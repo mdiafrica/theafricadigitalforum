@@ -1,2 +1,2 @@
 # theafricadigitalforum
-Ahe Africa Digital Forum
+The Africa Digital Forum
