@@ -1,0 +1,927 @@
+/* Home.module.css — Africa Digital Forum */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Bebas+Neue&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
+
+/* ── Base ────────────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 5%;
+  overflow: hidden;
+  background: #000000;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heroSlider {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.heroSlide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.heroSlideActive {
+  opacity: 1;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slidePrev,
+.slideNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 28px;
+  font-weight: 300;
+  z-index: 10;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.slidePrev:hover,
+.slideNext:hover {
+  background: #7C3AED;
+  border-color: #7C3AED;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.slidePrev { left: 30px; }
+.slideNext { right: 30px; }
+
+.slideIndicators {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.slideDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.slideDot:hover {
+  background: rgba(255, 255, 255, 0.75);
+  transform: scale(1.2);
+}
+
+.slideDotActive {
+  background: #7C3AED;
+  width: 28px;
+  border-radius: 6px;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  max-width: 900px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 100px;
+  padding: 6px 16px;
+  margin-top: 18px;
+  margin-bottom: 28px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: capitalize;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.heroEyebrowDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7C3AED;
+  flex-shrink: 0;
+}
+
+.heroTitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(36px, 5.5vw, 64px);
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  margin: 0 0 24px;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  text-transform: capitalize;
+}
+
+.heroTagline {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: clamp(13px, 1vw, 15px);
+  line-height: 1.75;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 600px;
+  margin: 0 auto 36px;
+  text-align: center;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 36px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.imageCaption {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  z-index: 3;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  padding: 5px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Section Label ───────────────────────────────────────────── */
+.sectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7C3AED;
+  margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.sectionLabelLine {
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: #7C3AED;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Stats Bar ───────────────────────────────────────────────── */
+.statsBar {
+  position: relative;
+  background: #000000;
+  padding: 30px 5% 70px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  margin-top: 0;
+}
+
+.statsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-top: 0;
+}
+
+.statCard {
+  position: relative;
+  text-align: center;
+  cursor: default;
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: visible;
+  transition: none;
+}
+
+.statCard::before { display: none; }
+
+.statCard:hover {
+  transform: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.statIcon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1;
+  transition: none;
+  color: #7C3AED;
+}
+
+.statCard:hover .statIcon { transform: none; }
+
+.statNumber {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: clamp(22px, 2.5vw, 36px);
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  min-height: 1.1em;
+  color: #ffffff;
+}
+
+.statSuffix {
+  font-size: 0.5em;
+  font-weight: 700;
+  vertical-align: super;
+  margin-left: 1px;
+  color: #ffffff;
+}
+
+.statLabel {
+  font-size: 8px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Presidential Dialogues ─────────────────────────────────── */
+.dialoguesSection {
+  position: relative;
+  padding: 80px 5%;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(124, 58, 237, 0.15);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.dialoguesOverlay {
+  display: none;
+}
+
+.dialoguesInner {
+  position: relative;
+  z-index: 1;
+}
+
+.dialoguesHeader {
+  text-align: left;
+  margin-bottom: 60px;
+}
+
+.dialoguesBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7C3AED;
+  margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.dialoguesTitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  color: #ffffff;
+  text-align: left;
+}
+
+.dialoguesTitle::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: #7C3AED;
+  border-radius: 2px;
+  margin: 12px 0 0;
+}
+
+.dialoguesSubtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 0 40px;
+  text-align: left;
+}
+
+.dialoguesCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dialogueCard { text-align: center; }
+
+.dialogueCardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  background: rgba(124, 58, 237, 0.12);
+  border: 0.5px solid rgba(124, 58, 237, 0.4);
+  border-radius: 10px;
+  padding: 10px 16px;
+  width: auto;
+  height: auto;
+}
+
+.dialogueCardIcon i {
+  font-size: 20px;
+  color: #7C3AED;
+}
+
+.dialogueCardTitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px;
+  letter-spacing: 0.05em;
+}
+
+.dialogueCardText {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Speakers Section ────────────────────────────────────────── */
+.speakersSection {
+  background: #ffffff;
+  padding: 96px 5%;
+}
+
+.speakersList {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.speakerCard {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  background: #f5f5f5;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 28px;
+  padding: 36px 40px;
+  transition: none;
+}
+
+/* ── Speaker Image Frame (rounded) ──────────────────────────── */
+.speakerImageFrame {
+  flex-shrink: 0;
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+
+/* Outer decorative ring */
+.speakerImageRing {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 58, 237, 0.25);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Dashed arc accent — top-right quarter */
+.speakerImageFrame::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(124, 58, 237, 0.4);
+  pointer-events: none;
+  z-index: 1;
+  /* mask to only show top-right arc */
+  clip-path: polygon(50% 0%, 100% 0%, 100% 50%, 50% 50%);
+}
+
+.speakerImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border: 3px solid #ffffff;
+  position: relative;
+  z-index: 0;
+}
+
+/* Floating number badge */
+.speakerImageBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #7C3AED;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #f5f5f5;
+  z-index: 2;
+}
+
+/* ── Speaker Info ────────────────────────────────────────────── */
+.speakerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.speakerIndex {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.speakerName {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: #111111;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.speakerTitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0 0 20px;
+}
+
+.speakerDivider {
+  width: 100px;
+  height: 2px;
+  background: #7C3AED;
+  border-radius: 2px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.speakerBio {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #333333;
+  line-height: 1.65;
+  margin-bottom: 20px;
+  margin-right: 40px;
+  max-width: 100%;
+  text-align: justify;
+}
+
+.bioTopicsLabel {
+  font-weight: 600;
+  color: #7C3AED;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  margin-right: 8px;
+}
+
+.speakerTopics {
+  margin-top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.speakerTopic {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: capitalize;
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.08);
+  border: 0.5px solid rgba(124, 58, 237, 0.3);
+  border-radius: 24px;
+  padding: 4px 12px;
+  display: inline-block;
+}
+
+.speakerSocial {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.speakerSocialLink {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.speakerSocialLink:hover {
+  border-color: #7C3AED;
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+/* ── More Speakers Coming ────────────────────────────────────── */
+.moreSpeakersSection {
+  position: relative;
+  background-color: #0a0a0a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 120px 5%;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.moreSpeakersOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.90);
+  z-index: 1;
+}
+
+.moreSpeakersContent {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tbaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 100px;
+  padding: 6px 16px;
+  margin-bottom: 24px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: capitalize;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tbaSubtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.tbaText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  margin: 0 0 28px;
+}
+
+.tbaDivider {
+  width: 48px;
+  height: 2px;
+  background: #7C3AED;
+  border-radius: 2px;
+  margin: 0 auto 28px;
+}
+
+.tbaCta {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: capitalize;
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.08);
+  border: 0.5px solid rgba(124, 58, 237, 0.3);
+  border-radius: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.tbaCta i {
+  color: #7C3AED;
+  font-size: 16px;
+}
+
+.tbaCta:hover {
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ── Speakers Footer ─────────────────────────────────────────── */
+.speakersFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.speakersNote {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* ── General Sections ────────────────────────────────────────── */
+.section { padding: 96px 5%; }
+.darkSection { background: #000000; }
+
+.h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  color: #ffffff;
+  text-align: left;
+}
+
+.h2::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: #7C3AED;
+  border-radius: 2px;
+  margin: 12px 0 0;
+}
+
+.h2Light { color: #ffffff; }
+
+.subtext {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 0 40px;
+  text-align: left;
+}
+
+.centerText {
+  text-align: center;
+  margin-top: 48px;
+}
+
+/* Speakers section: dark text overrides on white bg */
+.speakersSection .sectionLabel { color: #7C3AED; }
+.speakersSection .h2 { color: #111111; }
+.speakersSection .h2::after { background: #7C3AED; }
+.speakersSection .subtext { color: rgba(0, 0, 0, 0.6); }
+
+/* ── Responsive: Stats ───────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .statsGrid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .statsBar { padding: 30px 5% 70px; }
+}
+
+@media (max-width: 1024px) {
+  .statsGrid { gap: 12px; }
+  .statNumber { font-size: clamp(20px, 2.2vw, 32px); }
+  .statIcon { font-size: 18px; }
+  .dialoguesCardsGrid { gap: 30px; }
+  .dialogueCardTitle { font-size: 17px; }
+  .speakerName { font-size: clamp(20px, 2.4vw, 24px); }
+  .speakerImageFrame { width: 190px; height: 190px; }
+}
+
+@media (max-width: 768px) {
+  .statsBar { padding: 25px 5% 60px; }
+  .statsGrid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .statNumber { font-size: clamp(20px, 2.8vw, 28px); }
+  .statLabel { font-size: 7px; }
+
+  .dialoguesSection { padding: 60px 5%; }
+  .dialoguesCardsGrid { grid-template-columns: 1fr; gap: 32px; }
+  .dialoguesTitle { font-size: clamp(20px, 4vw, 24px); }
+  .dialogueCardTitle { font-size: 18px; }
+
+  .speakersSection { padding: 72px 5%; }
+  .speakerCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 36px 32px;
+    gap: 28px;
+  }
+  .speakerImageFrame { width: 180px; height: 180px; }
+  .speakerInfo { align-items: center; }
+  .speakerDivider { margin-left: auto; margin-right: auto; }
+  .speakerTopics { justify-content: center; }
+  .speakersFooter { flex-direction: column; gap: 20px; align-items: flex-start; }
+  .speakerBio { margin-right: 0; text-align: center; }
+
+  .moreSpeakersSection { padding: 80px 5%; min-height: 360px; }
+  .moreSpeakersContent { padding: 0 8px; }
+
+  .hero { padding: 100px 5%; min-height: 92vh; }
+  .heroTitle { font-size: 56px; }
+  .heroTagline { font-size: 15px; }
+  .slidePrev { left: 14px; }
+  .slideNext { right: 14px; }
+  .slidePrev, .slideNext { width: 40px; height: 40px; font-size: 22px; }
+  .statsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .heroEyebrow { font-size: 10px; padding: 7px 16px; }
+  .imageCaption { display: none; }
+  .section { padding: 72px 5%; }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 88px 5%; }
+  .heroTitle { font-size: 44px; }
+  .heroTagline { font-size: 14px; }
+  .heroActions { flex-direction: column; align-items: center; }
+  .heroActions button { width: 100%; max-width: 260px; justify-content: center; }
+  .slideIndicators { bottom: 20px; }
+  .slideDotActive { width: 22px; }
+  .statsGrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .statNumber { font-size: 26px; }
+  .section { padding: 60px 5%; }
+  .speakerImageFrame { width: 160px; height: 160px; }
+}
+
+@media (max-width: 480px) {
+  .statsBar { padding: 20px 4% 50px; }
+  .statsGrid { gap: 10px; }
+  .statIcon { font-size: 16px; margin-bottom: 8px; }
+  .statNumber { font-size: clamp(18px, 2.5vw, 24px); margin-bottom: 6px; }
+  .statLabel { font-size: 6px; letter-spacing: 0.08em; }
+  .sectionLabel { font-size: 8px; gap: 6px; }
+  .sectionLabelLine { width: 20px; }
+
+  .dialoguesSection { padding: 48px 4%; }
+  .dialoguesBadge { font-size: 10px; gap: 6px; }
+  .dialoguesTitle { font-size: clamp(18px, 5vw, 22px); }
+  .dialoguesTitle::after { width: 32px; }
+  .dialoguesSubtitle { font-size: 12px; margin-bottom: 30px; }
+
+  .dialogueCardTitle { font-size: 17px; margin-bottom: 8px; }
+  .dialogueCardText { font-size: 13px; }
+
+  .speakersSection { padding: 56px 4%; }
+  .speakerCard { padding: 28px 24px; }
+  .speakerImageFrame { width: 140px; height: 140px; }
+  .speakerImageBadge { width: 30px; height: 30px; font-size: 10px; }
+  .speakerName { font-size: clamp(20px, 5vw, 24px); }
+  .speakerTitle { font-size: 12px; }
+  .speakerBio { font-size: 13px; }
+  .speakersFooter { flex-direction: column; gap: 20px; align-items: flex-start; }
+
+  .moreSpeakersSection { padding: 60px 4%; min-height: 320px; }
+  .tbaSubtitle { font-size: 20px; }
+  .tbaText { font-size: 13px; }
+  .tbaBadge { font-size: 9px; padding: 5px 12px; gap: 8px; }
+  .tbaCta { font-size: 12px; gap: 8px; padding: 6px 16px; }
+}
+
+@media (max-width: 400px) {
+  .statsGrid { grid-template-columns: 1fr; gap: 10px; }
+  .heroTitle { font-size: 36px; }
+}
