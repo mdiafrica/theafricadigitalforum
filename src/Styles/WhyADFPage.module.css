@@ -38,9 +38,10 @@
 .heroText {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
-  max-width: 800px;
+  max-width: 680px;
   margin: 0 auto;
   line-height: 1.6;
+  text-align: center;
 }
 
 /* ----- General Sections ----- */
@@ -298,6 +299,9 @@
   .hero {
     padding: 80px 5% 60px;
   }
+  .heroText {
+    font-size: 14px;
+  }
   .section,
   .sectionAlt {
     padding: 60px 5%;
@@ -323,7 +327,6 @@
   .whyAttendImage img {
     max-width: 280px;
   }
-
   .agendaSection {
     padding: 60px 5%;
   }
@@ -343,6 +346,9 @@
     font-size: 28px;
     letter-spacing: 0.05em;
   }
+  .heroText {
+    font-size: 13px;
+  }
   .sectionTitle {
     font-size: 26px;
   }
@@ -352,7 +358,6 @@
   .sectionParagraph {
     font-size: 12px;
   }
-
   .agendaMainTitle {
     font-size: 20px;
   }

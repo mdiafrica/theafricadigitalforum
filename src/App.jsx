@@ -27,7 +27,7 @@ function App() {
         'Africa/Abidjan', 'Africa/Ouagadougou', 'Africa/Porto-Novo', 'Africa/Lome',
         'Africa/Dakar', 'Africa/Bamako', 'Africa/Conakry', 'Africa/Bissau', 'Africa/Niamey',
         'Africa/Ndjamena', 'Africa/Bangui', 'Africa/Douala', 'Africa/Libreville', 'Africa/Malabo',
-        'Africa/Brazzaville', 'Africa/Kinshasa', 'Africa/Kigali', 'Africa/Bujumbura',
+        'Africa/Brazzaville', 'Africa/Kinshasa', 'Africa/Bujumbura',
         'Africa/Tunis', 'Africa/Algiers', 'Africa/Casablanca', 'Indian/Antananarivo',
       ];
       if (frenchTZ.includes(tz)) setLang('fr');
@@ -49,7 +49,7 @@ function App() {
       case 'whyadf':
         return <WhyADFPage setPage={setPage} />;
       case 'city':
-        return <CityPage t={t} setPage={setPage} />;   // ✅ Added setPage
+        return <CityPage t={t} setPage={setPage} />;
       case 'contact':
         return <ContactPage t={t} />;
       case 'tickets':
