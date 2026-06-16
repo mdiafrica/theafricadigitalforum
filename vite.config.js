@@ -2,13 +2,14 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   server: {
-    open: true,  // Automatically opens browser when server starts
-    hmr: true,   // Enable Hot Module Replacement (auto-reload)
+    open: true,
+    hmr: true,
     watch: {
-      usePolling: true,  // Better file watching for Windows
-      interval: 100,     // Check for changes every 100ms
+      usePolling: true,
+      interval: 100,
     },
   },
 });
