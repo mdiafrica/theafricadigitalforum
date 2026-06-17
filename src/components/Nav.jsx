@@ -1,4 +1,5 @@
-// Nav.js - With proper flags next to languages (Media page removed)
+// Nav.js - With Blog page and language flags
+
 import { useState, useEffect } from 'react';
 import styles from '../Styles/components/Nav.module.css';
 import Logo from '../Assets/Images/Logo.png';
@@ -19,19 +20,29 @@ const T = {
   shadow: 'rgba(0, 0, 0, 0.08)',
 };
 
-// REMOVED 'media' from pageKeys
-const pageKeys = ['home', 'about', 'whyadf', 'city', 'contact'];
+// Added BLOG here
+const pageKeys = [
+  'home',
+  'about',
+  'whyadf',
+  'city',
+  'blog',
+  'contact'
+];
 
-const langSwitchCopy = {
-  en: 'Switch to Français',
-  fr: 'Switch to English',
-  ar: 'Switch to English',
-};
-
-// Language options with flags
 const languages = [
-  { code: 'en', name: 'English', flag: '🇬🇧', displayName: 'English' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', displayName: 'Français' },
+  {
+    code: 'en',
+    name: 'English',
+    flag: '🇬🇧',
+    displayName: 'English'
+  },
+  {
+    code: 'fr',
+    name: 'Français',
+    flag: '🇫🇷',
+    displayName: 'Français'
+  }
 ];
 
 function Nav({ lang, cycleLang, t, activePage, setPage }) {
@@ -41,42 +52,67 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
-  // Close dropdown when clicking outside
+  // Close language dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (langDropdownOpen && !event.target.closest('.language-dropdown')) {
+      if (
+        langDropdownOpen &&
+        !event.target.closest('.language-dropdown')
+      ) {
         setLangDropdownOpen(false);
       }
     };
+
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, [langDropdownOpen]);
 
   const handlePageChange = (page) => {
     setPage(page);
     setMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const handleLanguageChange = (langCode) => {
     if (langCode !== lang) {
       cycleLang();
     }
+
     setLangDropdownOpen(false);
   };
 
-  const currentLanguage = languages.find(l => l.code === lang) || languages.find(l => l.code === 'en');
+  const currentLanguage =
+    languages.find((l) => l.code === lang) ||
+    languages.find((l) => l.code === 'en');
+
   const navItems = t.nav || [];
 
   return (
     <>
-      <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ''}`}>
-        {/* Logo - clicks to home page */}
+      <nav
+        className={`${styles.nav} ${
+          scrolled ? styles.navScrolled : ''
+        }`}
+      >
+        {/* Logo */}
         <button
           className={styles.navLogo}
           onClick={() => handlePageChange('home')}
@@ -89,51 +125,72 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
           />
         </button>
 
-        {/* Desktop Nav Links */}
+        {/* Desktop Navigation */}
         <div className={styles.navLinks}>
           {navItems.map((item, index) => {
             const page = pageKeys[index];
-            // Skip rendering if no matching page key (e.g., if translations have extra items)
+
             if (!page) return null;
+
             const isActive = activePage === page;
             const isHovered = hoveredItem === page;
 
             return (
               <button
-                key={item}
+                key={page}
                 className={styles.navLink}
                 onClick={() => handlePageChange(page)}
                 onMouseEnter={() => setHoveredItem(page)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
-                <span className={
-                  isActive ? styles.navLinkActive :
-                  isHovered ? styles.navLinkHover :
-                  styles.navLinkInactive
-                }>
+                <span
+                  className={
+                    isActive
+                      ? styles.navLinkActive
+                      : isHovered
+                      ? styles.navLinkHover
+                      : styles.navLinkInactive
+                  }
+                >
                   {item}
                 </span>
-                <span className={`${styles.navLinkUnderline} ${
-                  isActive ? styles.navLinkUnderlineActive :
-                  isHovered ? styles.navLinkUnderlineHover :
-                  styles.navLinkUnderlineHidden
-                }`} />
+
+                <span
+                  className={`${styles.navLinkUnderline}
+                  ${
+                    isActive
+                      ? styles.navLinkUnderlineActive
+                      : isHovered
+                      ? styles.navLinkUnderlineHover
+                      : styles.navLinkUnderlineHidden
+                  }`}
+                />
               </button>
             );
           })}
         </div>
 
-        {/* Right side - Language Dropdown */}
+        {/* Right side */}
         <div className={styles.navRight}>
-          <div className={`${styles.languageDropdown} language-dropdown`}>
+          <div
+            className={`${styles.languageDropdown} language-dropdown`}
+          >
             <button
-              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              onClick={() =>
+                setLangDropdownOpen(!langDropdownOpen)
+              }
               className={styles.langTrigger}
               aria-label="Select language"
             >
               <span className={styles.worldIcon}>🌐</span>
-              <span className={styles.currentLang}>{currentLanguage.flag}</span>
-              <span className={styles.dropdownArrow}>{langDropdownOpen ? '▲' : '▼'}</span>
+
+              <span className={styles.currentLang}>
+                {currentLanguage.flag}
+              </span>
+
+              <span className={styles.dropdownArrow}>
+                {langDropdownOpen ? '▲' : '▼'}
+              </span>
             </button>
 
             {langDropdownOpen && (
@@ -141,20 +198,40 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
                 {languages.map((language) => (
                   <button
                     key={language.code}
-                    onClick={() => handleLanguageChange(language.code)}
-                    className={`${styles.dropdownItem} ${lang === language.code ? styles.activeLanguage : ''}`}
+                    onClick={() =>
+                      handleLanguageChange(language.code)
+                    }
+                    className={`${styles.dropdownItem}
+                    ${
+                      lang === language.code
+                        ? styles.activeLanguage
+                        : ''
+                    }`}
                   >
-                    <span className={styles.flagIcon}>{language.flag}</span>
-                    <span className={styles.languageName}>{language.displayName}</span>
-                    {lang === language.code && <span className={styles.checkMark}>✓</span>}
+                    <span className={styles.flagIcon}>
+                      {language.flag}
+                    </span>
+
+                    <span className={styles.languageName}>
+                      {language.displayName}
+                    </span>
+
+                    {lang === language.code && (
+                      <span className={styles.checkMark}>
+                        ✓
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Mobile Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() =>
+              setMobileMenuOpen(!mobileMenuOpen)
+            }
             className={styles.mobileMenuButton}
           >
             {mobileMenuOpen ? '✕' : '☰'}
@@ -167,14 +244,22 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
         <div className={styles.mobileMenu}>
           {navItems.map((item, index) => {
             const page = pageKeys[index];
+
             if (!page) return null;
+
             const isActive = activePage === page;
+
             return (
               <button
-                key={item}
-                onClick={() => handlePageChange(page)}
-                className={`${styles.mobileMenuItem} ${
-                  isActive ? styles.mobileMenuItemActive : styles.mobileMenuItemInactive
+                key={page}
+                onClick={() =>
+                  handlePageChange(page)
+                }
+                className={`${styles.mobileMenuItem}
+                ${
+                  isActive
+                    ? styles.mobileMenuItemActive
+                    : styles.mobileMenuItemInactive
                 }`}
               >
                 {item}
@@ -184,9 +269,12 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
 
           <div className={styles.mobileDivider} />
 
-          {/* Mobile Language Options */}
+          {/* Mobile Language Section */}
           <div className={styles.mobileLanguageSection}>
-            <div className={styles.mobileLanguageLabel}>Select Language</div>
+            <div className={styles.mobileLanguageLabel}>
+              Select Language
+            </div>
+
             {languages.map((language) => (
               <button
                 key={language.code}
@@ -194,13 +282,29 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
                   if (language.code !== lang) {
                     cycleLang();
                   }
+
                   setMobileMenuOpen(false);
                 }}
-                className={`${styles.mobileLangItem} ${lang === language.code ? styles.mobileLangActive : ''}`}
+                className={`${styles.mobileLangItem}
+                ${
+                  lang === language.code
+                    ? styles.mobileLangActive
+                    : ''
+                }`}
               >
-                <span className={styles.flagIcon}>{language.flag}</span>
-                <span>{language.displayName}</span>
-                {lang === language.code && <span className={styles.checkMark}>✓</span>}
+                <span className={styles.flagIcon}>
+                  {language.flag}
+                </span>
+
+                <span>
+                  {language.displayName}
+                </span>
+
+                {lang === language.code && (
+                  <span className={styles.checkMark}>
+                    ✓
+                  </span>
+                )}
               </button>
             ))}
           </div>

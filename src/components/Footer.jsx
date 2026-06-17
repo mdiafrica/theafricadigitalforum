@@ -13,35 +13,8 @@ function Footer({ t, setPage }) {
       .replace(/[^a-z0-9]+/g, ' ')
       .trim();
 
-  const handleLinkClick = (link) => {
-    const linkMap = {
-      home: 'home',
-      'about africa digital forum': 'about',
-      'why africa digital forum': 'whyadf',
-      'vision mission': 'about',
-      'organizing directors': 'about',
-      'host city lome togo': 'city',
-      'media press': 'contact',
-      'buy tickets': 'tickets',
-      'student pass': 'tickets',
-      'apply to speak': 'contact',
-      'expected speakers': 'about',
-      'media accreditation': 'contact',
-      'become a sponsor': 'contact',
-      'partnership opportunities': 'contact',
-      'newsletter': 'contact',
-      'contact us': 'contact',
-      'contact': 'contact',
-      'privacy policy': 'contact',
-      'terms of use': 'contact',
-      'cookie policy': 'contact',
-    };
-    const page = linkMap[normalizeLink(link)];
-    if (page && setPage) {
-      setPage(page);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  // ---- SOCIAL MEDIA HANDLING ----
+  const socialMediaNames = ['Facebook', 'LinkedIn', 'Twitter', 'Instagram', 'YouTube'];
 
   const handleSocialClick = (network) => {
     const socialLinks = {
@@ -53,6 +26,67 @@ function Footer({ t, setPage }) {
     };
     const url = socialLinks[network];
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleLinkClick = (link) => {
+    // 1️⃣ SOCIAL MEDIA COLUMN → open in new tab
+    if (socialMediaNames.includes(link)) {
+      handleSocialClick(link);
+      return;
+    }
+
+    // 2️⃣ EXTERNAL LINK: Media & Digital Institute Africa → open website in new tab
+    if (link === 'Media & Digital Institute Africa') {
+      window.open('https://mdiafrica.org/en/', '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // 3️⃣ INTERNAL PAGE ROUTING
+    const linkMap = {
+      // Core pages
+      home: 'home',
+      blog: 'blog',
+
+      // About
+      'about africa digital forum': 'about',
+      'vision mission': 'about',
+      'organizing directors': 'about',
+      // 👇 Both Vision and Mission → About page
+      'our vision': 'about',
+      'our mission': 'about',
+
+      // Why Africa Digital Forum
+      'why africa digital forum': 'whyadf',
+
+      // Host City
+      'host city lome togo': 'city',
+      'host city': 'city',
+
+      // Contact
+      'contact us': 'contact',
+      contact: 'contact',
+
+      // Legal
+      'privacy policy': 'contact',
+      'terms of use': 'contact',
+      'cookie policy': 'contact',
+    };
+
+    const key = normalizeLink(link);
+    const page = linkMap[key];
+
+    // Fallback for Home & Blog (case / spacing safety)
+    const safeFallbacks = {
+      home: 'home',
+      blog: 'blog',
+    };
+
+    const finalPage = page || safeFallbacks[key];
+
+    if (finalPage && setPage) {
+      setPage(finalPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const socialNetworks = [
@@ -69,6 +103,8 @@ function Footer({ t, setPage }) {
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.mainGrid}>
+
+          {/* Logo + Description */}
           <div className={styles.logoSection}>
             <div className={styles.logoWrapper}>
               <button
@@ -83,27 +119,48 @@ function Footer({ t, setPage }) {
                 />
               </button>
             </div>
-            <p className={styles.description}>{t.footerDesc}</p>
+
+            <p className={styles.description}>
+              {t.footerDesc}
+            </p>
+
+            {/* "Organized by" → clickable link */}
             <div className={styles.organizerText}>
               <span>{t.organizer}: </span>
-              <span className={styles.organizerName}>{t.orgName}</span>
+              <a
+                href="https://mdiafrica.org/en/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.organizerLink}
+              >
+                {t.orgName}
+              </a>
             </div>
+
+            {/* Newsletter Signup */}
             <div className={styles.newsletterSection}>
-              <div className={styles.newsletterLabel}>Subscribe to our newsletter</div>
+              <div className={styles.newsletterLabel}>
+                Subscribe to our newsletter
+              </div>
               <div className={styles.newsletterForm}>
                 <input
                   type="email"
                   placeholder="Your email address"
                   className={styles.newsletterInput}
                 />
-                <button className={styles.subscribeBtn}>Subscribe</button>
+                <button className={styles.subscribeBtn}>
+                  Subscribe
+                </button>
               </div>
             </div>
           </div>
 
+          {/* Footer Columns */}
           {footerCols.map((col) => (
             <div key={col.title} className={styles.col}>
-              <div className={styles.colTitle}>{col.title}</div>
+              <div className={styles.colTitle}>
+                {col.title}
+              </div>
               {col.links.map((link) => (
                 <button
                   key={link}
@@ -118,10 +175,12 @@ function Footer({ t, setPage }) {
           ))}
         </div>
 
+        {/* Bottom Bar */}
         <div className={styles.bottomBar}>
           <span className={styles.copyright}>
             {t.footerCopy.replace('2025', currentYear)}
           </span>
+
           <div className={styles.legalLinks}>
             {['Privacy Policy', 'Terms of Use', 'Cookie Policy'].map((label) => (
               <button
@@ -134,6 +193,7 @@ function Footer({ t, setPage }) {
               </button>
             ))}
           </div>
+
           <div className={styles.socialLinks}>
             {socialNetworks.map((network) => (
               <button

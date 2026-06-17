@@ -8,6 +8,7 @@ import AboutPage from './pages/AboutPage';
 import CityPage from './pages/CityPage';
 import ContactPage from './pages/ContactPage';
 import WhyADFPage from './pages/WhyADFPage';
+import BlogPage from './pages/BlogPage';   // ← ADD THIS
 
 function App() {
   const [lang, setLang] = useState('en');
@@ -50,6 +51,8 @@ function App() {
         return <WhyADFPage setPage={setPage} />;
       case 'city':
         return <CityPage t={t} setPage={setPage} />;
+      case 'blog':          // ← ADD THIS CASE
+        return <BlogPage setPage={setPage} />;
       case 'contact':
         return <ContactPage t={t} />;
       case 'tickets':
