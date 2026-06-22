@@ -1,5 +1,4 @@
-// Note: Tabler Icons font must be loaded in index.html:
-// <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+// AboutPage.jsx
 import { useState, useEffect, useRef } from 'react';
 import pageStyles from '../Styles/AboutPage.module.css';
 import AboutHero from '../Assets/Images/Image1.jpg';
@@ -90,19 +89,12 @@ function Modal({ isOpen, name, role, location, image, socials = {}, content, onC
                   <i className="ti ti-brand-linkedin" />
                 </a>
               )}
-              {socials.twitter && (
-                <a href={socials.twitter} target="_blank" rel="noopener noreferrer" className={pageStyles.modalSocialLink}>
-                  <i className="ti ti-brand-x" />
-                </a>
-              )}
-              {socials.instagram && (
-                <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className={pageStyles.modalSocialLink}>
-                  <i className="ti ti-brand-instagram" />
-                </a>
-              )}
               {socials.email && (
-                <a href={`mailto:${socials.email}`} className={pageStyles.modalSocialLink}>
+                <a href={`mailto:${socials.email}`} className={pageStyles.modalSocialLink} style={{ gap: '6px' }}>
                   <i className="ti ti-mail" />
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: '#7c3aed' }}>
+                    {socials.email}
+                  </span>
                 </a>
               )}
             </div>
@@ -140,15 +132,11 @@ function TeamCard({ name, title, bio, longBio, image, location, socials = {}, de
         transition: `opacity 0.65s ease ${delay}s, transform 0.65s ease ${delay}s`,
       }}
     >
-      {/* Photo column */}
       <div className={pageStyles.teamPhotoCol}>
-        {image && (
-          <img src={image} alt={name} className={pageStyles.teamPhoto} />
-        )}
+        {image && <img src={image} alt={name} className={pageStyles.teamPhoto} />}
         <div className={pageStyles.teamPhotoAccent} />
       </div>
 
-      {/* Content column */}
       <div className={pageStyles.teamCardBody}>
         <div>
           {location && (
@@ -190,35 +178,15 @@ function TeamCard({ name, title, bio, longBio, image, location, socials = {}, de
                 <i className="ti ti-brand-linkedin" />
               </a>
             )}
-            {socials.twitter && (
-              <a
-                href={socials.twitter}
-                className={pageStyles.teamSocialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="X / Twitter"
-              >
-                <i className="ti ti-brand-x" />
-              </a>
-            )}
-            {socials.instagram && (
-              <a
-                href={socials.instagram}
-                className={pageStyles.teamSocialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
-                <i className="ti ti-brand-instagram" />
-              </a>
-            )}
             {socials.email && (
               <a
                 href={`mailto:${socials.email}`}
                 className={pageStyles.teamSocialLink}
                 aria-label="Email"
+                style={{ gap: '6px', padding: '0 10px', width: 'auto', borderRadius: '20px' }}
               >
                 <i className="ti ti-mail" />
+                <span style={{ fontSize: '11px', fontWeight: 500 }}>{socials.email}</span>
               </a>
             )}
           </div>
@@ -229,7 +197,9 @@ function TeamCard({ name, title, bio, longBio, image, location, socials = {}, de
 }
 
 /* ── Page ── */
-export default function AboutPage() {
+export default function AboutPage({ t }) {
+  const about = t.about; // Get about translations
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState({
     name: '',
@@ -257,23 +227,24 @@ export default function AboutPage() {
     });
   };
 
-  const cliffordLongBio = `Emmanuel Clifford Gyetuah is a distinguished executive whose impressive 12-year career spans the non-profit sector, finance and business development. As the Organizing Director, Finance and Institutional Operations for the Africa Digital Forum, Emmanuel expertly champions the organization's fiscal sustainability and overall health. His leadership is defined by a deep-seated commitment to scaling multinational entities while maintaining the highest standards of operational excellence.
-
-Emmanuel is widely recognized for his leadership at Bolingo Consult, a multinational language company he co-founded in 2019 that currently has operations in the United States, Ghana, and Rwanda. He possesses a remarkable ability to translate high-level institutional ambitions into tangible outcomes, adeptly managing complex partnerships with prestigious global bodies such as the African Union, GIZ, and the World Bank.
-
-What truly sets Emmanuel apart is his unique blend of financial rigor and genuine, hands-on operational empathy. By optimizing resources for maximum impact, he directly advances the Africa Digital Forum's heartfelt mission to bridge the digital usage gap and foster an authentic, sovereign African digital ecosystem. Ultimately, Emmanuel is uniquely positioned to steer the Forum toward a future of enduring stability, ensuring its financial and institutional frameworks are as forward-thinking and dynamic as the technological landscapes they seek to elevate.`;
-
-  const marcLongBio = `Marc ABOFLAN is a seasoned media development and international project management professional with over 15 years of experience driving transformative initiatives across Africa. As the Organizing Director, Strategy & Global Partnerships for the Africa Digital Forum, he leads the Forum's strategic vision, institutional positioning, and partnership development efforts, fostering collaboration among governments, technology leaders, media organizations, investors, academia, and development partners to shape Africa's digital future.
-
-Throughout his career, Marc has built a strong reputation for designing and implementing high-impact programs at the intersection of media, digital transformation, youth empowerment, governance, and innovation. He has held leadership roles with international organizations including Reporters Without Borders (RSF), The Journalism Trust Initiative, Global Media Registry, and Fondation Hirondelle, where he has successfully managed multi-country projects, strengthened media ecosystems, and built strategic alliances across more than 40 African countries.
-
-Marc is also the Executive Director of Media and Digital Institute (MDI), a pan-African organization dedicated to media innovation, digital inclusion, research, youth employability, and capacity building. Through MDI and other initiatives, he has trained hundreds of media professionals, supported organizations in navigating digital transformation, and championed responsible and inclusive technology adoption across the continent.
-
-Known for his ability to connect ideas, institutions, and people, Marc combines strategic thinking with a deep understanding of Africa's evolving digital landscape. His work is driven by a conviction that collaboration, innovation, and strong partnerships are essential to building a digitally empowered Africa that can compete and thrive in the global economy.`;
+  // ── Team data from translations, enriched with static images & socials ──
+  const teamTranslations = about.team || [];
+  const teamData = teamTranslations.map((member, index) => {
+    // Map images by index (assuming order matches)
+    const images = [MarchImg, CliffordImg];
+    const socials = [
+      { linkedin: 'https://linkedin.com/in/marcaboflan', email: 'marc@africadigitalforum.com' },
+      { linkedin: 'https://linkedin.com/in/emmanuelcliffordgyetuah', email: 'clifford@africadigitalforum.com' },
+    ];
+    return {
+      ...member,
+      image: images[index] || null,
+      socials: socials[index] || {},
+    };
+  });
 
   return (
     <div className={pageStyles.pageShell}>
-      {/* Modal */}
       <Modal
         isOpen={modalOpen}
         name={modalData.name}
@@ -292,91 +263,61 @@ Known for his ability to connect ideas, institutions, and people, Marc combines 
       >
         <div className={pageStyles.heroContent}>
           <FadeUp>
-            <h1 className={pageStyles.heroTitle}>About Us</h1>
+            <h1 className={pageStyles.heroTitle}>{about.heroTitle}</h1>
           </FadeUp>
           <FadeUp delay={0.12}>
-            <p className={pageStyles.heroSubtitle}>
-              Africa Digital Forum is Africa's premier platform for digital transformation, AI, and innovation —
-              convening leaders, policymakers, and changemakers to shape a connected and sovereign digital future
-              for the continent.
-            </p>
+            <p className={pageStyles.heroSubtitle}>{about.heroSubtitle}</p>
           </FadeUp>
         </div>
       </section>
 
-      {/* Mission */}
-      <FadeUp>
-        <div className={`${pageStyles.band} ${pageStyles.bandMission}`}>
-          <h2 className={pageStyles.bandLabel}>Our Mission</h2>
-          <p className={pageStyles.bandText}>
-            To unlock Africa's digital potential by convening leaders across the media, tech, and investment
-            landscapes to drive inclusive access, accelerate AI‑driven economic growth, and establish a robust
-            policy framework necessary for a sustainable and connected future.
-          </p>
-        </div>
-      </FadeUp>
-
       {/* Vision */}
       <FadeUp>
-        <div
-          className={`${pageStyles.band} ${pageStyles.bandVision}`}
-          style={{ backgroundImage: `url(${AboutHero})` }}
-        >
-          <h2 className={pageStyles.bandLabel}>Our Vision</h2>
-          <p className={pageStyles.bandText}>
-            We envision a future where Africa leads the global digital frontier through authentic technological
-            sovereignty, a unified digital market, and resilient infrastructure that empowers every citizen to
-            thrive in the global economy.
-          </p>
+        <div className={`${pageStyles.band} ${pageStyles.bandVision}`}>
+          <h2 className={pageStyles.bandLabel}>{about.visionLabel}</h2>
+          <p className={pageStyles.bandText}>{about.visionText}</p>
         </div>
       </FadeUp>
 
-      {/* Organizing Director Section (formerly "Organizing Team") */}
+      {/* Mission */}
+      <FadeUp>
+        <div
+          className={`${pageStyles.band} ${pageStyles.bandMission}`}
+          style={{ backgroundImage: `url(${AboutHero})` }}
+        >
+          <h2 className={pageStyles.bandLabel}>{about.missionLabel}</h2>
+          <p className={pageStyles.bandText}>{about.missionText}</p>
+        </div>
+      </FadeUp>
+
+      {/* Organizing Director Section */}
       <section
         className={pageStyles.teamSection}
         style={{ '--team-bg': `url(${AboutHero})` }}
       >
         <div className={pageStyles.teamSectionFadeWrap}>
           <FadeUp>
-            <p className={pageStyles.teamSectionLabel}>Meet the people behind it</p>
-            <h2 className={pageStyles.teamSectionHeading}>
-              Organizing Directors
-            </h2>
+            <p className={pageStyles.teamSectionLabel}>{about.teamLabel}</p>
+            <h2 className={pageStyles.teamSectionHeading}>{about.teamHeading}</h2>
             <div className={pageStyles.teamSectionUnderline} />
           </FadeUp>
         </div>
 
         <div className={pageStyles.teamGrid}>
-          <TeamCard
-            name="Emmanuel Clifford Gyetuah"
-            title="Finance & Institutional Operations"
-            location="Ghana"
-            bio="Emmanuel Clifford Gyetuah is a strategic development professional and Coordinator of the Africa Digital Forum (ADF). He leads initiatives advancing digital transformation, innovation, and inclusive growth across Africa, while championing African language localization and digital advocacy through regional and global leadership roles."
-            longBio={cliffordLongBio}
-            image={CliffordImg}
-            socials={{
-              linkedin: 'https://linkedin.com',
-              twitter: 'https://x.com',
-              email: 'info@africadigitalforum.com',
-            }}
-            delay={0.05}
-            onReadMore={openModal}
-          />
-          <TeamCard
-            name="Marc Aboflan"
-            title="Strategy & Global Partnerships"
-            location="Togo"
-            bio="Marc Aboflan is a seasoned Togolese journalist, media executive, and digital credibility expert. As Africa Regional Project Manager for Reporters Without Borders' Journalism Trust Initiative (JTI), he advances digital transparency and combats disinformation across the continent. He brings extensive expertise in media management, tech governance, and strategic communications."
-            longBio={marcLongBio}
-            image={MarchImg}
-            socials={{
-              linkedin: 'https://linkedin.com',
-              twitter: 'https://x.com',
-              email: 'info@africadigitalforum.com',
-            }}
-            delay={0.15}
-            onReadMore={openModal}
-          />
+          {teamData.map((member, index) => (
+            <TeamCard
+              key={member.name}
+              name={member.name}
+              title={member.title}
+              location={member.location}
+              bio={member.bio}
+              longBio={member.longBio}
+              image={member.image}
+              socials={member.socials}
+              delay={index === 0 ? 0.05 : 0.15}
+              onReadMore={openModal}
+            />
+          ))}
         </div>
       </section>
 
@@ -387,14 +328,12 @@ Known for his ability to connect ideas, institutions, and people, Marc combines 
       >
         <div className={pageStyles.advisoryInner}>
           <FadeUp>
-            <h2 className={pageStyles.advisoryHeading}>
-              Advisory <span>Board</span>
-            </h2>
+            <h2
+              className={pageStyles.advisoryHeading}
+              dangerouslySetInnerHTML={{ __html: about.advisoryHeading }}
+            />
             <div className={pageStyles.advisoryUnderline} />
-            <p className={pageStyles.advisorySubtext}>
-              Our distinguished advisory board of global digital leaders, policy experts, and innovators
-              will be announced shortly.
-            </p>
+            <p className={pageStyles.advisorySubtext}>{about.advisorySubtext}</p>
           </FadeUp>
 
           <FadeUp delay={0.1}>
@@ -414,7 +353,7 @@ Known for his ability to connect ideas, institutions, and people, Marc combines 
           <FadeUp delay={0.2}>
             <div className={pageStyles.advisoryBadge}>
               <i className="ti ti-clock" />
-              Coming Soon
+              {about.advisoryBadge}
             </div>
           </FadeUp>
         </div>

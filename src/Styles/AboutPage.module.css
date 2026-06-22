@@ -62,13 +62,8 @@
   align-items: start;
 }
 
-/* Mission – solid black */
+/* ── Mission – now with image + dark overlay ── */
 .bandMission {
-  background: #111111;
-}
-
-/* Vision – image + dark overlay */
-.bandVision {
   background-color: #1a1a1a;
   background-size: cover;
   background-position: center;
@@ -76,17 +71,22 @@
   position: relative;
 }
 
-.bandVision::before {
+.bandMission::before {
   content: '';
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.52);
 }
 
-.bandVision .bandLabel,
-.bandVision .bandText {
+.bandMission .bandLabel,
+.bandMission .bandText {
   position: relative;
   z-index: 1;
+}
+
+/* ── Vision – solid black ── */
+.bandVision {
+  background: #111111;
 }
 
 /* Band label (left column) */

@@ -1,9 +1,32 @@
 // Footer.jsx
+import { useState, useEffect } from 'react';
 import styles from '../Styles/components/Footer.module.css';
 import Logo from '../Assets/Images/Logo.png';
+import emailjs from '@emailjs/browser';
+
+// ── EMAILJS CREDENTIALS ──
+const EMAILJS_SERVICE_ID  = 'service_oqw60pt';
+const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
+const EMAILJS_PUBLIC_KEY  = 'CRiokfjvcAxMuJHMB';
 
 function Footer({ t, setPage }) {
   const currentYear = new Date().getFullYear();
+
+  // ── Newsletter state ──
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeSuccess, setSubscribeSuccess] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
+
+  // ── Auto‑dismiss success after 3 seconds ──
+  useEffect(() => {
+    if (subscribeSuccess) {
+      const timer = setTimeout(() => {
+        setSubscribeSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [subscribeSuccess]);
 
   const normalizeLink = (value) =>
     value
@@ -13,7 +36,63 @@ function Footer({ t, setPage }) {
       .replace(/[^a-z0-9]+/g, ' ')
       .trim();
 
-  // ---- SOCIAL MEDIA HANDLING ----
+  // ── Send email via EmailJS ──
+  const sendEmailJS = async (subject, messageText) => {
+    if (!email) {
+      setSubscribeError('Please enter your email address.');
+      return false;
+    }
+
+    setIsSubscribing(true);
+    setSubscribeError('');
+    setSubscribeSuccess(false);
+
+    try {
+      const templateParams = {
+        name:       'Blog Subscriber',
+        from_email: email,
+        phone:      'N/A',
+        company:    'ADF Blog Reader',
+        subject:    subject,
+        message:    messageText,
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+
+      return true;
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      setSubscribeError('Something went wrong. Please try again.');
+      return false;
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  // ── Handle subscribe click ──
+  const handleSubscribe = async () => {
+    if (!email) {
+      setSubscribeError('Please enter your email address.');
+      return;
+    }
+
+    const success = await sendEmailJS(
+      'ADF Weekly Digest Subscription',
+      'Thank you for subscribing to the ADF Digest! You will receive our weekly newsletter every Thursday.'
+    );
+
+    if (success) {
+      setSubscribeSuccess(true);
+      setEmail('');
+    }
+  };
+
+  // ── Social media & link handlers ──
   const socialMediaNames = ['Facebook', 'LinkedIn', 'Twitter', 'Instagram', 'YouTube'];
 
   const handleSocialClick = (network) => {
@@ -29,62 +108,39 @@ function Footer({ t, setPage }) {
   };
 
   const handleLinkClick = (link) => {
-    // 1️⃣ SOCIAL MEDIA COLUMN → open in new tab
     if (socialMediaNames.includes(link)) {
       handleSocialClick(link);
       return;
     }
 
-    // 2️⃣ EXTERNAL LINK: Media & Digital Institute Africa → open website in new tab
     if (link === 'Media & Digital Institute Africa') {
       window.open('https://mdiafrica.org/en/', '_blank', 'noopener,noreferrer');
       return;
     }
 
-    // 3️⃣ INTERNAL PAGE ROUTING
     const linkMap = {
-      // Core pages
       home: 'home',
       blog: 'blog',
-
-      // About
       'about africa digital forum': 'about',
       'vision mission': 'about',
       'organizing directors': 'about',
-      // 👇 Both Vision and Mission → About page
       'our vision': 'about',
       'our mission': 'about',
-
-      // Why Africa Digital Forum
       'why africa digital forum': 'whyadf',
-
-      // Host City
       'host city lome togo': 'city',
       'host city': 'city',
-
-      // Contact
       'contact us': 'contact',
       contact: 'contact',
-
-      // Legal
       'privacy policy': 'contact',
       'terms of use': 'contact',
       'cookie policy': 'contact',
     };
 
     const key = normalizeLink(link);
-    const page = linkMap[key];
+    const page = linkMap[key] || (['home', 'blog'].includes(key) ? key : null);
 
-    // Fallback for Home & Blog (case / spacing safety)
-    const safeFallbacks = {
-      home: 'home',
-      blog: 'blog',
-    };
-
-    const finalPage = page || safeFallbacks[key];
-
-    if (finalPage && setPage) {
-      setPage(finalPage);
+    if (page && setPage) {
+      setPage(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -97,7 +153,9 @@ function Footer({ t, setPage }) {
     { name: 'YouTube', icon: 'ti-brand-youtube', color: '#FF0000' },
   ];
 
-  const footerCols = t?.footerCols || [];
+  // ── Use nested footer translations ──
+  const footer = t?.footer || {};
+  const footerCols = footer.cols || [];
 
   return (
     <footer className={styles.footer}>
@@ -121,37 +179,55 @@ function Footer({ t, setPage }) {
             </div>
 
             <p className={styles.description}>
-              {t.footerDesc}
+              {footer.desc}
             </p>
 
-            {/* "Organized by" → clickable link */}
             <div className={styles.organizerText}>
-              <span>{t.organizer}: </span>
+              <span>{footer.organizer}: </span>
               <a
                 href="https://mdiafrica.org/en/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.organizerLink}
               >
-                {t.orgName}
+                {footer.orgName}
               </a>
             </div>
 
-            {/* Newsletter Signup */}
+            {/* ── Newsletter Signup ── */}
             <div className={styles.newsletterSection}>
               <div className={styles.newsletterLabel}>
                 Subscribe to our newsletter
               </div>
-              <div className={styles.newsletterForm}>
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className={styles.newsletterInput}
-                />
-                <button className={styles.subscribeBtn}>
-                  Subscribe
-                </button>
-              </div>
+
+              {subscribeSuccess ? (
+                <div className={styles.subscribeSuccessMsg}>
+                  ✓ You're subscribed – check your inbox!
+                </div>
+              ) : (
+                <>
+                  <div className={styles.newsletterForm}>
+                    <input
+                      type="email"
+                      placeholder="Your email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={styles.newsletterInput}
+                      disabled={isSubscribing}
+                    />
+                    <button
+                      className={styles.subscribeBtn}
+                      onClick={handleSubscribe}
+                      disabled={isSubscribing || !email}
+                    >
+                      {isSubscribing ? 'Sending...' : 'Subscribe'}
+                    </button>
+                  </div>
+                  {subscribeError && (
+                    <div className={styles.subscribeErrorMsg}>{subscribeError}</div>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
@@ -178,7 +254,7 @@ function Footer({ t, setPage }) {
         {/* Bottom Bar */}
         <div className={styles.bottomBar}>
           <span className={styles.copyright}>
-            {t.footerCopy.replace('2025', currentYear)}
+            {footer.copy?.replace('2025', currentYear) || `© ${currentYear} Africa Digital Forum. All rights reserved.`}
           </span>
 
           <div className={styles.legalLinks}>

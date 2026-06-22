@@ -1,4 +1,4 @@
-/* Full CSS with zero margins around the logo */
+/* Full CSS with zero margins around the logo and functional newsletter feedback */
 .footer {
   background: #000000;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -91,6 +91,7 @@
   font-weight: 500;
 }
 
+/* ── Newsletter Section ──────────────────────────────────────── */
 .newsletterSection {
   margin-top: 24px;
 }
@@ -156,6 +157,36 @@
   transform: translateY(-1px);
 }
 
+.subscribeBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+/* ── Newsletter feedback (success & error) ──────────────────── */
+.subscribeSuccessMsg {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  color: #86efac;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.subscribeErrorMsg {
+  margin-top: 8px;
+  color: #f87171;
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ── Footer Columns ──────────────────────────────────────────── */
 .col {
   background: #000000;
 }
@@ -170,11 +201,11 @@
   font-family: 'Montserrat', sans-serif;
 }
 
-/* 🔼 INCREASED TOP MARGIN FOR Forum, Participate, and Engage columns */
+/* 🔼 Increased top margin for Forum, Participate, and Engage columns */
 .mainGrid > div:nth-child(2) .colTitle,
 .mainGrid > div:nth-child(3) .colTitle,
 .mainGrid > div:nth-child(4) .colTitle {
-  margin-top: 28px;  /* adjust as needed */
+  margin-top: 28px;
 }
 
 .link {
@@ -198,6 +229,7 @@
   transform: translateX(4px);
 }
 
+/* ── Bottom Bar ──────────────────────────────────────────────── */
 .bottomBar {
   display: flex;
   flex-wrap: wrap;
@@ -272,7 +304,7 @@
   transform: translateY(-1px);
 }
 
-/* Responsive */
+/* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .mainGrid {
     grid-template-columns: 1fr 1fr;

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite --open"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

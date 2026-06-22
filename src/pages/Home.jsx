@@ -1,7 +1,10 @@
+// src/pages/Home.js
 import { useState, useEffect, useRef } from 'react';
 import sharedStyles from '../Styles/shared.module.css';
 import styles from '../Styles/Home.module.css';
 import Button from '../components/Button';
+import emailjs from '@emailjs/browser';
+import { POSTS } from '../Data/posts';
 
 import Image1 from '../Assets/Images/Image2.jpg';
 import Image2 from '../Assets/Images/Image5.jpg';
@@ -13,19 +16,23 @@ import Image9 from '../Assets/Images/image9.jpg';
 import speaker1 from '../Assets/Images/speaker1.png';
 import speaker2 from '../Assets/Images/speaker2.png';
 
-const sliderImages = [
-  { url: Image1, title: 'Beautiful Lomé', location: 'Coastline of Lomé, Togo' },
-  { url: Image2, title: 'Cultural Heritage', location: 'Traditional Togo' },
-  { url: Image6, title: 'Modern Lomé', location: 'Downtown Lomé' },
-];
+// ── EMAILJS CREDENTIALS ──
+const EMAILJS_SERVICE_ID = 'service_oqw60pt';
+const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
+const EMAILJS_PUBLIC_KEY = 'CRiokfjvcAxMuJHMB';
 
+const sliderImages = [{ url: Image1 }, { url: Image2 }, { url: Image6 }];
+
+// ── Hooks ──
 function useInView(options = {}) {
   const [ref, setRef] = useState(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     if (!ref) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true);
+      },
       { threshold: 0.1, ...options }
     );
     observer.observe(ref);
@@ -41,20 +48,18 @@ function useCountUp(target, duration = 1800, started = false) {
   useEffect(() => {
     if (!started) return;
     let startTime = null;
-
-    function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
-
+    function easeOutQuart(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
     function step(timestamp) {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       setCount(Math.round(easeOutQuart(progress) * target));
       if (progress < 1) rafRef.current = requestAnimationFrame(step);
     }
-
     rafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafRef.current);
   }, [started, target, duration]);
-
   return count;
 }
 
@@ -75,18 +80,19 @@ function FadeUp({ children, delay = 0, style = {} }) {
   );
 }
 
+// ── Stats config ──
 const statConfig = [
-  { target: 1000, suffix: '+', label: 'Expected Participants', icon: 'ti-users',               color: '#7C3AED' },
-  { target: 50,   suffix: '+', label: 'Countries',             icon: 'ti-world',               color: '#7C3AED' },
-  { target: 150,  suffix: '+', label: 'Speakers',              icon: 'ti-microphone',          color: '#7C3AED' },
-  { target: 200,  suffix: '+', label: 'Startups',              icon: 'ti-rocket',              color: '#7C3AED' },
-  { target: 100,  suffix: '+', label: 'Partners',              icon: 'ti-building-skyscraper', color: '#7C3AED' },
-  { target: 50,   suffix: '+', label: 'Investors',             icon: 'ti-trending-up',         color: '#7C3AED' },
+  { target: 1000, suffix: '+', icon: 'ti-users', color: '#7C3AED' },
+  { target: 50, suffix: '+', icon: 'ti-world', color: '#7C3AED' },
+  { target: 150, suffix: '+', icon: 'ti-microphone', color: '#7C3AED' },
+  { target: 200, suffix: '+', icon: 'ti-rocket', color: '#7C3AED' },
+  { target: 100, suffix: '+', icon: 'ti-building-skyscraper', color: '#7C3AED' },
+  { target: 50, suffix: '+', icon: 'ti-trending-up', color: '#7C3AED' },
 ];
 
+// ── StatCard ──
 function StatCard({ target, suffix, label, icon, color, delay, started }) {
   const count = useCountUp(target, 1800, started);
-
   return (
     <div
       className={styles.statCard}
@@ -106,13 +112,15 @@ function StatCard({ target, suffix, label, icon, color, delay, started }) {
   );
 }
 
-function Hero({ setPage }) {
+// ── Hero ──
+function Hero({ setPage, t }) {
   const [loaded, setLoaded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const heroT = t.home.hero;
 
   useEffect(() => {
-    const t = window.setTimeout(() => setLoaded(true), 80);
-    return () => window.clearTimeout(t);
+    const timer = window.setTimeout(() => setLoaded(true), 80);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -128,16 +136,23 @@ function Hero({ setPage }) {
     transition: `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
   });
 
+  const currentSlide = heroT.slides[currentImageIndex] || { title: '', location: '' };
+
   return (
     <section className={styles.hero}>
       <div className={styles.heroSlider}>
         {sliderImages.map((image, index) => (
           <div
             key={index}
-            className={`${styles.heroSlide} ${index === currentImageIndex ? styles.heroSlideActive : ''}`}
-            style={{ opacity: index === currentImageIndex ? 1 : 0, transition: 'opacity 1s ease-in-out' }}
+            className={`${styles.heroSlide} ${
+              index === currentImageIndex ? styles.heroSlideActive : ''
+            }`}
+            style={{
+              opacity: index === currentImageIndex ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+            }}
           >
-            <img src={image.url} alt={image.title} />
+            <img src={image.url} alt={currentSlide.title || ''} />
           </div>
         ))}
         <div className={styles.heroOverlay} />
@@ -145,7 +160,9 @@ function Hero({ setPage }) {
 
       <button
         className={styles.slidePrev}
-        onClick={() => setCurrentImageIndex((p) => (p - 1 + sliderImages.length) % sliderImages.length)}
+        onClick={() =>
+          setCurrentImageIndex((p) => (p - 1 + sliderImages.length) % sliderImages.length)
+        }
       >
         ‹
       </button>
@@ -160,7 +177,9 @@ function Hero({ setPage }) {
         {sliderImages.map((_, index) => (
           <button
             key={index}
-            className={`${styles.slideDot} ${index === currentImageIndex ? styles.slideDotActive : ''}`}
+            className={`${styles.slideDot} ${
+              index === currentImageIndex ? styles.slideDotActive : ''
+            }`}
             onClick={() => setCurrentImageIndex(index)}
           />
         ))}
@@ -169,14 +188,15 @@ function Hero({ setPage }) {
       <div className={styles.heroContent}>
         <div style={fadeIn(0.1)} className={styles.heroEyebrow}>
           <span className={styles.heroEyebrowDot} />
-          <span> May 2027 • Lomé • Togo</span>
+          <span>{heroT.date}</span>
         </div>
-        <h1 className={styles.heroTitle} style={fadeIn(0.2)}>
-          Africa Digital <br />Forum
-        </h1>
+        <h1
+          className={styles.heroTitle}
+          style={fadeIn(0.2)}
+          dangerouslySetInnerHTML={{ __html: heroT.title }}
+        />
         <div className={styles.heroTagline} style={fadeIn(0.28)}>
-          Join Africa's leading digital innovation forum in Lomé, Togo, in May 2027, bringing together
-          policymakers, entrepreneurs, investors, and technology leaders to shape Africa's digital future.
+          {heroT.tagline}
         </div>
         <div className={styles.heroActions} style={fadeIn(0.43)}>
           <Button
@@ -187,20 +207,22 @@ function Hero({ setPage }) {
               setPage('whyadf');
             }}
           >
-            Learn More
+            {heroT.button}
           </Button>
         </div>
       </div>
 
       <div className={styles.imageCaption}>
-        {sliderImages[currentImageIndex].title} — {sliderImages[currentImageIndex].location}
+        {currentSlide.title} — {currentSlide.location}
       </div>
     </section>
   );
 }
 
-function StatsBar() {
+// ── StatsBar ──
+function StatsBar({ t }) {
   const [gridRef, inView] = useInView({ threshold: 0.2 });
+  const statsT = t.home.stats;
 
   return (
     <div className={styles.statsBar}>
@@ -208,8 +230,12 @@ function StatsBar() {
         <div ref={gridRef} className={styles.statsGrid}>
           {statConfig.map((stat, index) => (
             <StatCard
-              key={stat.label}
-              {...stat}
+              key={index}
+              target={stat.target}
+              suffix={stat.suffix}
+              label={statsT[index]?.label || ''}
+              icon={stat.icon}
+              color={stat.color}
               delay={index * 0.1}
               started={inView}
             />
@@ -220,24 +246,9 @@ function StatsBar() {
   );
 }
 
-function PresidentialDialogues() {
-  const dialogues = [
-    {
-      title: 'Presidential Dialogue',
-      text: "The President of Togo will share the national vision for digital transformation and outline Africa's broader digital future, highlighting key priorities for building a connected and innovation-driven continent.",
-      icon: 'ti-crown',
-    },
-    {
-      title: 'Ministerial Forum',
-      text: "Ministers from across Africa will discuss digital governance and continental integration, focusing on policies and cooperation needed to build a unified and future-ready digital economy.",
-      icon: 'ti-building-community',
-    },
-    {
-      title: 'Practitioners & Policymakers',
-      text: "Bridging the gap between policy and practice is essential to ensure effective digital transformation, turning strategic vision into real-world impact across Africa's digital ecosystem.",
-      icon: 'ti-users-group',
-    },
-  ];
+// ── PresidentialDialogues ──
+function PresidentialDialogues({ t }) {
+  const dialogues = t.home.dialogues;
 
   return (
     <section className={styles.dialoguesSection}>
@@ -245,12 +256,10 @@ function PresidentialDialogues() {
         <div className={styles.dialoguesHeader}>
           <div className={styles.dialoguesBadge}>
             <span className={styles.sectionLabelLine} />
-            <span>High-Level Dialogues</span>
+            <span>{t.home.dialoguesLabel}</span>
           </div>
-          <h2 className={styles.dialoguesTitle}>Where Vision Meets Action</h2>
-          <p className={styles.dialoguesSubtitle}>
-            From presidential perspectives to practical implementation, discover how leaders are turning digital ambitions into lasting impact across Africa.
-          </p>
+          <h2 className={styles.dialoguesTitle}>{t.home.dialoguesTitle}</h2>
+          <p className={styles.dialoguesSubtitle}>{t.home.dialoguesSubtitle}</p>
         </div>
         <div className={styles.dialoguesCardsGrid}>
           {dialogues.map((item) => (
@@ -268,98 +277,98 @@ function PresidentialDialogues() {
   );
 }
 
-const speakersData = [
-  {
-    name: 'H.E. Cina Lawson',
-    role: 'Minister of Digital Economy and Digital Transformation, Togo',
-    bio: "A visionary leader in Africa's digital transformation, Minister Cina Lawson has spearheaded Togo's transition to an inclusive digital economy. Under her leadership, Togo became the first West African country to deploy 5G and increased mobile internet access from 1% (2010) to 74% (2021). She pioneered the award-winning digital cash transfer program, Novissi, which used machine learning to deliver $34M in aid during COVID-19. A graduate of Sciences Po Paris and Harvard Kennedy School, she is a World Economic Forum Young Global Leader, was named in Forbes' 'Top 20 Youngest Power Women in Africa,' and is the first African woman to receive the Harvard Kennedy School Alumni Public Service Award. She is a fervent advocate for innovation-driven solutions to Africa's developmental challenges.",
-    topics: ['Digital Policy', 'GovTech', '5G & Connectivity', 'Financial Inclusion'],
-    image: speaker1,
-    twitter: '#',
-    linkedin: '#',
-  },
-  {
-    name: 'Tony O. Elumelu',
-    role: 'Chairman, Heirs Holdings | Founder, Tony Elumelu Foundation',
-    bio: "Tony Elumelu is one of Africa's most influential entrepreneurs, investors, and philanthropists. He is the Chairman of Heirs Holdings, a pan-African investment company with interests in financial services, energy, healthcare, hospitality, and technology. He also chairs United Bank for Africa (UBA), one of Africa's leading financial institutions operating across more than 20 countries. Through the Tony Elumelu Foundation, he has committed over $100 million to support African entrepreneurs, empowering thousands of startups across the continent. A leading advocate of 'Africapitalism,' Elumelu promotes the private sector as the catalyst for Africa's economic transformation, job creation, and sustainable development.",
-    topics: ['Entrepreneurship', 'Africapitalism', 'Investment & Finance', 'African Innovation'],
-    image: speaker2,
-    twitter: '#',
-    linkedin: '#',
-  },
-];
+// ── SpeakerCard ──
+function SpeakerCard({ speaker, index, teaserT }) {
+  if (speaker.isTeaser) {
+    return (
+      <FadeUp delay={0.06}>
+        <div className={`${styles.speakerCard} ${styles.teaserCard}`}>
+          <div className={styles.teaserIcon}>
+            <i className="ti ti-microphone" aria-hidden="true" />
+          </div>
+          <h3 className={styles.teaserTitle}>{teaserT.name}</h3>
+          <p className={styles.teaserSubtitle}>{teaserT.role}</p>
+          <div className={styles.teaserDivider} />
+          <div className={styles.teaserCta}>
+            <span>{teaserT.cta}</span>
+            <i className="ti ti-bell-ringing" aria-hidden="true" />
+          </div>
+        </div>
+      </FadeUp>
+    );
+  }
 
-function SpeakerCard({ speaker, index }) {
   return (
     <FadeUp delay={0.06}>
       <div className={styles.speakerCard}>
-
-        {/* ── Rounded photo frame ── */}
         <div className={styles.speakerImageFrame}>
           <div className={styles.speakerImageRing} />
-          <img
-            src={speaker.image}
-            alt={speaker.name}
-            className={styles.speakerImage}
-          />
-          {/* Floating index badge */}
-          <div className={styles.speakerImageBadge}>
-            {String(index + 1).padStart(2, '0')}
-          </div>
+          <img src={speaker.image} alt={speaker.name} className={styles.speakerImage} />
+          <div className={styles.speakerImageBadge}>{String(index + 1).padStart(2, '0')}</div>
         </div>
-
-        {/* ── Speaker info ── */}
         <div className={styles.speakerInfo}>
-          <div className={styles.speakerIndex}>Keynote Speaker</div>
           <h3 className={styles.speakerName}>{speaker.name}</h3>
           <p className={styles.speakerTitle}>{speaker.role}</p>
           <div className={styles.speakerDivider} />
-          <p className={styles.speakerBio}>{speaker.bio}</p>
-          <div className={styles.speakerTopics}>
-            <span className={styles.bioTopicsLabel}>Focus areas:</span>
-            {speaker.topics.map((topic) => (
-              <span key={topic} className={styles.speakerTopic}>
-                {topic}
-              </span>
-            ))}
-          </div>
           <div className={styles.speakerSocial}>
-            <a href={speaker.twitter} className={styles.speakerSocialLink} target="_blank" rel="noopener noreferrer">
+            <a
+              href={speaker.twitter}
+              className={styles.speakerSocialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="ti ti-brand-twitter" aria-hidden="true" />
             </a>
-            <a href={speaker.linkedin} className={styles.speakerSocialLink} target="_blank" rel="noopener noreferrer">
+            <a
+              href={speaker.linkedin}
+              className={styles.speakerSocialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="ti ti-brand-linkedin" aria-hidden="true" />
             </a>
           </div>
         </div>
-
       </div>
     </FadeUp>
   );
 }
 
-function SpeakersSection({ setPage }) {
+// ── SpeakersSection ──
+function SpeakersSection({ setPage, t }) {
+  const speakersT = t.home.speakers;
+  const teaserT = t.home.speakersTeaser;
+  const sectionT = t.home.speakersSection;
+
+  const speakerImages = [speaker1, speaker2, speaker1];
+  const speakersData = speakersT.map((s, idx) => ({
+    ...s,
+    image: speakerImages[idx] || speaker1,
+    twitter: s.twitter || '#',
+    linkedin: s.linkedin || '#',
+  }));
+
+  const allSpeakers = [...speakersData, { isTeaser: true }];
+
   return (
-    <section className={styles.speakersSection}>
+    <section className={styles.speakersSection} style={{ backgroundImage: `url(${Image6})` }}>
+      <div className={styles.speakersOverlay} />
       <div className={styles.container}>
         <FadeUp>
           <div className={styles.sectionLabel}>
             <span className={styles.sectionLabelLine} />
-            Expected Speakers
+            {sectionT.label}
           </div>
         </FadeUp>
         <FadeUp delay={0.05}>
-          <h2 className={styles.h2}>Voices Shaping Africa's Digital Future</h2>
+          <h2 className={styles.h2}>{sectionT.title}</h2>
         </FadeUp>
         <FadeUp delay={0.1}>
-          <p className={styles.subtext}>
-            Meet the visionary leaders, policymakers, and innovators taking the stage at ADF 2027.
-          </p>
+          <p className={styles.subtext}>{sectionT.subtitle}</p>
         </FadeUp>
-
         <div className={styles.speakersList}>
-          {speakersData.map((speaker, index) => (
-            <SpeakerCard key={speaker.name} speaker={speaker} index={index} />
+          {allSpeakers.map((speaker, index) => (
+            <SpeakerCard key={index} speaker={speaker} index={index} teaserT={teaserT} />
           ))}
         </div>
       </div>
@@ -367,46 +376,174 @@ function SpeakersSection({ setPage }) {
   );
 }
 
-function MoreSpeakersComingSection() {
+// ── LatestArticlesSection ──
+function LatestArticlesSection({ setPage, t }) {
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeSuccess, setSubscribeSuccess] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
+
+  const latestT = t.home.latest;
+
+  // Merge static POSTS with translated text
+  const posts = POSTS.slice(0, 3).map((post, index) => ({
+    ...post,
+    title: t.home.latestPosts[index]?.title || post.title,
+    excerpt: t.home.latestPosts[index]?.excerpt || post.excerpt,
+    category: t.home.latestPosts[index]?.category || post.category,
+  }));
+
+  useEffect(() => {
+    if (subscribeSuccess) {
+      const timer = setTimeout(() => setSubscribeSuccess(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [subscribeSuccess]);
+
+  const sendEmailJS = async (subject, messageText) => {
+    if (!email) {
+      setSubscribeError(latestT.newsletter.error);
+      return false;
+    }
+
+    setIsSubscribing(true);
+    setSubscribeError('');
+    setSubscribeSuccess(false);
+
+    try {
+      const templateParams = {
+        name: 'Blog Subscriber',
+        from_email: email,
+        phone: 'N/A',
+        company: 'ADF Blog Reader',
+        subject: subject,
+        message: messageText,
+      };
+
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
+      return true;
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      setSubscribeError(latestT.newsletter.errorGeneric || 'Something went wrong. Please try again.');
+      return false;
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    if (!email) {
+      setSubscribeError(latestT.newsletter.error);
+      return;
+    }
+
+    const success = await sendEmailJS(latestT.newsletter.subject, latestT.newsletter.message);
+    if (success) {
+      setSubscribeSuccess(true);
+      setEmail('');
+    }
+  };
+
+  const goToArticle = (postId) => {
+    setPage('article', postId);
+  };
+
   return (
-    <section
-      className={styles.moreSpeakersSection}
-      style={{ backgroundImage: `url(${Image6})` }}
-    >
-      <div className={styles.moreSpeakersOverlay} />
-      <FadeUp
-        delay={0.1}
-        style={{ position: 'relative', zIndex: 2, width: '100%' }}
-      >
-        <div className={styles.moreSpeakersContent}>
-          <div className={styles.tbaBadge}>
-            <span className={styles.heroEyebrowDot} />
-            <span>More Speakers Coming</span>
+    <section className={styles.latestArticlesSection}>
+      <div className={styles.container}>
+        <div className={styles.latestHeader}>
+          <div className={styles.latestHeaderLeft}>
+            <FadeUp>
+              <div className={styles.sectionLabel}>
+                <span className={styles.sectionLabelLine} />
+                <span>{latestT.label}</span>
+              </div>
+            </FadeUp>
+            <FadeUp delay={0.05}>
+              <h2 className={styles.latestTitle}>{latestT.title}</h2>
+            </FadeUp>
+            <FadeUp delay={0.1}>
+              <p className={styles.latestSub}>{latestT.subtitle}</p>
+            </FadeUp>
           </div>
-          <p className={styles.tbaSubtitle}>Announcing soon</p>
-          <p className={styles.tbaText}>
-            Additional keynotes, ministers, and innovators will be announced as ADF 2027 approaches.
-          </p>
-          <div className={styles.tbaDivider} />
-          <div className={styles.tbaCta}>
-            <i className="ti ti-microphone" aria-hidden="true" />
-            <span>Stay tuned for updates</span>
-            <i className="ti ti-bell-ringing" aria-hidden="true" />
+
+          <div className={styles.latestHeaderRight}>
+            <FadeUp delay={0.15}>
+              <div className={styles.inlineNewsletter}>
+                <div className={styles.inlineNewsletterLabel}>
+                  <i className="ti ti-mail" aria-hidden="true" />
+                  <span>{latestT.newsletter.label}</span>
+                </div>
+                {subscribeSuccess ? (
+                  <div className={styles.inlineSuccess}>{latestT.newsletter.success}</div>
+                ) : (
+                  <div className={styles.inlineForm}>
+                    <input
+                      type="email"
+                      placeholder={latestT.newsletter.placeholder}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={styles.inlineInput}
+                      disabled={isSubscribing}
+                    />
+                    <button
+                      className={styles.inlineBtn}
+                      onClick={handleSubscribe}
+                      disabled={isSubscribing || !email}
+                    >
+                      {isSubscribing ? latestT.newsletter.sending : latestT.newsletter.button}
+                    </button>
+                  </div>
+                )}
+                {subscribeError && <div className={styles.inlineError}>{subscribeError}</div>}
+              </div>
+            </FadeUp>
           </div>
         </div>
-      </FadeUp>
+
+        <div className={styles.latestGrid}>
+          {posts.map((post, index) => (
+            <FadeUp key={index} delay={0.15 + index * 0.08}>
+              <div
+                className={styles.latestCard}
+                onClick={() => goToArticle(post.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={styles.latestImgWrap}>
+                  <img src={post.image} alt={post.title} className={styles.latestImg} />
+                  <span className={styles.latestTag}>{post.category}</span>
+                </div>
+                <div className={styles.latestBody}>
+                  <h3 className={styles.latestCardTitle}>{post.title}</h3>
+                  <p className={styles.latestExcerpt}>{post.excerpt}</p>
+                  <div className={styles.latestReadLink}>
+                    {latestT.readMore} <i className="ti ti-arrow-right" aria-hidden="true" />
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        <div className={styles.latestFooter}>
+          <button className={styles.latestViewAll} onClick={() => setPage('blog')}>
+            {latestT.viewAll} <i className="ti ti-arrow-right" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
     </section>
   );
 }
 
-export default function HomePage({ setPage }) {
+// ── Main HomePage ──
+export default function HomePage({ setPage, t, lang }) {
   return (
     <>
-      <Hero setPage={setPage} />
-      <StatsBar />
-      <PresidentialDialogues />
-      <SpeakersSection setPage={setPage} />
-      <MoreSpeakersComingSection />
+      <Hero setPage={setPage} t={t} />
+      <StatsBar t={t} />
+      <PresidentialDialogues t={t} />
+      <SpeakersSection setPage={setPage} t={t} />
+      <LatestArticlesSection setPage={setPage} t={t} />
     </>
   );
 }

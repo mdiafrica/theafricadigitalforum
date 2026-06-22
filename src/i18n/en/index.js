@@ -1,80 +1,19 @@
+import { nav } from './components/nav';
+import { home } from './pages/home';
+import { footer } from './components/footer';
+import { about } from './pages/about';
+import { blog } from './pages/blog';
+import { whyadf } from './pages/whyadf';
+import { city } from './pages/city';
+import { contact } from './pages/contact';   
+
 export const en = {
-  nav: [
-    'Home',
-    'About',
-    'Why Africa Digital Forum',
-    'About Host City',
-    'Blog',
-    'Contact Us'
-  ],
-  heroEyebrow: "Africa's Premier Digital Platform",
-  heroH1a: "Africa's Premier Forum on",
-  heroH1b: 'Digital Transformation,',
-  heroH1c: 'Innovation & AI',
-  heroTagline: "Shaping Africa's Digital Future",
-  heroDesc: "A continental platform connecting technology leaders, startups, investors, policymakers, creators, innovators and institutions to shape Africa's digital future.",
-  heroLoc: 'Lomé, Togo',
-  heroDate: 'Date: To Be Announced',
-  heroCta2: 'Become a Sponsor',
-  heroCta3: 'Apply to Speak',
-  statsLabel: 'Expected impact',
-  stats: [
-    { num: '1,000+', label: 'Expected Participants' },
-    { num: '50+', label: 'Countries Represented' },
-    { num: '150+', label: 'Speakers & Thought Leaders' },
-    { num: '200+', label: 'Startups & Innovators' },
-    { num: '100+', label: 'Organizations & Partners' },
-    { num: '50+', label: 'Investors & Ecosystem Leaders' },
-  ],
-  whyLabel: 'Why Africa Digital Forum',
-  whyTitle: 'The platform Africa needs now',
-  whySub: "At the intersection of technology, policy, investment and human potential — Africa Digital Forum convenes the continent's most consequential conversations.",
-  whyCards: [
-    { n: '01', title: "Africa's Digital Transformation is Accelerating", text: 'From fintech to agritech, African innovation is disrupting global industries. Africa Digital Forum provides the stage where this transformation gets amplified, funded, and scaled across the continent.' },
-    { n: '02', title: 'Artificial Intelligence is Reshaping Every Industry', text: "AI is not a future technology — it is here. Africa Digital Forum brings together Africa's AI pioneers, global leaders, and policy architects to shape how the continent adopts and leads." },
-    { n: '03', title: 'Innovation Ecosystems Need Capital and Collaboration', text: 'Startups across the continent need more than ideas — they need investors, mentors, and markets. Africa Digital Forum connects the dots across 54 countries in one place.' },
-    { n: '04', title: 'Africa Needs a Continental Platform for Digital Leadership', text: 'No single event has positioned itself as the permanent home of African digital strategy. Africa Digital Forum is built to fill that gap — and define the agenda for the next decade.' },
-  ],
-  themesLabel: 'Thematic Pillars',
-  themesTitle: 'Six pillars. One vision.',
-  themesSub: "Africa Digital Forum explores the critical domains shaping Africa's digital future through world-class sessions, debates, and collaborative programming.",
-  themes: [
-    { icon: 'ti-brain', color: '#1B6FE8', title: 'Artificial Intelligence', text: "Machine learning, generative AI, data infrastructure, responsible AI governance, and Africa's role in the global AI race." },
-    { icon: 'ti-transform', color: '#00C8F0', title: 'Digital Transformation', text: 'Enterprise transformation, public sector digitization, cloud adoption, and cross-sector digital integration strategies.' },
-    { icon: 'ti-coin', color: '#C9973A', title: 'Digital Economy', text: "Fintech, e-commerce, digital payments, cross-border trade, and building Africa's digital GDP." },
-    { icon: 'ti-rocket', color: '#00D48A', title: 'Innovation & Startups', text: "Startup ecosystems, venture capital, accelerators, entrepreneurship culture, and Africa's most investable companies." },
-    { icon: 'ti-building-bank', color: '#7C3AED', title: 'Digital Governance', text: 'Data sovereignty, cybersecurity policy, digital identity, regulatory frameworks, and inclusive digital governance.' },
-    { icon: 'ti-school', color: '#FF6B35', title: 'Future Skills', text: "Tech education, workforce transformation, creator economy, digital literacy, and building Africa's next generation of tech talent." },
-  ],
-  expLabel: 'Event Experiences',
-  expTitle: 'More than a conference',
-  expSub: "Africa Digital Forum is a multi-venue, immersive experience designed for every stakeholder in Africa's digital ecosystem.",
-  experiences: [
-    { icon: 'ti-microphone', title: 'Main Stage', text: "Keynotes from Africa's top digital leaders and global innovators" },
-    { icon: 'ti-cpu', title: 'AI Arena', text: 'Live demos, AI showcases, and deep-dive technical sessions' },
-    { icon: 'ti-building-community', title: 'Startup Village', text: '200+ startups, pitch competitions, and investor meetings' },
-    { icon: 'ti-briefcase', title: 'Investor Lounge', text: 'Curated 1:1 meetings connecting founders with leading investors' },
-    { icon: 'ti-flask', title: 'Innovation Lab', text: 'Hands-on workshops, hackathons, and technology experiences' },
-    { icon: 'ti-landmark', title: 'Policy Forum', text: 'Ministerial dialogues and continental governance roundtables' },
-    { icon: 'ti-palette', title: 'Creator Economy', text: "Africa's digital creators, influencers, and media innovators" },
-    { icon: 'ti-trophy', title: 'Awards Ceremony', text: "Celebrating Africa's most impactful digital pioneers" },
-  ],
-  cityLabel: 'Host City',
-  cityTitle: "Lomé: A Strategic Gateway for Africa's Digital Future",
-  cityDesc: "Togo's capital is emerging as one of West Africa's most dynamic digital hubs — combining strategic air connectivity, ambitious national digital transformation plans, and a welcoming environment for business and innovation.",
-  cityPills: ['ASKY Airlines Regional Hub', 'Visa-Free for African Citizens', 'Cybersecurity Excellence', 'National Digital Strategy', 'Cost Competitive', 'West Africa Gateway'],
-  ctaTitle: "Join the leaders shaping Africa's",
-  ctaAccent: 'digital future',
-  ctaSub: 'Africa Digital Forum is not just a forum to attend — it is a movement to join.',
-  ctaBtns: ['Become a Partner', 'Contact Us'],
-  footerDesc: "Africa's premier platform connecting digital innovation, artificial intelligence, entrepreneurship, investment, policy, technology and leadership.",
-  footerCols: [
-    // 👇 "Our Vision" and "Our Mission" as separate items
-    { title: 'Forum', links: ['Home', 'About Africa Digital Forum', 'Why Africa Digital Forum', 'Our Vision', 'Our Mission'] },
-    { title: 'Engage', links: ['Blog', 'Host City', 'Organizing Directors', 'Media & Digital Institute Africa', 'Contact Us'] },
-    { title: 'Social Media', links: ['Facebook', 'LinkedIn', 'Twitter', 'Instagram', 'YouTube'] },
-  ],
-  footerCopy: '© 2025 Africa Digital Forum. All rights reserved. Lomé, Togo.',
-  organizer: 'Organized by',
-  orgName: 'Media & Digital Institute Africa',
+  nav,
+  home,
+  footer,
+  about,
+  blog,
+  whyadf,
+  city,
+  contact,   
 };

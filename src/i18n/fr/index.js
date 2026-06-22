@@ -1,80 +1,19 @@
+import { nav } from './components/nav';
+import { home } from './pages/home';
+import { footer } from './components/footer';
+import { about } from './pages/about';
+import { blog } from './pages/blog';
+import { whyadf } from './pages/whyadf';
+import { city } from './pages/city';
+import { contact } from './pages/contact';   
+
 export const fr = {
-  nav: [
-  'Accueil',
-  'À propos',
-  'Pourquoi le Forum Numérique Africain',
-  'À propos la ville hôte',
-  'Contact'
-],
-  register: 'Acheter des Billets',
-  heroEyebrow: "La principale plateforme numérique d'Afrique",
-  heroH1a: "Le premier forum d'Afrique sur",
-  heroH1b: 'la transformation numérique,',
-  heroH1c: "l'innovation et l'IA",
-  heroTagline: "Façonner l'avenir numérique de l'Afrique",
-  heroDesc: "Une plateforme continentale connectant les leaders technologiques, startups, investisseurs, décideurs politiques, créateurs, innovateurs et institutions pour façonner l'avenir numérique de l'Afrique.",
-  heroLoc: 'Lomé, Togo',
-  heroDate: 'Date: À annoncer',
-  heroCta1: 'Acheter des Billets',
-  heroCta2: 'Devenir Partenaire',
-  heroCta3: 'Postuler comme Speaker',
-  statsLabel: 'Impact attendu',
-  stats: [
-    { num: '1,000+', label: 'Participants attendus' },
-    { num: '50+', label: 'Pays représentés' },
-    { num: '150+', label: 'Intervenants & Leaders' },
-    { num: '200+', label: 'Startups & Innovateurs' },
-    { num: '100+', label: 'Organisations & Partenaires' },
-    { num: '50+', label: 'Investisseurs & Leaders' },
-  ],
-  whyLabel: 'Pourquoi ADF',
-  whyTitle: "La plateforme dont l'Afrique a besoin maintenant",
-  whySub: "À l'intersection de la technologie, de la politique, de l'investissement et du potentiel humain — ADF rassemble les conversations les plus importantes du continent.",
-  whyCards: [
-    { n: '01', title: "La transformation numérique de l'Afrique s'accélère", text: "De la fintech à l'agritech, l'innovation africaine perturbe les industries mondiales. L'ADF offre la scène où cette transformation est amplifiée, financée et étendue à travers le continent." },
-    { n: '02', title: "L'intelligence artificielle transforme chaque industrie", text: "L'IA n'est pas une technologie future — elle est là. L'ADF rassemble les pionniers africains de l'IA, les leaders mondiaux et les architectes politiques pour façonner comment le continent adopte et mène." },
-    { n: '03', title: "Les écosystèmes d'innovation ont besoin de capital et de collaboration", text: "Les startups à travers le continent ont besoin de plus que d'idées — elles ont besoin d'investisseurs, de mentors et de marchés. L'ADF connecte les points à travers 54 pays en un seul endroit." },
-    { n: '04', title: "L'Afrique a besoin d'une plateforme continentale pour le leadership numérique", text: "Aucun événement unique ne s'est positionné comme la maison permanente de la stratégie numérique africaine. L'ADF est construit pour combler cette lacune — et définir l'agenda pour la prochaine décennie." },
-  ],
-  themesLabel: "Piliers thématiques",
-  themesTitle: "Six piliers. Une vision.",
-  themesSub: "L'ADF explore les domaines critiques qui façonnent l'avenir numérique de l'Afrique à travers des sessions, débats et programmations collaboratives de classe mondiale.",
-  themes: [
-    { icon: '🤖', color: '#1B6FE8', title: 'Intelligence Artificielle', text: "Apprentissage automatique, IA générative, infrastructure de données, gouvernance responsable de l'IA, et le rôle de l'Afrique dans la course mondiale à l'IA." },
-    { icon: '⚡', color: '#00C8F0', title: 'Transformation Numérique', text: "Transformation des entreprises, numérisation du secteur public, adoption du cloud et stratégies d'intégration numérique intersectorielles." },
-    { icon: '💰', color: '#C9973A', title: 'Économie Numérique', text: 'Fintech, e-commerce, paiements numériques, commerce transfrontalier et construction du PIB numérique de l\'Afrique.' },
-    { icon: '🚀', color: '#00D48A', title: 'Innovation & Startups', text: "Écosystèmes de startups, capital-risque, accélérateurs, culture entrepreneuriale et les entreprises les plus investissables d'Afrique." },
-    { icon: '🏛', color: '#7C3AED', title: 'Gouvernance Numérique', text: "Souveraineté des données, politique de cybersécurité, identité numérique, cadres réglementaires et gouvernance numérique inclusive." },
-    { icon: '🎓', color: '#FF6B35', title: 'Compétences Futures', text: "Éducation technologique, transformation de la main-d'œuvre, économie des créateurs, littératie numérique et construction de la prochaine génération de talents technologiques en Afrique." },
-  ],
-  expLabel: 'Expériences événementielles',
-  expTitle: 'Plus qu\'une conférence',
-  expSub: "L'ADF est une expérience multi-lieux immersive conçue pour chaque partie prenante de l'écosystème numérique africain.",
-  experiences: [
-    { icon: '🎤', title: 'Scène Principale', text: 'Keynotes des principaux leaders numériques africains et innovateurs mondiaux' },
-    { icon: '🤖', title: 'AI Arena', text: 'Démos en direct, présentations IA et sessions techniques approfondies' },
-    { icon: '🏘', title: 'Startup Village', text: '200+ startups, compétitions de pitch et rencontres avec investisseurs' },
-    { icon: '💼', title: 'Investor Lounge', text: 'Réunions 1:1 organisées connectant fondateurs avec investisseurs leaders' },
-    { icon: '🔬', title: 'Innovation Lab', text: 'Ateliers pratiques, hackathons et expériences technologiques' },
-    { icon: '🏛', title: 'Policy Forum', text: 'Dialogues ministériels et tables rondes sur la gouvernance continentale' },
-    { icon: '🎨', title: 'Creator Economy', text: 'Créateurs numériques africains, influenceurs et innovateurs médias' },
-    { icon: '🏆', title: 'Cérémonie des Prix', text: 'Célébration des pionniers numériques les plus impactants d\'Afrique' },
-  ],
-  cityLabel: 'Ville hôte',
-  cityTitle: 'Lomé : Une passerelle stratégique pour l\'avenir numérique de l\'Afrique',
-  cityDesc: "La capitale du Togo émerge comme l'un des hubs numériques les plus dynamiques d'Afrique de l'Ouest — combinant une connectivité aérienne stratégique, des plans ambitieux de transformation numérique nationale et un environnement accueillant pour les affaires et l'innovation.",
-  cityPills: ['Hub régional ASKY Airlines', 'Sans visa pour les citoyens africains', 'Excellence en cybersécurité', 'Stratégie numérique nationale', 'Compétitif en termes de coûts', 'Passerelle vers l\'Afrique de l\'Ouest'],
-  ctaTitle: "Rejoignez les leaders qui façonnent l'avenir",
-  ctaAccent: 'numérique de l\'Afrique',
-  ctaSub: "L'ADF n'est pas seulement un forum auquel assister — c'est un mouvement auquel se joindre.",
-  ctaBtns: ['Acheter des Billets', 'Devenir Partenaire', 'Nous Contacter'],
-  footerDesc: "La première plateforme africaine connectant l'innovation numérique, l'intelligence artificielle, l'entrepreneuriat, l'investissement, la politique, la technologie et le leadership.",
-  footerCols: [
-    { title: 'Forum', links: ['À propos de ADF', 'Pourquoi ADF', 'Médias', 'Ville hôte'] },
-    { title: 'Participer', links: ['Acheter des Billets', 'Accréditation médias', 'Pass Étudiant'] },
-    { title: 'S\'engager', links: ['Partenariat', 'Newsletter', 'Contact'] },
-  ],
-  footerCopy: '© 2025 Africa Digital Forum. Tous droits réservés. Lomé, Togo.',
-  organizer: 'Organisé par',
-  orgName: 'Media & Digital Institute Africa',
+  nav,
+  home,
+  footer,
+  about,
+  blog,
+  whyadf,
+  city,
+  contact,   
 };

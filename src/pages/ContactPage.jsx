@@ -41,12 +41,7 @@ function FadeUp({ children, delay = 0 }) {
   );
 }
 
-const CONTACT_INFO = [
-  { icon: <FaMapMarkerAlt />, title: 'Head Office', lines: ['Lomé, Togo', 'Africa Digital Forum HQ'] },
-  { icon: <FaEnvelope />, title: 'Email Us', lines: ['info@africadigitalforum.com', 'partners@africadigitalforum.com'] },
-  { icon: <FaPhoneAlt />, title: 'Call Us', lines: ['Phone: +228 123 456 789', 'Fax: +228 987 654 321'] },
-];
-
+// ─── Social icons (static) ──────────────────────────────────────────────────
 const SOCIALS = [
   { label: <FaFacebookF />, href: '#' },
   { label: <FaInstagram />, href: '#' },
@@ -54,7 +49,11 @@ const SOCIALS = [
   { label: <FaYoutube />,   href: '#' },
 ];
 
+// ─── Map icon to contact item (using static icons, but content from translations) ──
+const CONTACT_ICONS = [<FaMapMarkerAlt />, <FaEnvelope />, <FaPhoneAlt />];
+
 export default function ContactPage({ t }) {
+  const contact = t.contact;
   const [status, setStatus] = useState('idle');
   const [formData, setFormData] = useState({
     name: '', company: '', phone: '', email: '', subject: '', message: '',
@@ -89,17 +88,21 @@ export default function ContactPage({ t }) {
     }
   };
 
+  // Build contact info from translations, mapped with static icons
+  const contactItems = contact.info.items.map((item, index) => ({
+    icon: CONTACT_ICONS[index % CONTACT_ICONS.length],
+    title: item.title,
+    lines: item.lines,
+  }));
+
   return (
     <div className={pageStyles.pageShell}>
       {/* HERO */}
       <div className={pageStyles.pageShellHeader} style={{ backgroundImage: `url(${ContactHero})` }}>
         <div className={pageStyles.heroContent}>
-          <FadeUp><h1 className={pageStyles.pageShellTitle}>Contact Us</h1></FadeUp>
+          <FadeUp><h1 className={pageStyles.pageShellTitle}>{contact.hero.title}</h1></FadeUp>
           <FadeUp delay={0.1}>
-            <p className={pageStyles.heroSubtitle}>
-              The Africa Digital Forum team is ready to answer your questions
-              and help you make the most of Africa Digital Forum 2027.
-            </p>
+            <p className={pageStyles.heroSubtitle}>{contact.hero.subtitle}</p>
           </FadeUp>
         </div>
       </div>
@@ -109,13 +112,11 @@ export default function ContactPage({ t }) {
           <div className={pageStyles.contactPanel}>
             {/* LEFT: INFO */}
             <div className={pageStyles.contactInfoCol}>
-              <h2 className={pageStyles.contactInfoTitle}>Get in touch</h2>
-              <p className={pageStyles.contactInfoSubtext}>
-                Reach out to us through any of the channels below and we'll respond within 48 hours.
-              </p>
+              <h2 className={pageStyles.contactInfoTitle}>{contact.info.title}</h2>
+              <p className={pageStyles.contactInfoSubtext}>{contact.info.subtext}</p>
               <div className={pageStyles.contactInfoDivider} />
               <div className={pageStyles.contactInfoRows}>
-                {CONTACT_INFO.map((info) => (
+                {contactItems.map((info) => (
                   <div key={info.title} className={pageStyles.contactInfoRow}>
                     <div className={pageStyles.contactInfoIconWrap}>{info.icon}</div>
                     <div>
@@ -128,7 +129,7 @@ export default function ContactPage({ t }) {
                 ))}
               </div>
               <div className={pageStyles.contactInfoDivider} />
-              <p className={pageStyles.socialLabel}>Follow our social media</p>
+              <p className={pageStyles.socialLabel}>{contact.info.socialLabel}</p>
               <div className={pageStyles.socialRow}>
                 {SOCIALS.map((s, i) => (
                   <a key={i} href={s.href} className={pageStyles.socialBtn}>{s.label}</a>
@@ -136,57 +137,106 @@ export default function ContactPage({ t }) {
               </div>
             </div>
 
-            {/* RIGHT: FORM WITH IMPROVED MESSAGE BOXES */}
+            {/* RIGHT: FORM */}
             <div className={pageStyles.contactFormCol}>
-              <h2 className={pageStyles.contactFormTitle}>Send us a message</h2>
+              <h2 className={pageStyles.contactFormTitle}>{contact.form.title}</h2>
 
               {status === 'success' ? (
                 <div className={pageStyles.messageBox}>
                   <FaCheckCircle className={pageStyles.messageIconSuccess} />
-                  <div className={pageStyles.messageTitle}>Message sent successfully!</div>
-                  <p className={pageStyles.messageText}>
-                    Thank you for reaching out. We will get back to you within 48 hours.
-                  </p>
+                  <div className={pageStyles.messageTitle}>{contact.form.success.title}</div>
+                  <p className={pageStyles.messageText}>{contact.form.success.text}</p>
                 </div>
               ) : status === 'error' ? (
                 <div className={pageStyles.messageBox}>
                   <FaExclamationTriangle className={pageStyles.messageIconError} />
-                  <div className={pageStyles.messageTitle}>Delivery failed</div>
-                  <p className={pageStyles.messageText}>
-                    Sorry, something went wrong while sending your message. Please try again later, or email us directly at <strong>info@africadigitalforum.com</strong>.
-                  </p>
+                  <div className={pageStyles.messageTitle}>{contact.form.error.title}</div>
+                  <p
+                    className={pageStyles.messageText}
+                    dangerouslySetInnerHTML={{ __html: contact.form.error.text }}
+                  />
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
                   <div className={pageStyles.formGrid}>
                     <div className={pageStyles.formGroup}>
-                      <label className={pageStyles.formLabel}>Name</label>
-                      <input type="text" name="name" value={formData.name} onChange={handleChange} required className={pageStyles.formControl} placeholder="Your name" />
+                      <label className={pageStyles.formLabel}>{contact.form.name.label}</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.name.placeholder}
+                      />
                     </div>
                     <div className={pageStyles.formGroup}>
-                      <label className={pageStyles.formLabel}>Company</label>
-                      <input type="text" name="company" value={formData.company} onChange={handleChange} className={pageStyles.formControl} placeholder="Your company" />
+                      <label className={pageStyles.formLabel}>{contact.form.company.label}</label>
+                      <input
+                        type="text"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleChange}
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.company.placeholder}
+                      />
                     </div>
                     <div className={pageStyles.formGroup}>
-                      <label className={pageStyles.formLabel}>Phone</label>
-                      <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className={pageStyles.formControl} placeholder="+XXX XXX XXX" />
+                      <label className={pageStyles.formLabel}>{contact.form.phone.label}</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.phone.placeholder}
+                      />
                     </div>
                     <div className={pageStyles.formGroup}>
-                      <label className={pageStyles.formLabel}>Email</label>
-                      <input type="email" name="email" value={formData.email} onChange={handleChange} required className={pageStyles.formControl} placeholder="your@email.com" />
+                      <label className={pageStyles.formLabel}>{contact.form.email.label}</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.email.placeholder}
+                      />
                     </div>
                     <div className={pageStyles.formGroupFull}>
-                      <label className={pageStyles.formLabel}>Subject</label>
-                      <input type="text" name="subject" value={formData.subject} onChange={handleChange} required className={pageStyles.formControl} placeholder="What is this about?" />
+                      <label className={pageStyles.formLabel}>{contact.form.subject.label}</label>
+                      <input
+                        type="text"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        required
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.subject.placeholder}
+                      />
                     </div>
                     <div className={pageStyles.formGroupFull}>
-                      <label className={pageStyles.formLabel}>Message</label>
-                      <textarea name="message" value={formData.message} onChange={handleChange} required rows={5} className={pageStyles.formControl} placeholder="Describe your inquiry..." />
+                      <label className={pageStyles.formLabel}>{contact.form.message.label}</label>
+                      <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        required
+                        rows={5}
+                        className={pageStyles.formControl}
+                        placeholder={contact.form.message.placeholder}
+                      />
                     </div>
                   </div>
                   <div className={pageStyles.submitWrapper}>
-                    <button type="submit" className={pageStyles.submitBtn} disabled={status === 'sending'}>
-                      {status === 'sending' ? 'Sending…' : 'Send message'}
+                    <button
+                      type="submit"
+                      className={pageStyles.submitBtn}
+                      disabled={status === 'sending'}
+                    >
+                      {status === 'sending' ? contact.form.sending : contact.form.submit}
                     </button>
                   </div>
                 </form>
@@ -205,7 +255,7 @@ export default function ContactPage({ t }) {
             allowFullScreen=""
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="Lomé, Togo map"
+            title={contact.map.title}
           />
         </div>
       </FadeUp>
