@@ -185,7 +185,7 @@
 /* ── Team grid ── */
 .teamGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 560px));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 580px));
   gap: 24px;
   justify-content: center;
 }
@@ -193,7 +193,7 @@
 /* ── Team card – horizontal layout ── */
 .teamCard {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 200px 1fr;
   border-radius: 20px;
   overflow: hidden;
   background: #ffffff;
@@ -303,6 +303,38 @@
   text-align: justify;
 }
 
+/* ── Read More Button ── */
+.readMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #7c3aed;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  margin-top: 0.75rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.readMoreBtn i {
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.readMoreBtn:hover {
+  color: #5b21b6;
+}
+
+.readMoreBtn:hover i {
+  transform: translateX(2px);
+}
+
 /* Divider */
 .teamCardDivider {
   height: 1px;
@@ -337,38 +369,6 @@
   transform: scale(1.1);
 }
 
-/* ── Read More Button ── */
-.readMoreBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: #7c3aed;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.5rem 0;
-  margin-top: 0.75rem;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  font-family: inherit;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.readMoreBtn i {
-  font-size: 0.9rem;
-  transition: transform 0.2s ease;
-}
-
-.readMoreBtn:hover {
-  color: #5b21b6;
-}
-
-.readMoreBtn:hover i {
-  transform: translateX(2px);
-}
-
 /* ── Modal Overlay ── */
 .modalOverlay {
   position: fixed;
@@ -390,8 +390,8 @@
   background: #ffffff;
   max-width: 880px;
   width: 100%;
-  max-height: 72vh;
-  border-radius: 20px;
+  max-height: 80vh;
+  border-radius: 24px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.35);
@@ -425,25 +425,26 @@
   position: absolute;
   top: 14px;
   right: 16px;
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(124, 58, 237, 0.12);
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 18px;
   cursor: pointer;
-  color: #666;
-  transition: background 0.2s ease, color 0.2s ease;
+  color: #7c3aed;
+  transition: all 0.25s ease;
   z-index: 10;
-  float: none;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
 }
 
 .modalClose:hover {
-  background: rgba(0, 0, 0, 0.12);
-  color: #000;
+  background: #7c3aed;
+  color: #ffffff;
+  transform: rotate(90deg);
 }
 
 /* ── Two-column grid ── */
@@ -459,19 +460,30 @@
 .modalLeft {
   text-align: center;
   background: #f9f8ff;
-  border-right: 1px solid rgba(124, 58, 237, 0.1);
-  padding: 24px 20px 20px;
+  border-right: 1px solid rgba(124, 58, 237, 0.08);
+  padding: 32px 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
+  position: relative;
+}
+
+.modalLeft::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
 }
 
 /* ── Modal Image ── */
 .modalImageWrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .modalImage {
@@ -480,19 +492,20 @@
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #7c3aed;
-  box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.12), 0 8px 24px rgba(124, 58, 237, 0.18);
 }
 
 .modalName {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0 0 10px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0 0 6px;
   color: #1a1a1a;
   line-height: 1.3;
+  letter-spacing: -0.02em;
 }
 
 .modalRoleWrapper {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
 }
 
 .modalRole {
@@ -505,8 +518,7 @@
   background: rgba(124, 58, 237, 0.1);
   border: 1px solid rgba(124, 58, 237, 0.25);
   border-radius: 999px;
-  padding: 4px 12px;
-  margin-bottom: 10px;
+  padding: 4px 14px;
 }
 
 .modalLocation {
@@ -517,6 +529,7 @@
   color: #888888;
   font-weight: 500;
   letter-spacing: 0.04em;
+  margin-top: 4px;
 }
 
 .modalLocation i {
@@ -524,38 +537,43 @@
   color: #7c3aed;
 }
 
-/* ── Socials label ── */
+/* ── Socials section ── */
 .modalSocialsLabel {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #aaaaaa;
-  margin: 20px 0 8px;
-  border-top: 1px solid rgba(124, 58, 237, 0.1);
-  padding-top: 20px;
+  margin: 20px 0 10px;
+  border-top: 1px solid rgba(124, 58, 237, 0.08);
+  padding-top: 18px;
   width: 100%;
   text-align: center;
 }
 
+/* ── Styled Social Links with Email Highlight ── */
 .modalSocials {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
 .modalSocialLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  gap: 8px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(124, 58, 237, 0.25);
+  border: 1.5px solid rgba(124, 58, 237, 0.2);
   color: #7c3aed;
   text-decoration: none;
-  font-size: 16px;
-  transition: all 0.2s ease;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  background: rgba(124, 58, 237, 0.04);
 }
 
 .modalSocialLink:hover {
@@ -563,25 +581,77 @@
   border-color: #7c3aed;
   color: #ffffff;
   transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+/* ── Email Link - Special Styling ── */
+.modalSocialLink[href*="mailto:"] {
+  width: auto;
+  padding: 0 16px 0 12px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(124, 58, 237, 0.3);
+  background: rgba(124, 58, 237, 0.06);
+  font-size: 13px;
+  font-weight: 600;
+  color: #7c3aed;
+  gap: 10px;
+  height: 44px;
+}
+
+.modalSocialLink[href*="mailto:"]:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  border-color: #7c3aed;
+  color: #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+}
+
+.modalSocialLink[href*="mailto:"] i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.modalSocialLink[href*="mailto:"] span {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── LinkedIn link ── */
+.modalSocialLink[href*="linkedin"] {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+}
+
+/* ── Social links row layout ── */
+.modalSocialsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* ── Right column ── */
 .modalRight {
   overflow-y: auto;
-  padding: 24px 28px 24px;
+  padding: 28px 32px 28px 28px;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
 }
 
 /* ── Bio meta header ── */
 .modalBioMeta {
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 2px solid rgba(124, 58, 237, 0.08);
 }
 
 .modalBioEyebrow {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -590,8 +660,8 @@
 }
 
 .modalBioTitle {
-  margin: 0 0 4px;
-  font-size: 15px;
+  margin: 0 0 2px;
+  font-size: 18px;
   font-weight: 700;
   color: #1a1a1a;
   line-height: 1.35;
@@ -599,22 +669,22 @@
 
 .modalBioOrg {
   margin: 0;
-  font-size: 12px;
-  color: #444444;
+  font-size: 13px;
+  color: #666666;
   font-weight: 500;
 }
 
 /* ── Bio body ── */
 .modalBody {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
-  color: #1a1a1a;
+  color: #2a2a2a;
   flex: 1;
 }
 
 .modalBody p {
-  margin-bottom: 0.9rem;
-  color: #1a1a1a;
+  margin-bottom: 1rem;
+  color: #2a2a2a;
 }
 
 .modalBody p:last-child {
@@ -739,7 +809,7 @@
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .teamGrid {
-    grid-template-columns: minmax(0, 560px);
+    grid-template-columns: minmax(0, 520px);
     gap: 20px;
   }
   .advisoryPlaceholderRow {
@@ -767,7 +837,7 @@
     grid-template-columns: 1fr;
   }
   .teamPhotoCol {
-    height: 220px;
+    height: 180px;
     min-height: unset;
   }
   .teamPhotoCol::after {
@@ -795,6 +865,13 @@
     max-height: none;
     padding: 24px 20px;
   }
+  .modalClose {
+    top: 10px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -805,7 +882,7 @@
     border-radius: 16px;
   }
   .teamPhotoCol {
-    height: 200px;
+    height: 160px;
   }
   .advisoryPlaceholderRow {
     grid-template-columns: repeat(2, 1fr);
@@ -813,5 +890,20 @@
   .modalImage {
     width: 100px;
     height: 100px;
+  }
+  .modalContent {
+    max-height: 85vh;
+    border-radius: 16px;
+  }
+  .modalSocialLink[href*="mailto:"] {
+    font-size: 11px;
+    padding: 0 12px 0 10px;
+    height: 38px;
+  }
+  .modalSocialLink[href*="mailto:"] span {
+    font-size: 10px;
+  }
+  .modalSocialLink[href*="mailto:"] i {
+    font-size: 15px;
   }
 }

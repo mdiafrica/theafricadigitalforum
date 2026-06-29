@@ -93,13 +93,14 @@ function Footer({ t, setPage }) {
   };
 
   // ── Social media & link handlers ──
-  const socialMediaNames = ['Facebook', 'LinkedIn', 'Twitter', 'Instagram', 'YouTube'];
+  const socialMediaNames = ['Facebook', 'LinkedIn', 'X', 'Twitter', 'Instagram', 'YouTube'];
 
   const handleSocialClick = (network) => {
     const socialLinks = {
       Facebook: 'https://www.facebook.com/theafricadigitalforum/',
       LinkedIn: 'https://www.linkedin.com/company/theafricadigitalforum/',
-      Twitter: 'https://twitter.com/theafricadigitalforum',
+      X: 'https://x.com/theafricadigitalforum',
+      Twitter: 'https://x.com/theafricadigitalforum',
       Instagram: 'https://www.instagram.com/theafricadigitalforum/',
       YouTube: 'https://youtube.com/@theafricadigitalforum',
     };
@@ -108,36 +109,55 @@ function Footer({ t, setPage }) {
   };
 
   const handleLinkClick = (link) => {
+    // ── Check if it's a social media link ──
     if (socialMediaNames.includes(link)) {
       handleSocialClick(link);
       return;
     }
 
-    if (link === 'Media & Digital Institute Africa') {
+    // ── Media & Digital Institute Africa (external link) ──
+    if (link === 'Media & Digital Institute Africa' || link === 'Media & Digital Institute') {
       window.open('https://mdiafrica.org/en/', '_blank', 'noopener,noreferrer');
       return;
     }
 
+    // ── Map footer links to pages ──
     const linkMap = {
-      home: 'home',
-      blog: 'blog',
+      // Forum section
+      'home': 'home',
+      'about adf': 'about',
       'about africa digital forum': 'about',
-      'vision mission': 'about',
-      'organizing directors': 'about',
+      'à propos d\'adf': 'about',
+      'à propos d’adf': 'about',
       'our vision': 'about',
+      'notre vision': 'about',
       'our mission': 'about',
+      'notre mission': 'about',
+      'why adf': 'whyadf',
+      'pourquoi adf': 'whyadf',
       'why africa digital forum': 'whyadf',
-      'host city lome togo': 'city',
+      'pourquoi africa digital forum': 'whyadf',
+      
+      // Engage section
+      'blog': 'blog',
       'host city': 'city',
+      'ville hôte': 'city',
+      'host city lome togo': 'city',
+      'speakers': 'home',        // ← Linked to home
+      'intervenants': 'home',    // ← Linked to home
+      'organizing directors': 'about',
+      'directeurs organisateurs': 'about',
       'contact us': 'contact',
-      contact: 'contact',
+      'contactez-nous': 'contact',
+      
+      // Legal
       'privacy policy': 'contact',
       'terms of use': 'contact',
       'cookie policy': 'contact',
     };
 
     const key = normalizeLink(link);
-    const page = linkMap[key] || (['home', 'blog'].includes(key) ? key : null);
+    const page = linkMap[key] || linkMap[link.toLowerCase()] || null;
 
     if (page && setPage) {
       setPage(page);
@@ -148,7 +168,7 @@ function Footer({ t, setPage }) {
   const socialNetworks = [
     { name: 'Facebook', icon: 'ti-brand-facebook', color: '#1877F2' },
     { name: 'LinkedIn', icon: 'ti-brand-linkedin', color: '#0A66C2' },
-    { name: 'Twitter', icon: 'ti-brand-twitter', color: '#1DA1F2' },
+    { name: 'X', icon: 'ti-brand-x', color: '#000000' },
     { name: 'Instagram', icon: 'ti-brand-instagram', color: '#E4405F' },
     { name: 'YouTube', icon: 'ti-brand-youtube', color: '#FF0000' },
   ];

@@ -1,8 +1,8 @@
 export const nav = [
-  'Home',
-  'About Us',
-  'Why Africa Digital Forum',
-  'About Host City',
-  'Blog',
-  'Contact Us',
+  'HOME',
+  'ABOUT',
+  'WHY ADF',
+  'HOST CITY',
+  'BLOG',
+  'CONTACT',
 ];

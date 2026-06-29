@@ -3,103 +3,28 @@ import styles from '../Styles/SingleArticlePage.module.css';
 import emailjs from '@emailjs/browser';
 import { CATEGORY_COLORS } from '../constants/categoryColors';
 
-// ── STRAPI API CONFIGURATION ──
-// Using Vite proxy - no CORS issues!
-const STRAPI_API_URL = '/api';
-const STRAPI_URL = 'http://localhost:1337'; // For images
+// ── Import images ──
+import Image1 from '../Assets/Images/Image2.jpg';
+import Image2 from '../Assets/Images/Image5.jpg';
+import Image3 from '../Assets/Images/Image3.jpg';
+import Image4 from '../Assets/Images/Image4.jpg';
+import Image6 from '../Assets/Images/Image6.jpg';
+import Image7 from '../Assets/Images/Image7.jpeg';
+import Image9 from '../Assets/Images/image9.jpg';
+
+const POST_IMAGES = {
+  1: Image6,
+  2: Image2,
+  3: Image3,
+  4: Image4,
+  5: Image7,
+  6: Image9,
+};
 
 // ── EMAILJS CREDENTIALS ──
 const EMAILJS_SERVICE_ID  = 'service_oqw60pt';
 const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
 const EMAILJS_PUBLIC_KEY  = 'CRiokfjvcAxMuJHMB';
-
-// ── FIX: Strapi v5 requires nested populate as bracket notation, not a flat
-// comma list. "author.profileImage" inside populate=a,b,c is invalid and
-// causes a 400 Bad Request. This builds the equivalent query string manually
-// (no need for the `qs` package): ──
-// ── SPEED: previously this page fetched the ENTIRE article list (including
-// every article's full rich-text content) just to find one article by id,
-// then discarded almost all of it. Now we fetch the single article directly
-// by id (full content, since this page renders it) and fetch "related"
-// articles separately with a light, content-free query, same as the list
-// page. This avoids downloading every other article's full body. ──
-const ARTICLE_DETAIL_POPULATE_QUERY =
-  'populate[coverImage][fields][0]=url' +
-  '&populate[author][populate][profileImage][fields][0]=url' +
-  '&populate[author][fields][0]=name' +
-  '&populate[author][fields][1]=bio' +
-  '&populate[category][fields][0]=name' +
-  '&populate[tags][fields][0]=name';
-
-const RELATED_ARTICLES_POPULATE_QUERY =
-  'fields[0]=title' +
-  '&fields[1]=slug' +
-  '&fields[2]=excerpt' +
-  '&fields[3]=publishedAt' +
-  '&populate[coverImage][fields][0]=url' +
-  '&populate[category][fields][0]=name' +
-  '&sort=publishedAt:desc' +
-  '&pagination[pageSize]=4';
-
-// ── Helper: Render Rich Text Content ──
-const renderRichText = (content) => {
-  if (!content || !Array.isArray(content)) return <p>No content available</p>;
-  
-  return content.map((block, index) => {
-    // Handle heading
-    if (block.type === 'heading' || block.type === 'heading-one') {
-      return (
-        <h2 key={index} style={{ fontSize: '28px', fontWeight: 'bold', margin: '30px 0 16px' }}>
-          {block.children?.map(child => child.text).join('')}
-        </h2>
-      );
-    }
-    
-    // Handle paragraph
-    if (block.type === 'paragraph') {
-      const text = block.children?.map(child => child.text).join('') || '';
-      
-      // Check if it contains HTML tags that need special handling
-      if (text.includes('<h2>') || text.includes('<p>') || text.includes('<ul>')) {
-        const cleanHtml = text
-          .replace(/<h2>/g, '<h2 style="font-size:28px;font-weight:bold;margin:30px 0 16px">')
-          .replace(/<p>/g, '<p style="margin:0 0 16px;line-height:1.8">')
-          .replace(/<ul>/g, '<ul style="margin:0 0 16px 20px;list-style-type:disc">')
-          .replace(/<li>/g, '<li style="margin-bottom:4px">');
-        
-        return (
-          <div 
-            key={index}
-            dangerouslySetInnerHTML={{ __html: cleanHtml }}
-            style={{ marginBottom: '8px' }}
-          />
-        );
-      }
-      
-      // Plain text paragraph
-      if (text.trim()) {
-        return <p key={index} style={{ margin: '0 0 16px', lineHeight: '1.8' }}>{text}</p>;
-      }
-      return null;
-    }
-    
-    // Handle list
-    if (block.type === 'list' || block.type === 'list-item') {
-      return (
-        <li key={index} style={{ marginBottom: '4px' }}>
-          {block.children?.map(child => child.text).join('')}
-        </li>
-      );
-    }
-    
-    // Handle any other block type
-    return (
-      <div key={index} style={{ margin: '0 0 16px', lineHeight: '1.8' }}>
-        {block.children?.map(child => child.text).join('')}
-      </div>
-    );
-  });
-};
 
 // ── Helper: get color from translated category name ──
 const getCategoryColor = (categoryName) => {
@@ -199,146 +124,16 @@ export default function SingleArticlePage({ setPage, postId, t }) {
   const blogT = t.blog;
   const singleT = blogT.singleArticle;
 
-  // ── STATE FOR DYNAMIC DATA ──
-  const [article, setArticle] = useState(null);
-  const [allPosts, setAllPosts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   // ── Refs for scrolling ──
   const heroRef = useRef(null);
 
-  // ── Transform article helper ──
-  const transformArticle = (item) => {
-    const article = item;
-    
-    // ── GET IMAGE URL ──
-    let imageUrl = null;
-    if (article.coverImage?.url) {
-      imageUrl = `${STRAPI_URL}${article.coverImage.url}`;
-    }
-    
-    // ── GET AUTHOR PROFILE IMAGE URL ──
-    let authorAvatarUrl = null;
-    
-    // Check if author exists and has profileImage
-    if (article.author?.profileImage?.url) {
-      if (article.author.profileImage.url.startsWith('/')) {
-        authorAvatarUrl = `${STRAPI_URL}${article.author.profileImage.url}`;
-      } else {
-        authorAvatarUrl = article.author.profileImage.url;
-      }
-    }
-    
-    // ── FALLBACK: Generate avatar from name if no image ──
-    if (!authorAvatarUrl && article.author?.name) {
-      const name = encodeURIComponent(article.author.name);
-      authorAvatarUrl = `https://ui-avatars.com/api/?name=${name}&background=7C3AED&color=fff&size=128&rounded=true&bold=true`;
-    }
-    
-    const categoryName = article.category?.name || 'General';
-    const authorName = article.author?.name || 'ADF Team';
-    const authorBio = article.author?.bio || '';
-    
-    const tags = article.tags?.map(tag => tag.name) || [];
-    const tag = tags.length > 0 ? tags[0] : article.tag || categoryName;
-    
-    const date = article.publishedAt 
-      ? new Date(article.publishedAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })
-      : new Date().toLocaleDateString('en-US', {
-          year: 'numeric', 
-          month: 'long',
-          day: 'numeric'
-        });
-    
-    // Read time: use Strapi's readTime field if set, otherwise estimate
-    // from content length when present (detail fetch), or excerpt length
-    // when not (related articles, which don't fetch content).
-    const readTime = article.readTime
-      || (article.content
-            ? `${Math.max(2, Math.ceil(JSON.stringify(article.content).length / 1000))} min read`
-            : `${Math.max(2, Math.ceil((article.excerpt?.length || 0) / 200))} min read`);
-    
-    return {
-      id: item.documentId || item.id,
-      title: article.title || 'Untitled',
-      slug: article.slug || article.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'untitled',
-      excerpt: article.excerpt || '',
-      content: article.content || [],
-      category: categoryName,
-      tag: tag,
-      author: authorName,
-      authorBio: authorBio,
-      authorAvatar: authorAvatarUrl,
-      date: date,
-      readTime: readTime,
-      image: imageUrl,
-      publishedAt: article.publishedAt,
-      richContent: article.content || [],
-    };
-  };
+  // Build posts array: combine translations with image mapping
+  const posts = (blogT.posts || []).map(post => ({
+    ...post,
+    image: POST_IMAGES[post.id] || null,
+  }));
 
-  // ── FETCH ARTICLE FROM STRAPI ──
-  useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch the single article directly by id/documentId, and the
-        // (content-free) related-articles list in parallel — instead of
-        // downloading every article's full body just to find one.
-        const [articleRes, relatedRes] = await Promise.all([
-          fetch(`${STRAPI_API_URL}/articles/${postId}?${ARTICLE_DETAIL_POPULATE_QUERY}`),
-          fetch(`${STRAPI_API_URL}/articles?${RELATED_ARTICLES_POPULATE_QUERY}`),
-        ]);
-
-        if (!articleRes.ok) {
-          throw new Error(`HTTP error! status: ${articleRes.status}`);
-        }
-
-        const articleJson = await articleRes.json();
-        const foundArticle = articleJson.data;
-
-        if (!foundArticle) {
-          setError('Article not found');
-          setLoading(false);
-          return;
-        }
-
-        const transformedArticle = transformArticle(foundArticle);
-        setArticle(transformedArticle);
-
-        if (relatedRes.ok) {
-          const relatedJson = await relatedRes.json();
-          const transformedRelated = (relatedJson.data || [])
-            .filter(item => item.id !== foundArticle.id)
-            .map(item => transformArticle(item));
-          setAllPosts(transformedRelated);
-
-          const uniqueCategories = ['All', ...new Set(
-            relatedJson.data.map(item => item.category?.name).filter(Boolean)
-          )];
-          setCategories(uniqueCategories);
-        }
-
-      } catch (err) {
-        console.error('❌ Error fetching article:', err);
-        setError('Failed to load article. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    if (postId) {
-      fetchArticle();
-    }
-  }, [postId]);
+  const article = posts.find(p => p.id === Number(postId));
 
   // ── Scroll to hero when article loads ──
   useEffect(() => {
@@ -348,6 +143,39 @@ export default function SingleArticlePage({ setPage, postId, t }) {
       }, 100);
     }
   }, [article]);
+
+  if (!article) {
+    return (
+      <main className={styles.mainContent}>
+        <div className={styles.container}>
+          <div style={{ padding: '100px 20px', textAlign: 'center' }}>
+            <h2>{singleT?.articleNotFound || 'Article Not Found'}</h2>
+            <p style={{ color: '#666', margin: '16px 0' }}>
+              {singleT?.articleNotFoundDesc || 'The article you are looking for does not exist.'}
+            </p>
+            <button
+              onClick={() => setPage('blog')}
+              style={{
+                marginTop: '20px',
+                padding: '12px 28px',
+                background: '#7C3AED',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                cursor: 'pointer',
+              }}
+            >
+              ← {singleT?.backToBlog || 'Back to Blog'}
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const categoryColor = getCategoryColor(article.category);
+  const relatedArticles = posts.filter(p => p.id !== article.id).slice(0, 3);
 
   // ── Newsletter state ──
   const [email, setEmail] = useState('');
@@ -405,60 +233,8 @@ export default function SingleArticlePage({ setPage, postId, t }) {
     }
   };
 
-  const translatedCategories = categories.filter(cat => cat !== 'All');
-
-  // ── LOADING STATE: lightweight skeleton instead of a centered spinner,
-  // so the page shape appears immediately rather than a blank stall ──
-  if (loading) {
-    return (
-      <main className={styles.mainContent}>
-        <div style={{ width: '100%', height: '50vh', minHeight: 320, background: '#eee' }} />
-        <div className={styles.container}>
-          <div style={{ maxWidth: 720, margin: '40px auto' }}>
-            <div style={{ height: 14, width: '30%', background: '#eee', borderRadius: 4, marginBottom: 18 }} />
-            <div style={{ height: 14, width: '95%', background: '#eee', borderRadius: 4, marginBottom: 10 }} />
-            <div style={{ height: 14, width: '88%', background: '#eee', borderRadius: 4, marginBottom: 10 }} />
-            <div style={{ height: 14, width: '92%', background: '#eee', borderRadius: 4, marginBottom: 10 }} />
-            <div style={{ height: 14, width: '70%', background: '#eee', borderRadius: 4 }} />
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  // ── ERROR STATE ──
-  if (error || !article) {
-    return (
-      <main className={styles.mainContent}>
-        <div className={styles.container}>
-          <div style={{ padding: '100px 20px', textAlign: 'center' }}>
-            <h2>{singleT?.articleNotFound || 'Article Not Found'}</h2>
-            <p style={{ color: '#666', margin: '16px 0' }}>
-              {singleT?.articleNotFoundDesc || 'The article you are looking for does not exist.'}
-            </p>
-            <button
-              onClick={() => setPage('blog')}
-              style={{
-                marginTop: '20px',
-                padding: '12px 28px',
-                background: '#7C3AED',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                cursor: 'pointer',
-              }}
-            >
-              ← {singleT?.backToBlog || 'Back to Blog'}
-            </button>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  const categoryColor = getCategoryColor(article.category);
-  const relatedArticles = allPosts.slice(0, 3);
+  // Get translated categories (excluding 'All')
+  const translatedCategories = (blogT.categories || []).filter(cat => cat !== 'All');
 
   return (
     <main className={styles.mainContent}>
@@ -518,32 +294,18 @@ export default function SingleArticlePage({ setPage, postId, t }) {
                 <div className={styles.categoryBadge} style={{ color: categoryColor }}>
                   {article.category}
                 </div>
-                <div className={styles.articleContent}>
-                  {renderRichText(article.content)}
-                </div>
+                <div 
+                  className={styles.articleContent}
+                  dangerouslySetInnerHTML={{ __html: article.content || article.excerpt || 'Full content coming soon.' }}
+                />
               </FadeUp>
 
-              {/* ── AUTHOR BIO WITH AVATAR ── */}
-              {article.author && (
+              {article.authorBio && (
                 <FadeUp delay={0.1}>
                   <div className={styles.authorBio}>
                     <div className={styles.authorAvatar}>
                       {article.authorAvatar ? (
-                        <img 
-                          src={article.authorAvatar} 
-                          alt={article.author} 
-                          className={styles.authorAvatarImg}
-                          onError={(e) => {
-                            console.log('❌ Avatar image failed to load:', article.authorAvatar);
-                            e.target.onerror = null;
-                            e.target.style.display = 'none';
-                            const parent = e.target.parentElement;
-                            const initial = document.createElement('span');
-                            initial.className = styles.authorInitial;
-                            initial.textContent = article.author.charAt(0);
-                            parent.appendChild(initial);
-                          }}
-                        />
+                        <img src={article.authorAvatar} alt={article.author} />
                       ) : (
                         <span className={styles.authorInitial}>
                           {article.author.charAt(0)}
@@ -552,9 +314,7 @@ export default function SingleArticlePage({ setPage, postId, t }) {
                     </div>
                     <div className={styles.authorInfo}>
                       <h4 className={styles.authorName}>{article.author}</h4>
-                      {article.authorBio && (
-                        <p className={styles.authorBioText}>{article.authorBio}</p>
-                      )}
+                      <p className={styles.authorBioText}>{article.authorBio}</p>
                     </div>
                   </div>
                 </FadeUp>
@@ -685,7 +445,7 @@ export default function SingleArticlePage({ setPage, postId, t }) {
           </FadeUp>
 
           <div className={styles.moreGrid}>
-            {allPosts.slice(0, 3).map((post, index) => (
+            {posts.filter(p => p.id !== article.id).slice(0, 3).map((post, index) => (
               <FadeUp key={post.id} delay={0.08 * (index + 1)}>
                 <div className={styles.moreCard} onClick={() => setPage('article', post.id)}>
                   <div className={styles.moreImgWrap}>

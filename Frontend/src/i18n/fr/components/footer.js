@@ -3,15 +3,33 @@ export const footer = {
   cols: [
     {
       title: 'Forum',
-      links: ['Accueil', 'À propos d’Africa Digital Forum', 'Pourquoi Africa Digital Forum', 'Notre vision', 'Notre mission']
+      links: [
+        'Accueil',
+        'À propos d\'ADF',
+        'Notre vision',
+        'Notre mission',
+        'Pourquoi ADF'
+      ]
     },
     {
       title: 'Engagement',
-      links: ['Blog', 'Ville hôte', 'Directeurs organisateurs', 'Media & Digital Institute Africa', 'Contactez-nous']
+      links: [
+        'Blog',
+        'Ville hôte',
+        'Intervenants',
+        'Media & Digital Institute',
+        'Contactez-nous'
+      ]
     },
     {
       title: 'Médias sociaux',
-      links: ['Facebook', 'LinkedIn', 'Twitter', 'Instagram', 'YouTube']
+      links: [
+        'Facebook',
+        'LinkedIn',
+        'X',
+        'Instagram',
+        'YouTube'
+      ]
     }
   ],
   copy: '© 2025 Africa Digital Forum. Tous droits réservés. Lomé, Togo.',

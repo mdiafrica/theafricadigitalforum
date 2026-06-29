@@ -34,13 +34,13 @@ const languages = [
   {
     code: 'en',
     name: 'English',
-    flag: '🇬🇧',
+    flag: 'EN',
     displayName: 'English'
   },
   {
     code: 'fr',
     name: 'Français',
-    flag: '🇫🇷',
+    flag: 'FR',
     displayName: 'Français'
   }
 ];
@@ -104,6 +104,25 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
     languages.find((l) => l.code === 'en');
 
   const navItems = t.nav || [];
+
+  // ── World Icon SVG Component ──
+  const WorldIcon = () => (
+    <svg 
+      width="18" 
+      height="18" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="#7C3AED" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      className={styles.worldIconSvg}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
 
   return (
     <>
@@ -182,7 +201,9 @@ function Nav({ lang, cycleLang, t, activePage, setPage }) {
               className={styles.langTrigger}
               aria-label="Select language"
             >
-              <span className={styles.worldIcon}>🌐</span>
+              <span className={styles.worldIconWrapper}>
+                <WorldIcon />
+              </span>
 
               <span className={styles.currentLang}>
                 {currentLanguage.flag}

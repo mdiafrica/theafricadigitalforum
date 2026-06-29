@@ -130,7 +130,6 @@ export default function WhyADFPage({ t }) {
                   </div>
                   <h3 className={pageStyles.cardTitle}>{item.title}</h3>
                   <p className={pageStyles.cardDescription}>{item.description}</p>
-                  <button className={pageStyles.cardButton}>{why.agenda.learnMore}</button>
                 </div>
               </FadeUp>
             ))}

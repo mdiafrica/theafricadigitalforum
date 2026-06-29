@@ -1,9 +1,9 @@
 // AboutPage.jsx
 import { useState, useEffect, useRef } from 'react';
 import pageStyles from '../Styles/AboutPage.module.css';
-import AboutHero from '../Assets/Images/Image1.jpg';
-import CliffordImg from '../Assets/Images/clifford.jpg';
-import MarchImg from '../Assets/Images/March.jpg';
+import AboutHero from '../Assets/Images/Image1.png';
+import CliffordImg from '../Assets/Images/clifford.png';
+import MarchImg from '../Assets/Images/Marc.png';
 
 /* ── Fade-up animation hook ── */
 function useInView(options = {}) {
@@ -139,14 +139,14 @@ function TeamCard({ name, title, bio, longBio, image, location, socials = {}, de
 
       <div className={pageStyles.teamCardBody}>
         <div>
+          <div className={pageStyles.teamCardRole}>{title}</div>
+          <h3 className={pageStyles.teamCardName}>{name}</h3>
           {location && (
             <div className={pageStyles.teamCardLocation}>
               <i className="ti ti-map-pin" aria-hidden="true" />
               {location}
             </div>
           )}
-          <div className={pageStyles.teamCardRole}>{title}</div>
-          <h3 className={pageStyles.teamCardName}>{name}</h3>
           <p className={pageStyles.teamCardBio}>{bio}</p>
           <button
             className={pageStyles.readMoreBtn}
@@ -234,12 +234,20 @@ export default function AboutPage({ t }) {
     const images = [MarchImg, CliffordImg];
     const socials = [
       { linkedin: 'https://linkedin.com/in/marcaboflan', email: 'marc@africadigitalforum.com' },
-      { linkedin: 'https://linkedin.com/in/emmanuelcliffordgyetuah', email: 'clifford@africadigitalforum.com' },
+      { linkedin: 'https://www.linkedin.com/in/ecgyetuah/', email: 'clifford@africadigitalforum.com' },
     ];
+    // ── OVERRIDE LOCATIONS ──
+    let location = member.location || '';
+    if (index === 0) {
+      location = 'Togo / Senegal';
+    } else if (index === 1) {
+      location = 'Ghana / Rwanda';
+    }
     return {
       ...member,
       image: images[index] || null,
       socials: socials[index] || {},
+      location: location,
     };
   });
 

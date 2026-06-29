@@ -406,6 +406,7 @@
   margin: 0 auto;
 }
 
+/* ── Dialogue Card - matching 6-point agenda card fonts ── */
 .dialogueCard {
   background: #ffffff;
   border-radius: 20px;
@@ -443,22 +444,27 @@
   color: #7C3AED;
 }
 
+/* ── Updated: Card Title - same as 6-point agenda ── */
 .dialogueCardTitle {
   font-family: 'Montserrat', sans-serif;
-  font-size: 18px;
+  font-size: 16px; /* Matching agenda card title */
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 12px;
   letter-spacing: 0.02em;
+  line-height: 1.3;
 }
 
+/* ── Updated: Card Text - same as 6-point agenda description ── */
 .dialogueCardText {
-  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; /* Matching agenda card description */
   font-weight: 400;
   color: rgba(0, 0, 0, 0.7);
-  line-height: 1.7;
+  line-height: 1.6;
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
+  max-width: 90%;
+  text-align: center;
 }
 
 /* ── Speakers Section – with background image ──────────────── */
@@ -1127,7 +1133,14 @@
     gap: 24px;
   }
   .dialoguesTitle { font-size: clamp(20px, 4vw, 24px); }
-  .dialogueCardTitle { font-size: 18px; }
+
+  /* ── Dialogue cards update for mobile ── */
+  .dialogueCardTitle {
+    font-size: 15px;
+  }
+  .dialogueCardText {
+    font-size: 12px;
+  }
 
   .speakersSection { padding: 72px 5%; }
   .speakersList {
@@ -1257,11 +1270,14 @@
   .dialogueCard {
     padding: 24px 20px 28px;
   }
+
+  /* ── Dialogue cards update for small mobile ── */
   .dialogueCardTitle {
-    font-size: 17px;
+    font-size: 14px;
   }
   .dialogueCardText {
-    font-size: 13px;
+    font-size: 12px;
+    max-width: 95%;
   }
 
   .speakersSection { padding: 56px 4%; }

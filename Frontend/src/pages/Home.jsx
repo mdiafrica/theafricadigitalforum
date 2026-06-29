@@ -13,8 +13,19 @@ import Image4 from '../Assets/Images/Image4.jpg';
 import Image6 from '../Assets/Images/Image6.jpg';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';
-import speaker1 from '../Assets/Images/speaker1.png';
-import speaker2 from '../Assets/Images/speaker2.png';
+
+// ── REAL SPEAKER IMAGES ──
+import speaker1 from '../Assets/Images/LACINA KONE.png';
+import speaker2 from '../Assets/Images/Mitchell Elegbe.png';
+import speaker3 from '../Assets/Images/REBECCA ENOCHONG.png';
+import speaker4 from '../Assets/Images/Shola Akinlade.png';
+import speaker5 from '../Assets/Images/TIDIANE DEME.avif';
+import speaker6 from '../Assets/Images/H.E. Cina Lawson.png';
+import speaker7 from '../Assets/Images/Tony O. Elumelu.png';
+import speaker8 from "../Assets/Images/GEOFFROY-Odundo-scaled.jpeg";
+import speaker9 from "../Assets/Images/Hassanein HIRIDJEE.jpeg";
+import speaker10 from "../Assets/Images/Juliana Rotich.jpeg";
+import speaker11 from "../Assets/Images/Iyinoluwa Aboyeji.jpg";
 
 // ── EMAILJS CREDENTIALS ──
 const EMAILJS_SERVICE_ID = 'service_oqw60pt';
@@ -248,7 +259,7 @@ function StatsBar({ t }) {
 
 // ── PresidentialDialogues ──
 function PresidentialDialogues({ t }) {
-  const dialogues = t.home.dialogues;
+  const dialogues = t.home.dialogues || [];
 
   return (
     <section className={styles.dialoguesSection}>
@@ -336,19 +347,28 @@ function SpeakerCard({ speaker, index, teaserT }) {
 
 // ── SpeakersSection ──
 function SpeakersSection({ setPage, t }) {
-  const speakersT = t.home.speakers;
   const teaserT = t.home.speakersTeaser;
   const sectionT = t.home.speakersSection;
 
-  const speakerImages = [speaker1, speaker2, speaker1];
-  const speakersData = speakersT.map((s, idx) => ({
-    ...s,
-    image: speakerImages[idx] || speaker1,
-    twitter: s.twitter || '#',
-    linkedin: s.linkedin || '#',
+  // Get speakers from translations
+  const speakersData = t.home.speakers || [];
+  
+  // Map speakers with images (use imported images in order)
+  const speakerImages = [
+    speaker6, speaker1, speaker7, speaker3, speaker2,
+    speaker4, speaker5, speaker8, speaker9, speaker10, speaker11
+  ];
+
+  const speakersWithImages = speakersData.map((speaker, index) => ({
+    name: speaker.name,
+    role: speaker.role,
+    image: speakerImages[index % speakerImages.length] || speaker1,
+    twitter: speaker.twitter || '#',
+    linkedin: speaker.linkedin || '#',
   }));
 
-  const allSpeakers = [...speakersData, { isTeaser: true }];
+  // Add the teaser card
+  const allSpeakers = [...speakersWithImages, { isTeaser: true }];
 
   return (
     <section className={styles.speakersSection} style={{ backgroundImage: `url(${Image6})` }}>

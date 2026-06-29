@@ -51,12 +51,13 @@
   color: #FFFFFF;
 }
 
-.nav.passive .worldIcon {
-  color: #FFFFFF;
+.nav.passive .worldIconSvg {
+  stroke: #7C3AED;
 }
 
-.nav.passive .langTrigger:hover .worldIcon {
-  color: #CCCCCC;
+.nav.passive .langTrigger:hover .worldIconSvg {
+  stroke: #7C3AED;
+  opacity: 0.8;
 }
 
 .nav.passive .dropdownArrow {
@@ -172,15 +173,17 @@
   overflow: visible;
 }
 
+/* ── LOGO SIZE KEPT THE SAME ── */
 .navLogoImg {
   height: 140px;
   width: auto;
   object-fit: contain;
 }
 
+/* ── NAVIGATION LINKS - REDUCED SIZE ── */
 .navLinks {
   display: flex;
-  gap: 24px;
+  gap: 40px;
 }
 
 .navLink {
@@ -189,9 +192,9 @@
   border: none;
   cursor: pointer;
   padding: 6px 2px;
-  font-size: 13px;
+  font-size: 18px;
   letter-spacing: 0.08em;
-  text-transform: capitalize;
+  text-transform: uppercase;
   transition: color 0.2s ease;
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
@@ -213,10 +216,10 @@
 
 .navLinkUnderline {
   position: absolute;
-  bottom: -2px;
+  bottom: -3px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 2.5px;
   border-radius: 2px;
   background: linear-gradient(90deg, #7C3AED, #A066F5);
   transition: opacity 0.2s ease;
@@ -242,6 +245,26 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ── WORLD ICON SVG ── */
+.worldIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.worldIconSvg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: #7C3AED;
+  transition: opacity 0.2s ease;
+}
+
+.langTrigger:hover .worldIconSvg {
+  opacity: 0.8;
 }
 
 /* Language Dropdown Styles */
@@ -272,20 +295,17 @@
   color: #CCCCCC;
 }
 
-.worldIcon {
-  font-size: 14px;
-  color: #FFFFFF;
-}
-
-.langTrigger:hover .worldIcon {
-  color: #CCCCCC;
-}
-
 .currentLang {
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   letter-spacing: 0.02em;
+  color: #FFFFFF;
+}
+
+.langTrigger:hover .currentLang {
+  color: #CCCCCC;
 }
 
 .dropdownArrow {
@@ -354,16 +374,19 @@
 }
 
 .flagIcon {
-  font-size: 20px;
+  font-size: 14px;
+  font-weight: 700;
   width: 28px;
   display: flex;
   align-items: center;
+  color: #FFFFFF;
 }
 
 .languageName {
   flex: 1;
   font-weight: 500;
   letter-spacing: 0.03em;
+  color: #FFFFFF;
 }
 
 .activeLanguage .languageName {
@@ -371,7 +394,7 @@
 }
 
 .checkMark {
-  color: #FFFFFF;
+  color: #7C3AED;
   font-weight: bold;
   margin-left: auto;
   font-size: 14px;
@@ -441,7 +464,7 @@
 .mobileMenuItem {
   background: none;
   border: none;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -565,14 +588,14 @@
   transform: translateY(-1px);
 }
 
-/* Responsive */
+/* ── Responsive ── */
 @media (max-width: 1024px) {
   .navLinks {
-    gap: 18px;
+    gap: 28px;
   }
 
   .navLink {
-    font-size: 12px;
+    font-size: 15px;
     letter-spacing: 0.07em;
   }
   
@@ -612,13 +635,13 @@
     gap: 5px;
   }
 
-  .worldIcon {
-    font-size: 13px;
+  .worldIconSvg {
+    width: 16px;
+    height: 16px;
   }
 
   .currentLang {
-    font-size: 13px;
-    letter-spacing: 0.015em;
+    font-size: 10px;
   }
 
   .dropdownMenu {
@@ -633,12 +656,12 @@
   }
 
   .flagIcon {
-    font-size: 18px;
+    font-size: 12px;
     width: 24px;
   }
 
   .mobileMenuItem {
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.08em;
     padding: 11px 14px;
   }
@@ -673,13 +696,13 @@
     gap: 4px;
   }
 
-  .worldIcon {
-    font-size: 11px;
+  .worldIconSvg {
+    width: 14px;
+    height: 14px;
   }
 
   .currentLang {
-    font-size: 11px;
-    letter-spacing: 0.01em;
+    font-size: 9px;
   }
 
   .dropdownArrow {
@@ -699,7 +722,7 @@
   }
 
   .flagIcon {
-    font-size: 16px;
+    font-size: 11px;
     width: 22px;
   }
 
@@ -711,7 +734,7 @@
 
   .mobileMenuItem {
     padding: 10px 12px;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.07em;
   }
 
