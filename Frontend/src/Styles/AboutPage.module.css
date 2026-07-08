@@ -867,10 +867,11 @@
     border-radius: 16px;
   }
 
+  /* ═══ INCREASED ORGANIZER IMAGE HEIGHT ON TABLETS ═══ */
   .teamPhotoCol {
     width: 100%;
-    height: clamp(200px, 55vw, 300px);
-    min-height: 200px;
+    height: clamp(320px, 70vw, 420px); /* Increased from clamp(200px, 55vw, 300px) */
+    min-height: 320px; /* Increased from 200px */
     border-radius: 16px 16px 0 0;
   }
 
@@ -958,9 +959,15 @@
     border-radius: 14px;
   }
 
+  /* ═══ INCREASED ORGANIZER IMAGE HEIGHT ON SMALL PHONES ═══ */
   .teamPhotoCol {
-    height: clamp(180px, 60vw, 240px);
-    min-height: 180px;
+    height: clamp(280px, 75vw, 360px); /* Increased from clamp(180px, 60vw, 240px) */
+    min-height: 280px; /* Increased from 180px */
+  }
+
+  /* Adjust image focus point for better visibility on small screens */
+  .teamPhoto {
+    object-position: center 20%;
   }
 
   .teamCardBody {
@@ -1022,6 +1029,13 @@
   .heroTitle {
     letter-spacing: 0.03em;
   }
+
+  /* ═══ INCREASED ORGANIZER IMAGE HEIGHT ON VERY SMALL PHONES ═══ */
+  .teamPhotoCol {
+    height: clamp(240px, 80vw, 300px); /* Increased from clamp(220px, 75vw, 280px) */
+    min-height: 240px; /* Increased from 220px */
+  }
+
   .teamCardBody {
     padding: 14px 14px 12px;
   }
