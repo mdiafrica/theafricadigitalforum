@@ -1,10 +1,10 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
 import styles from './Styles/App.module.css';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import HomePage from './pages/Home';
+// ✅ Correct import path (no '/translations')
 import { i18n } from './i18n';
 import AboutPage from './pages/AboutPage';
 import CityPage from './pages/CityPage';
@@ -12,8 +12,6 @@ import ContactPage from './pages/ContactPage';
 import WhyADFPage from './pages/WhyADFPage';
 import BlogPage from './pages/BlogPage';
 import SingleArticlePage from './pages/SingleArticlePage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage from './pages/TermsPage';
 
 function App() {
   const [lang, setLang] = useState('en');
@@ -36,23 +34,6 @@ function App() {
       setArticleId(null);
     }
   };
-
-  // Expose setPage to window for CookieConsent navigation
-  useEffect(() => {
-    window.__setPage = handleSetPage;
-    
-    // Listen for navigation events from CookieConsent
-    const handleNavigation = (event) => {
-      handleSetPage(event.detail);
-    };
-    
-    window.addEventListener('navigate', handleNavigation);
-    
-    return () => {
-      window.removeEventListener('navigate', handleNavigation);
-      delete window.__setPage;
-    };
-  }, []);
 
   // Auto‑detect French timezone
   useEffect(() => {
@@ -78,6 +59,7 @@ function App() {
   const renderPage = () => {
     switch (page) {
       case 'home':
+        // ✅ Pass lang to HomePage (required for bilingual features)
         return <HomePage setPage={handleSetPage} t={t} lang={lang} />;
       case 'about':
         return <AboutPage t={t} />;
@@ -91,10 +73,6 @@ function App() {
         return <SingleArticlePage setPage={handleSetPage} postId={articleId} t={t} />;
       case 'contact':
         return <ContactPage t={t} />;
-      case 'privacy':
-        return <PrivacyPage t={t} />;
-      case 'terms':
-        return <TermsPage t={t} />;
       case 'tickets':
         return <div style={{ padding: '100px', textAlign: 'center' }}>Tickets Page - Coming Soon</div>;
       case 'register':

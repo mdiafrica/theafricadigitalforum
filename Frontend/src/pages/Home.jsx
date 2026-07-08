@@ -10,7 +10,7 @@ import Image1 from '../Assets/Images/Image2.jpg';
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
 import Image4 from '../Assets/Images/Image4.jpg';
-import Image6 from '../Assets/Images/Image6.jpg';
+// import Image6 from '../Assets/Images/Image6.jpg'; // REMOVED - slide 3 image
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';
 
@@ -32,7 +32,8 @@ const EMAILJS_SERVICE_ID = 'service_oqw60pt';
 const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
 const EMAILJS_PUBLIC_KEY = 'CRiokfjvcAxMuJHMB';
 
-const sliderImages = [{ url: Image1 }, { url: Image2 }, { url: Image6 }];
+// ── SLIDER IMAGES - REMOVED Image6 (slide 3) ──
+const sliderImages = [{ url: Image1 }, { url: Image2 }]; // Now only 2 images
 
 // ── Hooks ──
 function useInView(options = {}) {
