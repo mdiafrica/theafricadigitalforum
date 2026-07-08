@@ -869,8 +869,8 @@
 
   .teamPhotoCol {
     width: 100%;
-    height: clamp(200px, 55vw, 300px);
-    min-height: 200px;
+    height: clamp(340px, 100vw, 460px);
+    min-height: 340px;
     border-radius: 16px 16px 0 0;
   }
 
@@ -959,8 +959,8 @@
   }
 
   .teamPhotoCol {
-    height: clamp(180px, 60vw, 240px);
-    min-height: 180px;
+    height: clamp(320px, 110vw, 420px);
+    min-height: 320px;
   }
 
   .teamCardBody {
@@ -1021,6 +1021,10 @@
 @media (max-width: 360px) {
   .heroTitle {
     letter-spacing: 0.03em;
+  }
+  .teamPhotoCol {
+    height: clamp(300px, 115vw, 380px);
+    min-height: 300px;
   }
   .teamCardBody {
     padding: 14px 14px 12px;

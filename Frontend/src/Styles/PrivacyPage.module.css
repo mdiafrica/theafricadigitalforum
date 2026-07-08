@@ -1,0 +1,412 @@
+/* src/Styles/PrivacyPage.module.css */
+
+.page {
+  padding-top: 80px;
+  min-height: 100vh;
+  background: #f8f9fa;
+  color: #1a1a1a;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+
+.header {
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid rgba(124, 58, 237, 0.12);
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.lastUpdated {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.content {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 48px 56px;
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.intro {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #374151;
+  padding: 18px 22px;
+  background: rgba(124, 58, 237, 0.045);
+  border-left: 4px solid #7c3aed;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+.intro a {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.intro a:hover {
+  border-bottom-color: #7c3aed;
+}
+
+.section {
+  margin-bottom: 44px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid #eceef1;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: #7c3aed;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sectionIntro {
+  font-size: 15.5px;
+  color: #374151;
+  line-height: 1.75;
+  margin-bottom: 22px;
+}
+
+.subsection {
+  margin-bottom: 26px;
+}
+
+.subsection:last-child {
+  margin-bottom: 0;
+}
+
+.subsectionTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 10px;
+  letter-spacing: -0.005em;
+}
+
+.subsection p {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.75;
+  margin: 0 0 10px;
+}
+
+.subsection p:last-child {
+  margin-bottom: 0;
+}
+
+.list {
+  margin: 10px 0 0;
+  padding-left: 22px;
+  color: #374151;
+  line-height: 1.85;
+  font-size: 15px;
+}
+
+.list li {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.list li:last-child {
+  margin-bottom: 0;
+}
+
+.list li::marker {
+  color: #7c3aed;
+}
+
+.emailLink {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.emailLink:hover {
+  border-bottom-color: #7c3aed;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: 16px 0 4px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.table thead {
+  background: #f9fafb;
+}
+
+.table th {
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4b5563;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.table td {
+  padding: 14px 18px;
+  color: #374151;
+  line-height: 1.6;
+  border-bottom: 1px solid #f0f1f3;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background: #faf9ff;
+}
+
+.contactInfo {
+  margin-top: 16px;
+  padding: 20px 24px;
+  background: rgba(124, 58, 237, 0.045);
+  border-radius: 10px;
+  border: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.contactInfo p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* ── Force Light Mode ── */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: #f8f9fa !important;
+  }
+
+  .content {
+    background: #ffffff !important;
+    border-color: #e5e7eb !important;
+  }
+
+  .title {
+    color: #111827 !important;
+  }
+
+  .lastUpdated {
+    color: #6b7280 !important;
+  }
+
+  .sectionTitle {
+    color: #111827 !important;
+  }
+
+  .subsectionTitle {
+    color: #1f2937 !important;
+  }
+
+  .subsection p,
+  .list,
+  .sectionIntro {
+    color: #374151 !important;
+  }
+
+  .intro {
+    color: #374151 !important;
+    background: rgba(124, 58, 237, 0.045) !important;
+  }
+
+  .tableWrapper {
+    border-color: #e5e7eb !important;
+  }
+
+  .table {
+    background: #ffffff !important;
+  }
+
+  .table thead {
+    background: #f9fafb !important;
+  }
+
+  .table th {
+    color: #4b5563 !important;
+    border-bottom-color: #e5e7eb !important;
+  }
+
+  .table td {
+    color: #374151 !important;
+    border-bottom-color: #f0f1f3 !important;
+  }
+
+  .table tbody tr:hover {
+    background: #faf9ff !important;
+  }
+
+  .contactInfo {
+    background: rgba(124, 58, 237, 0.045) !important;
+  }
+
+  .contactInfo p {
+    color: #374151 !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 28px 18px 48px;
+  }
+
+  .title {
+    font-size: 27px;
+  }
+
+  .header {
+    margin-bottom: 36px;
+    padding-bottom: 22px;
+  }
+
+  .content {
+    padding: 30px 24px;
+    border-radius: 14px;
+  }
+
+  .section {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+
+  .subsectionTitle {
+    font-size: 16px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-top: 70px;
+  }
+
+  .container {
+    padding: 20px 14px 36px;
+  }
+
+  .title {
+    font-size: 23px;
+  }
+
+  .lastUpdated {
+    font-size: 12px;
+  }
+
+  .content {
+    padding: 20px 18px;
+    border-radius: 12px;
+  }
+
+  .intro {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .section {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+    gap: 8px;
+  }
+
+  .sectionTitle::before {
+    height: 16px;
+  }
+
+  .subsectionTitle {
+    font-size: 15px;
+  }
+
+  .subsection p,
+  .list {
+    font-size: 14px;
+  }
+
+  .list {
+    padding-left: 18px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .contactInfo {
+    padding: 16px 18px;
+  }
+}
