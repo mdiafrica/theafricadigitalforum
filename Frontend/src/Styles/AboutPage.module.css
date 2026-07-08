@@ -190,10 +190,11 @@
   justify-content: center;
 }
 
-/* ── Team card – horizontal layout ── */
+/* ── Team card – horizontal layout (desktop/tablet default) ── */
 .teamCard {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: minmax(150px, 200px) minmax(0, 1fr);
+  align-items: stretch;
   border-radius: 20px;
   overflow: hidden;
   background: #ffffff;
@@ -213,13 +214,15 @@
   background: linear-gradient(160deg, #3b0764 0%, #6d28d9 100%);
   overflow: hidden;
   min-height: 280px;
+  display: flex;
+  align-items: stretch;
 }
 
 .teamPhoto {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center;
   display: block;
   transition: transform 0.5s ease;
 }
@@ -258,6 +261,7 @@
   flex-direction: column;
   justify-content: space-between;
   background: #ffffff;
+  min-width: 0; /* allow text to wrap/truncate correctly inside grid/flex */
 }
 
 .teamCardLocation {
@@ -320,6 +324,7 @@
   font-family: inherit;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  min-height: 44px; /* comfortable touch target */
 }
 
 .readMoreBtn i {
@@ -346,6 +351,7 @@
 .teamSocials {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .teamSocialLink {
@@ -596,6 +602,7 @@
   color: #7c3aed;
   gap: 10px;
   height: 44px;
+  max-width: 100%;
 }
 
 .modalSocialLink[href*="mailto:"]:hover {
@@ -615,6 +622,8 @@
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── LinkedIn link ── */
@@ -806,7 +815,14 @@
   color: #a78bfa;
 }
 
-/* ── Responsive ── */
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE — consolidated, mobile-first-friendly breakpoints.
+   All team/organizer-card mobile rules now live in ONE place
+   (previously split across 640px/768px/480px blocks that fought
+   each other and forced names/roles to truncate with ellipsis).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Tablet / small desktop ── */
 @media (max-width: 900px) {
   .teamGrid {
     grid-template-columns: minmax(0, 520px);
@@ -817,6 +833,9 @@
   }
 }
 
+/* ── Tablet & large phone (≤768px) ──
+   This is the single breakpoint where the organizer card switches
+   from the side-by-side photo+bio layout to a stacked layout. */
 @media (max-width: 768px) {
   .band {
     grid-template-columns: 1fr;
@@ -826,6 +845,7 @@
   .bandText {
     margin: 0;
     max-width: 100%;
+    text-align: left; /* justified text creates ugly gaps at narrow widths */
   }
   .heroSection {
     padding: 100px 6% 80px;
@@ -833,22 +853,76 @@
   .teamSection {
     padding: 56px 5%;
   }
-  .teamCard {
+
+  .teamGrid {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
+
+  /* Organizer card: stack photo above content, full width */
+  .teamCard {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 16px;
+  }
+
   .teamPhotoCol {
-    height: 180px;
-    min-height: unset;
+    width: 100%;
+    height: clamp(200px, 55vw, 300px);
+    min-height: 200px;
+    border-radius: 16px 16px 0 0;
   }
+
+  .teamPhoto {
+    object-position: center top;
+  }
+
   .teamPhotoCol::after {
-    display: none;
+    display: none; /* the right-edge fade only makes sense in the side-by-side layout */
   }
+
+  .teamCardBody {
+    padding: 18px 18px 16px;
+  }
+
+  .teamCardName {
+    font-size: 17px;
+    margin-bottom: 8px;
+    /* allow full name to wrap instead of being clipped with an ellipsis */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .teamCardRole {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .teamCardBio {
+    font-size: 13.5px;
+    line-height: 1.65;
+    text-align: left; /* avoid justify-induced whitespace rivers on narrow cards */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .teamSocials {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
   .advisorySection {
     padding: 72px 6%;
   }
   .advisoryPlaceholderRow {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .modalTwoColumns {
     grid-template-columns: 1fr;
   }
@@ -874,19 +948,53 @@
   }
 }
 
+/* ── Small phone (≤480px) ── */
 @media (max-width: 480px) {
   .teamSectionHeading {
     font-size: 26px;
   }
+
   .teamCard {
-    border-radius: 16px;
+    border-radius: 14px;
   }
+
   .teamPhotoCol {
-    height: 160px;
+    height: clamp(180px, 60vw, 240px);
+    min-height: 180px;
   }
+
+  .teamCardBody {
+    padding: 16px 16px 14px;
+  }
+
+  .teamCardName {
+    font-size: 16px;
+  }
+
+  .teamCardBio {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
+  }
+
+  .readMoreBtn {
+    font-size: 0.76rem;
+  }
+
+  .teamSocialLink {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+  }
+
   .advisoryPlaceholderRow {
     grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
+
+  .advisoryPlaceholderCard {
+    padding: 24px 12px 20px;
+  }
+
   .modalImage {
     width: 100px;
     height: 100px;
@@ -902,8 +1010,33 @@
   }
   .modalSocialLink[href*="mailto:"] span {
     font-size: 10px;
+    max-width: 150px;
   }
   .modalSocialLink[href*="mailto:"] i {
     font-size: 15px;
+  }
+}
+
+/* ── Very small phone (≤360px) ── */
+@media (max-width: 360px) {
+  .heroTitle {
+    letter-spacing: 0.03em;
+  }
+  .teamCardBody {
+    padding: 14px 14px 12px;
+  }
+  .teamCardName {
+    font-size: 15px;
+  }
+  .teamCardBio {
+    font-size: 12.5px;
+    -webkit-line-clamp: 3;
+  }
+  .advisoryPlaceholderRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .modalSocialLink[href*="mailto:"] span {
+    max-width: 110px;
   }
 }

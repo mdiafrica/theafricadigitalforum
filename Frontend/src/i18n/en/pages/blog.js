@@ -16,6 +16,7 @@ export const blog = {
 
   categories: [
     'All',
+    'ADF Updates',
     'Digital Policy',
     'Cybersecurity',
     'Infrastructure',

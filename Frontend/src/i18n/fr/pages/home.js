@@ -2,7 +2,7 @@ export const home = {
   hero: {
     date: 'Mai 2027 • Lomé • Togo',
     title: 'Africa Digital Forum',
-    tagline: "Africa Digital Forum - Façonner l'avenir numérique de l'Afrique. Le rendez-vous incontournable du continent pour les leaders des médias, de l'IA, de la technologie, de l'innovation et de la transformation numérique.",
+    tagline: "Façonner l'avenir numérique de l'Afrique. Le rendez-vous incontournable du continent pour les leaders des médias, de l'IA, de la technologie, de l'innovation et de la transformation numérique.",
     button: 'En savoir plus',
     slides: [
       { title: 'Lomé la magnifique', location: 'Côte de Lomé, Togo' },

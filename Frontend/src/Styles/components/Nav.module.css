@@ -173,9 +173,9 @@
   overflow: visible;
 }
 
-/* ── LOGO SIZE KEPT THE SAME ── */
+/* ── LOGO SIZE ── */
 .navLogoImg {
-  height: 140px;
+  height: 160px;
   width: auto;
   object-fit: contain;
 }
@@ -600,7 +600,7 @@
   }
   
   .navLogoImg {
-    height: 130px;
+    height: 145px;
   }
 }
 
@@ -620,7 +620,7 @@
   }
 
   .navLogoImg {
-    height: 90px;
+    height: 110px;
   }
 
   .mobileMenu {
@@ -686,7 +686,7 @@
   }
 
   .navLogoImg {
-    height: 70px;
+    height: 90px;
   }
 
   .langTrigger {

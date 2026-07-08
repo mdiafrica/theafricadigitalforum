@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from './Styles/App.module.css';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
+import CookieConsent from './components/CookieConsent';
 import HomePage from './pages/Home';
 // ✅ Correct import path (no '/translations')
 import { i18n } from './i18n';
@@ -89,6 +90,7 @@ function App() {
         {renderPage()}
       </div>
       <Footer t={t} setPage={handleSetPage} />
+      <CookieConsent />
     </div>
   );
 }

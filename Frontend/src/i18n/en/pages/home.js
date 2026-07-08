@@ -2,7 +2,7 @@ export const home = {
   hero: {
     date: 'May 2027 • Lomé • Togo',
     title: 'Africa Digital Forum',
-    tagline: "Africa Digital Forum - Shaping Africa's Digital Future. The continent's premier gathering for Media, AI, Technology, Innovation and Digital Transformation Leaders.",
+    tagline: "Shaping Africa's Digital Future. The continent's premier gathering for Media, AI, Technology, Innovation and Digital Transformation Leaders.",
     button: 'Learn More',
     slides: [
       { title: 'Beautiful Lomé', location: 'Coastline of Lomé, Togo' },
