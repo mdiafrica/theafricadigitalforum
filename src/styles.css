@@ -1,0 +1,291 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/dm-sans";
+@import "@fontsource-variable/montserrat";
+@import "katex/dist/katex.min.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: 'DM Sans Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'DM Sans Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-nav: 'Montserrat Variable', ui-sans-serif, system-ui, sans-serif;
+
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+
+    /* Brand accents — used only for category badges / charts. */
+    --color-brand-violet: var(--brand-violet);
+    --color-brand-blue: var(--brand-blue);
+    --color-brand-teal: var(--brand-teal);
+    --color-brand-amber: var(--brand-amber);
+    --color-brand-rose: var(--brand-rose);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ── Dark-only theme, matched to the original site (Frontend/) ─────── */
+:root {
+    --radius: 0.875rem;
+
+    --background: #050d1a;            /* navy-black page */
+    --foreground: #ffffff;
+    --card: #0a1628;                 /* raised navy panel */
+    --card-foreground: #ffffff;
+    --popover: #0a1628;
+    --popover-foreground: #ffffff;
+    --primary: #7c3aed;              /* brand violet */
+    --primary-foreground: #ffffff;
+    --secondary: #12203a;
+    --secondary-foreground: #ffffff;
+    --muted: #0f1b30;
+    --muted-foreground: #7a90aa;     /* muted blue-grey copy */
+    --accent: rgba(124, 58, 237, 0.15);
+    --accent-foreground: #c4b5fd;
+    --destructive: #e5484d;
+    --border: rgba(255, 255, 255, 0.08);
+    --input: rgba(255, 255, 255, 0.12);
+    --ring: #7c3aed;
+
+    --brand-violet: #7c3aed;
+    --brand-blue: #1b6fe8;
+    --brand-teal: #14b8a6;
+    --brand-amber: #e8b84b;
+    --brand-rose: #f43f5e;
+
+    --chart-1: var(--primary);
+    --chart-2: var(--brand-blue);
+    --chart-3: var(--brand-teal);
+    --chart-4: var(--brand-amber);
+    --chart-5: var(--brand-rose);
+
+    --sidebar: #0a1628;
+    --sidebar-foreground: #ffffff;
+    --sidebar-primary: #7c3aed;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(124, 58, 237, 0.15);
+    --sidebar-accent-foreground: #c4b5fd;
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-ring: #7c3aed;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    html {
+        @apply font-sans;
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+    body {
+        @apply bg-background text-foreground;
+        min-height: 100svh;
+        overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-heading;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+    }
+    ::selection {
+        background: color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+}
+
+@layer components {
+    /* A very restrained top wash behind the hero — no heavy glows. */
+    .adf-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                42rem 26rem at 50% -6rem,
+                color-mix(in oklch, var(--primary) 8%, transparent),
+                transparent 72%
+            ),
+            var(--background);
+    }
+
+    /* Kept for backwards-compat; now renders as clean solid text (no gradient). */
+    .adf-gradient-text {
+        color: var(--foreground);
+    }
+
+    /* Long-form article body (renders trusted, in-repo HTML content). */
+    .article-prose {
+        color: var(--foreground);
+        font-size: 1.075rem;
+        line-height: 1.8;
+    }
+    .article-prose > * + * { margin-top: 1.3em; }
+    .article-prose h2 {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 2.2rem;
+        margin-bottom: 0.2rem;
+    }
+    .article-prose h3 {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 1.6rem;
+    }
+    .article-prose p { color: var(--muted-foreground); }
+    .article-prose strong { color: var(--foreground); font-weight: 600; }
+    .article-prose a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+    .article-prose ul { list-style: disc; padding-left: 1.4rem; }
+    .article-prose ol { list-style: decimal; padding-left: 1.4rem; }
+    .article-prose li { margin-top: 0.4em; color: var(--muted-foreground); }
+    .article-prose blockquote {
+        border-left: 3px solid var(--primary);
+        padding: 0.4rem 0 0.4rem 1.5rem;
+        margin-block: 1.8rem;
+        font-size: 1.2rem;
+        font-style: italic;
+        line-height: 1.6;
+        color: var(--foreground);
+    }
+    .article-prose blockquote cite {
+        display: block;
+        margin-top: 0.8rem;
+        font-size: 0.95rem;
+        font-style: normal;
+        font-weight: 600;
+        color: var(--primary);
+    }
+}
+
+/* Host-city pillar carousel — infinite marquee of duplicated cards. */
+@keyframes adf-marquee {
+    to { transform: translateX(-50%); }
+}
+
+/* Inline links inside the legal (Privacy/Terms) documents. */
+.legal-links a {
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+.legal-links a:hover {
+    border-bottom-color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Editor code-block syntax tokens (lowlight / highlight.js), GitHub palette. */
+.adf-code-block .hljs-comment,
+.adf-code-block .hljs-code,
+.adf-code-block .hljs-formula { color: #6a737d; }
+.adf-code-block .hljs-keyword,
+.adf-code-block .hljs-doctag,
+.adf-code-block .hljs-template-tag,
+.adf-code-block .hljs-template-variable,
+.adf-code-block .hljs-type { color: #d73a49; }
+.adf-code-block .hljs-attr,
+.adf-code-block .hljs-attribute,
+.adf-code-block .hljs-literal,
+.adf-code-block .hljs-meta,
+.adf-code-block .hljs-number,
+.adf-code-block .hljs-operator,
+.adf-code-block .hljs-selector-attr,
+.adf-code-block .hljs-selector-class,
+.adf-code-block .hljs-selector-id,
+.adf-code-block .hljs-variable { color: #005cc5; }
+.adf-code-block .hljs-string,
+.adf-code-block .hljs-regexp { color: #032f62; }
+.adf-code-block .hljs-title,
+.adf-code-block .hljs-title.class_,
+.adf-code-block .hljs-title.function_ { color: #6f42c1; }
+.adf-code-block .hljs-name,
+.adf-code-block .hljs-quote,
+.adf-code-block .hljs-selector-tag,
+.adf-code-block .hljs-selector-pseudo { color: #22863a; }
+.adf-code-block .hljs-built_in,
+.adf-code-block .hljs-symbol { color: #e36209; }
+.adf-code-block .hljs-section { color: #005cc5; font-weight: 700; }
+.adf-code-block .hljs-bullet { color: #735c0f; }
+.adf-code-block .hljs-emphasis { font-style: italic; }
+.adf-code-block .hljs-strong { font-weight: 700; }
+.adf-code-block .hljs-addition { color: #22863a; background-color: #f0fff4; }
+.adf-code-block .hljs-deletion { color: #b31d28; background-color: #ffeef0; }
+
+.dark .adf-code-block .hljs-keyword,
+.dark .adf-code-block .hljs-doctag,
+.dark .adf-code-block .hljs-template-tag,
+.dark .adf-code-block .hljs-template-variable,
+.dark .adf-code-block .hljs-type { color: #ee6960; }
+.dark .adf-code-block .hljs-attr,
+.dark .adf-code-block .hljs-attribute,
+.dark .adf-code-block .hljs-literal,
+.dark .adf-code-block .hljs-meta,
+.dark .adf-code-block .hljs-number,
+.dark .adf-code-block .hljs-operator,
+.dark .adf-code-block .hljs-selector-attr,
+.dark .adf-code-block .hljs-selector-class,
+.dark .adf-code-block .hljs-selector-id,
+.dark .adf-code-block .hljs-variable { color: #6596cf; }
+.dark .adf-code-block .hljs-string,
+.dark .adf-code-block .hljs-regexp { color: #3593ff; }
+.dark .adf-code-block .hljs-title,
+.dark .adf-code-block .hljs-title.class_,
+.dark .adf-code-block .hljs-title.function_ { color: #a77bfa; }
+.dark .adf-code-block .hljs-name,
+.dark .adf-code-block .hljs-quote,
+.dark .adf-code-block .hljs-selector-tag,
+.dark .adf-code-block .hljs-selector-pseudo { color: #36a84f; }
+.dark .adf-code-block .hljs-built_in,
+.dark .adf-code-block .hljs-symbol { color: #c3854e; }
+.dark .adf-code-block .hljs-section { color: #61a5f2; }
+.dark .adf-code-block .hljs-addition { color: #ceead5; background-color: #3c5743; }
+.dark .adf-code-block .hljs-deletion { color: #e7c7cb; background-color: #473235; }

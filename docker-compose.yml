@@ -1,0 +1,71 @@
+# Dev-only infrastructure for the in-app ADF backend.
+# The app itself runs on the host via `pnpm dev` (port 3000) — only its
+# backing services live here. Compose auto-loads `.env` from this directory;
+# the `:-default` fallbacks let it boot even without one.
+#
+#   docker compose up -d      # start postgres + seaweedfs + mailpit
+#   docker compose down       # stop (volumes persist under ./.docker)
+#
+# Ports are set in .env (offset from defaults to avoid clashing with sibling
+# projects). With the shipped .env:
+#   Mailpit UI:    http://localhost:8026
+#   SeaweedFS S3:  http://localhost:8433   (filer UI http://localhost:8988)
+#   Postgres:      localhost:5433
+
+name: adf
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: adf-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-adf}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-adf}
+      POSTGRES_DB: ${POSTGRES_DB:-adf}
+      TZ: UTC
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./.docker/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-adf} -d ${POSTGRES_DB:-adf}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Single all-in-one SeaweedFS node exposing an S3 API (design §8).
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.19
+    container_name: adf-seaweedfs
+    restart: unless-stopped
+    environment:
+      AWS_ACCESS_KEY_ID: ${STORAGE_ACCESS_KEY:-adf-storage}
+      AWS_SECRET_ACCESS_KEY: ${STORAGE_SECRET_KEY:-adf-storage-secret}
+    ports:
+      - "${SEAWEEDFS_S3_PORT:-8333}:8333" # S3 API
+      - "${SEAWEEDFS_FILER_PORT:-8888}:8888" # filer web UI
+      - "${SEAWEEDFS_MASTER_PORT:-9333}:9333" # master UI
+    command:
+      - server
+      - -dir=/data
+      - -s3
+      - -s3.port=8333
+      - -filer
+    volumes:
+      - ./.docker/seaweedfs:/data
+
+  # Local SMTP sink — captures every outgoing mail, never delivers.
+  mailpit:
+    image: axllent/mailpit:v1.25
+    container_name: adf-mailpit
+    restart: unless-stopped
+    # Public resolvers so the SMTP greeting's reverse-DNS lookup fails fast —
+    # through the host's Tailscale MagicDNS it times out and delays every
+    # connection by ~8s, breaking the email integration tests.
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    ports:
+      - "${MAIL_PORT:-1025}:1025" # SMTP
+      - "${MAILPIT_UI_PORT:-8025}:8025" # web UI
