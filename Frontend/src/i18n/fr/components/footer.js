@@ -34,5 +34,5 @@ export const footer = {
   ],
   copy: '© 2025 Africa Digital Forum. Tous droits réservés. Lomé, Togo.',
   organizer: 'Organisé par',
-  orgName: 'Media & Digital Institute Africa'
+  orgName: 'Media & Digital Institute'
 };

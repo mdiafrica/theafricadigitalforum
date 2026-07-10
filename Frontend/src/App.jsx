@@ -19,6 +19,7 @@ function App() {
   const [lang, setLang] = useState('en');
   const [page, setPage] = useState('home');
   const [articleId, setArticleId] = useState(null);
+  const [scrollTarget, setScrollTarget] = useState(null);
 
   const languageOrder = ['en', 'fr'];
   const t = i18n[lang] || i18n.en;
@@ -28,8 +29,9 @@ function App() {
     setLang(languageOrder[nextIndex]);
   };
 
-  const handleSetPage = (pageName, data = null) => {
+  const handleSetPage = (pageName, data = null, target = null) => {
     setPage(pageName);
+    setScrollTarget(target);
     if (pageName === 'article') {
       setArticleId(data);
     } else {
@@ -74,6 +76,22 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
+
+  useEffect(() => {
+    if (page !== 'home' || !scrollTarget) return;
+
+    const scrollToSection = () => {
+      const selector = `[data-scroll="${scrollTarget}"]`;
+      const element = document.querySelector(selector) || document.getElementById(scrollTarget);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setScrollTarget(null);
+    };
+
+    const timer = window.setTimeout(scrollToSection, 120);
+    return () => window.clearTimeout(timer);
+  }, [page, scrollTarget]);
 
   const renderPage = () => {
     switch (page) {

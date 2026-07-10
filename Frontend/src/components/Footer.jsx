@@ -99,8 +99,8 @@ function Footer({ t, setPage }) {
     const socialLinks = {
       Facebook: 'https://www.facebook.com/theafricadigitalforum/',
       LinkedIn: 'https://www.linkedin.com/company/theafricadigitalforum/',
-      X: 'https://x.com/theafricadigitalforum',
-      Twitter: 'https://x.com/theafricadigitalforum',
+      X: 'https://x.com/ADFafrica',
+      Twitter: 'https://x.com/ADFafrica',
       Instagram: 'https://www.instagram.com/theafricadigitalforum/',
       YouTube: 'https://youtube.com/@theafricadigitalforum',
     };
@@ -151,17 +151,29 @@ function Footer({ t, setPage }) {
       'contactez-nous': 'contact',
       
       // Legal
-      'privacy policy': 'contact',
-      'terms of use': 'contact',
-      'cookie policy': 'contact',
+      'privacy policy': 'privacy',
+      'terms of use': 'terms',
+      'cookie policy': 'privacy',
     };
 
     const key = normalizeLink(link);
     const page = linkMap[key] || linkMap[link.toLowerCase()] || null;
+    const scrollTargets = {
+      speakers: 'speakers',
+      intervenants: 'speakers',
+    };
+    const target = scrollTargets[key] || null;
 
     if (page && setPage) {
-      setPage(page);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (page === 'privacy' || page === 'terms') {
+        const url = `${window.location.origin}/${page}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+      setPage(page, null, target);
+      if (!target) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 

@@ -10,6 +10,7 @@ import Image3 from '../Assets/Images/Image3.jpg';
 import Image4 from '../Assets/Images/Image4.jpg';
 import Image6 from '../Assets/Images/Image6.jpg';
 import Image7 from '../Assets/Images/Image7.jpeg';
+import Image8 from '../Assets/Images/Image8.jpg';
 import Image9 from '../Assets/Images/image9.jpg';
 
 const POST_IMAGES = {
@@ -19,6 +20,7 @@ const POST_IMAGES = {
   4: Image4,
   5: Image7,
   6: Image9,
+  7: Image8,
 };
 
 // ── EMAILJS CREDENTIALS ──

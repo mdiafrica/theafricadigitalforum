@@ -371,7 +371,7 @@ function SpeakersSection({ setPage, t }) {
   const allSpeakers = [...speakersWithImages, { isTeaser: true }];
 
   return (
-    <section className={styles.speakersSection} style={{ backgroundImage: `url(${Image6})` }}>
+    <section id="speakers" data-scroll="speakers" className={styles.speakersSection} style={{ backgroundImage: `url(${Image6})` }}>
       <div className={styles.speakersOverlay} />
       <div className={styles.container}>
         <FadeUp>
@@ -405,13 +405,16 @@ function LatestArticlesSection({ setPage, t }) {
 
   const latestT = t.home.latest;
 
-  // Merge static POSTS with translated text
-  const posts = POSTS.slice(0, 3).map((post, index) => ({
-    ...post,
-    title: t.home.latestPosts[index]?.title || post.title,
-    excerpt: t.home.latestPosts[index]?.excerpt || post.excerpt,
-    category: t.home.latestPosts[index]?.category || post.category,
-  }));
+  // Merge static POSTS with translated text, using newest post only
+  const posts = [...POSTS]
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 1)
+    .map((post, index) => ({
+      ...post,
+      title: t.home.latestPosts[index]?.title || post.title,
+      excerpt: t.home.latestPosts[index]?.excerpt || post.excerpt,
+      category: t.home.latestPosts[index]?.category || post.category,
+    }));
 
   useEffect(() => {
     if (subscribeSuccess) {

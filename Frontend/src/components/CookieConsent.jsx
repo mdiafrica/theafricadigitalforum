@@ -260,7 +260,7 @@ export default function CookieConsent() {
           <div className={styles.footer}>
             <button 
               className={styles.footerLink}
-              onClick={() => handleNavigate('privacy')}
+              onClick={() => window.open(`${window.location.origin}/privacy`, '_blank', 'noopener,noreferrer')}
             >
               <i className="ti ti-lock" />
               Privacy Policy
@@ -268,7 +268,7 @@ export default function CookieConsent() {
             <span className={styles.footerDivider}>•</span>
             <button 
               className={styles.footerLink}
-              onClick={() => handleNavigate('terms')}
+              onClick={() => window.open(`${window.location.origin}/terms`, '_blank', 'noopener,noreferrer')}
             >
               <i className="ti ti-file-text" />
               Terms of Use
