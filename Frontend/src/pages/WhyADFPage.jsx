@@ -2,8 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import pageStyles from '../Styles/WhyADFPage.module.css';
 import WhyHero from '../Assets/Images/Image5.jpg';
-import image1 from '../Assets/Images/AI.png';
-import image2 from '../Assets/Images/Image2.jpg';
+import image2 from '../Assets/Images/Image2.png';
 
 function useInView(options = {}) {
   const ref = useRef(null);
@@ -79,8 +78,9 @@ export default function WhyADFPage({ t }) {
         <div className={pageStyles.container}>
           <div className={pageStyles.whyAttendGrid}>
             <FadeUp delay={0.1}>
-              <div className={pageStyles.whyAttendImage}>
-                <img src={image1} alt="AI economic impact on Africa" />
+              <div className={pageStyles.impactNumberCard}>
+                {/* ONE WORD – numbers + dollar sign only */}
+                <div className={pageStyles.impactNumber}>$1,000,000,000,000</div>
               </div>
             </FadeUp>
 

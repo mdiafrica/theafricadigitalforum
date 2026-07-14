@@ -14,7 +14,7 @@
 
 /* ----- Hero Section ----- */
 .hero {
-  padding: 120px 5% 100px; /* Increased top and bottom padding */
+  padding: 120px 5% 100px;
   text-align: center;
   background-size: cover;
   background-position: center;
@@ -98,7 +98,42 @@
   transform: scale(1.02);
 }
 
-/* Heading with violet divider */
+/* ========== IMPACT NUMBER CARD – VIOLET ON BLACK (REDUCED AGAIN) ========== */
+.impactNumberCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;              /* reduced to match smaller number */
+  padding: 24px 20px;
+  border-radius: 24px;
+  background: #0a0a0a;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(139, 92, 246, 0.12);
+}
+
+.impactNumberCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(139, 92, 246, 0.06), transparent 70%);
+  pointer-events: none;
+}
+
+.impactNumber {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(28px, 3vw, 42px);    /* significantly smaller */
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #a78bfa;
+  text-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+  z-index: 1;
+}
+
+/* ----- Heading with violet divider ----- */
 .headingWithDivider {
   display: flex;
   gap: 20px;
@@ -115,7 +150,6 @@
   margin-top: 4px;
 }
 
-/* AI Impact Heading */
 .sectionHeading {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
@@ -141,7 +175,7 @@
 
 /* ----- Agenda Section (Practice‑Areas style) ----- */
 .agendaSection {
-  padding: 100px 5%; /* Increased top and bottom padding */
+  padding: 100px 5%;
   background-attachment: fixed;
 }
 
@@ -150,7 +184,6 @@
   margin-bottom: 60px;
 }
 
-/* Flex wrapper: divider and text on same line */
 .eyebrowWrapper {
   display: flex;
   align-items: center;
@@ -158,7 +191,6 @@
   margin-bottom: 16px;
 }
 
-/* Small horizontal divider (same line as text) */
 .smallHorizontalDivider {
   width: 30px;
   height: 2px;
@@ -166,7 +198,6 @@
   flex-shrink: 0;
 }
 
-/* Eyebrow text – very small font */
 .agendaEyebrow {
   font-family: 'Montserrat', sans-serif;
   font-size: 9px;
@@ -177,7 +208,6 @@
   display: inline-block;
 }
 
-/* Main title */
 .agendaMainTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
@@ -189,7 +219,6 @@
   color: #ffffff;
 }
 
-/* Horizontal divider under main title */
 .titleDivider {
   width: 60px;
   height: 3px;
@@ -197,7 +226,6 @@
   margin: 0 0 24px 0;
 }
 
-/* Descriptive paragraph */
 .agendaDescription {
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
@@ -209,7 +237,6 @@
   text-align: left;
 }
 
-/* Grid of cards */
 .agendaGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -218,7 +245,6 @@
   margin: 0 auto;
 }
 
-/* Individual card - Center aligned content */
 .agendaCard {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(2px);
@@ -241,36 +267,34 @@
 }
 
 .cardIcon {
-  font-size: 40px; /* Reduced from 48px */
+  font-size: 40px;
   color: #8b5cf6;
-  margin-bottom: 16px; /* Reduced from 20px */
+  margin-bottom: 16px;
 }
 
 .cardIcon i {
-  font-size: 40px; /* Reduced from 48px */
+  font-size: 40px;
   display: inline-block;
 }
 
 .cardTitle {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px; /* Reduced from 20px */
+  font-size: 16px;
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 12px; /* Reduced from 16px */
+  margin-bottom: 12px;
   line-height: 1.3;
 }
 
 .cardDescription {
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; /* Reduced from 14px */
+  font-size: 13px;
   color: #cbd5e1;
   line-height: 1.6;
-  margin-bottom: 0; /* Removed bottom margin since no button */
-  text-align: center; /* Changed from left to center */
+  margin-bottom: 0;
+  text-align: center;
   max-width: 90%;
 }
-
-/* Card button removed - no longer needed */
 
 /* ----- Responsive ----- */
 @media (max-width: 1024px) {
@@ -311,8 +335,12 @@
     margin-right: 0;
     text-align: center;
   }
-  .whyAttendImage img {
-    max-width: 280px;
+  .impactNumberCard {
+    min-height: 160px;
+    padding: 18px 14px;
+  }
+  .impactNumber {
+    font-size: clamp(24px, 4.5vw, 32px); /* smaller on tablet */
   }
   .agendaSection {
     padding: 80px 5%;
@@ -353,5 +381,12 @@
   }
   .cardTitle {
     font-size: 14px;
+  }
+  .impactNumberCard {
+    min-height: 120px;
+    padding: 14px 10px;
+  }
+  .impactNumber {
+    font-size: clamp(20px, 5vw, 26px); /* even smaller on mobile */
   }
 }

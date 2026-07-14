@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './Styles/App.module.css';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -15,11 +15,31 @@ import SingleArticlePage from './pages/SingleArticlePage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 
+const getPageFromPathname = (pathname) => {
+  const normalized = pathname.replace(/^\/+|\/+$/g, '');
+  const routeMap = {
+    '': 'home',
+    'about': 'about',
+    'whyadf': 'whyadf',
+    'why-adf': 'whyadf',
+    'city': 'city',
+    'blog': 'blog',
+    'contact': 'contact',
+    'privacy': 'privacy',
+    'terms': 'terms',
+    'tickets': 'tickets',
+    'register': 'register',
+  };
+
+  return routeMap[normalized] || 'home';
+};
+
 function App() {
   const [lang, setLang] = useState('en');
   const [page, setPage] = useState('home');
   const [articleId, setArticleId] = useState(null);
   const [scrollTarget, setScrollTarget] = useState(null);
+  const hasInitializedRoute = useRef(false);
 
   const languageOrder = ['en', 'fr'];
   const t = i18n[lang] || i18n.en;
@@ -42,19 +62,40 @@ function App() {
   // Expose setPage to window for CookieConsent navigation
   useEffect(() => {
     window.__setPage = handleSetPage;
-    
+
     // Listen for navigation events from CookieConsent
     const handleNavigation = (event) => {
       handleSetPage(event.detail);
     };
-    
+
+    const handlePopState = () => {
+      const nextPage = getPageFromPathname(window.location.pathname);
+      handleSetPage(nextPage);
+    };
+
     window.addEventListener('navigate', handleNavigation);
-    
+    window.addEventListener('popstate', handlePopState);
+
     return () => {
       window.removeEventListener('navigate', handleNavigation);
+      window.removeEventListener('popstate', handlePopState);
       delete window.__setPage;
     };
   }, []);
+
+  useEffect(() => {
+    if (!hasInitializedRoute.current) {
+      hasInitializedRoute.current = true;
+      const initialPage = getPageFromPathname(window.location.pathname);
+      if (initialPage !== page) {
+        handleSetPage(initialPage);
+      }
+      return;
+    }
+
+    const nextPath = page === 'home' ? '/' : `/${page}`;
+    window.history.replaceState({ page }, '', nextPath);
+  }, [page]);
 
   // Auto‑detect French timezone
   useEffect(() => {

@@ -4,13 +4,13 @@ import emailjs from '@emailjs/browser';
 import { CATEGORY_COLORS } from '../constants/categoryColors';
 
 // ── Import images ──
-import Image1 from '../Assets/Images/Image2.jpg';
+import Image1 from '../Assets/Images/Image2.png';
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
 import Image4 from '../Assets/Images/Image4.jpg';
-import Image6 from '../Assets/Images/Image6.jpg';
-import Image7 from '../Assets/Images/Image7.jpeg';
-import Image8 from '../Assets/Images/Image8.jpg';
+import Image6 from '../Assets/Images/Image6.png';
+import Image7 from '../Assets/Images/Image6.png';
+import Image8 from '../Assets/Images/Image8.png';
 import Image9 from '../Assets/Images/image9.jpg';
 
 const POST_IMAGES = {
@@ -87,11 +87,12 @@ const CheckIcon = () => (
 export default function BlogPage({ setPage, t }) {
   const blogT = t.blog;
 
-  // Build posts array: combine translations with image mapping
+  // ── Build posts array: combine translations with image mapping ──
+  // ✅ FIXED: Removed the .filter((post) => post.id === 7)
   const posts = (blogT.posts || []).map(post => ({
     ...post,
     image: POST_IMAGES[post.id] || null,
-  })).filter((post) => post.id === 7);
+  }));
 
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');

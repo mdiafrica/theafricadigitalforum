@@ -165,11 +165,6 @@ function Footer({ t, setPage }) {
     const target = scrollTargets[key] || null;
 
     if (page && setPage) {
-      if (page === 'privacy' || page === 'terms') {
-        const url = `${window.location.origin}/${page}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return;
-      }
       setPage(page, null, target);
       if (!target) {
         window.scrollTo({ top: 0, behavior: 'smooth' });

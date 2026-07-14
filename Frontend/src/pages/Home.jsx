@@ -4,15 +4,15 @@ import sharedStyles from '../Styles/shared.module.css';
 import styles from '../Styles/Home.module.css';
 import Button from '../components/Button';
 import emailjs from '@emailjs/browser';
-import { POSTS } from '../Data/posts';
 
-import Image1 from '../Assets/Images/Image2.jpg';
+import Image1 from '../Assets/Images/Image2.png';
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
 import Image4 from '../Assets/Images/Image4.jpg';
-import Image6 from '../Assets/Images/Image6.jpg';
+import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';
+import Image8 from '../Assets/Images/Image8.png';
 
 // ── REAL SPEAKER IMAGES ──
 import speaker1 from '../Assets/Images/LACINA KONE.png';
@@ -26,6 +26,18 @@ import speaker8 from "../Assets/Images/GEOFFROY-Odundo-scaled.jpeg";
 import speaker9 from "../Assets/Images/Hassanein HIRIDJEE.jpeg";
 import speaker10 from "../Assets/Images/Juliana Rotich.jpeg";
 import speaker11 from "../Assets/Images/Iyinoluwa Aboyeji.jpg";
+
+// ── POST IMAGES MAPPING ──
+const POST_IMAGES = {
+  1: Image6,
+  2: Image2,
+  3: Image3,
+  4: Image4,
+  5: Image7,
+  6: Image9,
+  7: Image8,
+  8: Image1,
+};
 
 // ── EMAILJS CREDENTIALS ──
 const EMAILJS_SERVICE_ID = 'service_oqw60pt';
@@ -405,16 +417,14 @@ function LatestArticlesSection({ setPage, t }) {
 
   const latestT = t.home.latest;
 
-  // Merge static POSTS with translated text, using newest post only
-  const posts = [...POSTS]
-    .sort((a, b) => b.id - a.id)
-    .slice(0, 1)
-    .map((post, index) => ({
+  // ✅ Get posts from translations like the blog page does
+  const posts = (t.blog?.posts || [])
+    .map(post => ({
       ...post,
-      title: t.home.latestPosts[index]?.title || post.title,
-      excerpt: t.home.latestPosts[index]?.excerpt || post.excerpt,
-      category: t.home.latestPosts[index]?.category || post.category,
-    }));
+      image: POST_IMAGES[post.id] || null,
+    }))
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 3);
 
   useEffect(() => {
     if (subscribeSuccess) {

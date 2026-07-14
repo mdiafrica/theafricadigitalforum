@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from '../Styles/shared.module.css';
 import pageStyles from '../Styles/CityPage.module.css';
-import Image1 from '../Assets/Images/Image2.jpg';
+import Image1 from '../Assets/Images/Image2.png';      // ← this is Image2.png (5‑Star Venues)
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
 import Image4 from '../Assets/Images/Image4.jpg';
-import Image6 from '../Assets/Images/Image6.jpg';
+import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';
+import visaImage from '../Assets/Images/visa.png';
+import digitalHubImage from '../Assets/Images/digitalhub.png';
 
 function useInView(options = {}) {
   const ref = useRef(null);
@@ -38,7 +40,7 @@ function FadeUp({ children, delay = 0, style = {} }) {
   );
 }
 
-// ── SVG Icon Components (fully defined) ──
+// ── SVG Icon Components ──
 const LocationIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 6 11 6 11s6-5.75 6-11c0-3.87-3.13-7-7-7z" stroke="#7C3AED" strokeWidth="2" fill="none"/>
@@ -124,15 +126,30 @@ export default function CityPage({ t, setPage }) {
   const [isAnimating, setIsAnimating] = useState(true);
   const animationRef = useRef(null);
 
-  // ── Build FORUM_PILLARS from translations and static images ──
-  const FORUM_PILLARS = city.cards.items.map((item, index) => ({
-    title: item.title,
-    subtitle: item.subtitle,
-    price: item.price,
-    description: item.description,
-    // Map static images in order: Image3, Image1, Image4, Image6, Image2, Image7
-    img: [Image3, Image1, Image4, Image6, Image2, Image7][index % 6],
-  }));
+  // ── Build FORUM_PILLARS with custom image overrides ──
+  const FORUM_PILLARS = city.cards.items.map((item, index) => {
+    // Default fallback images (order: Image3, Image1, Image4, Image6, Image2, Image7)
+    const defaultImages = [Image3, Image1, Image4, Image6, Image2, Image7];
+    let img;
+    if (index === 0) {
+      img = Image6;                  // Strategic Location ← NOW USING Image6
+    } else if (index === 1) {
+      img = visaImage;               // Visa-Free Travel
+    } else if (index === 3) {
+      img = digitalHubImage;         // Digital Hub (Digital Transformation)
+    } else if (index === 5) {
+      img = Image1;                  // 5‑Star Venues (Image2.png)
+    } else {
+      img = defaultImages[index % defaultImages.length];
+    }
+    return {
+      title: item.title,
+      subtitle: item.subtitle,
+      price: item.price,
+      description: item.description,
+      img,
+    };
+  });
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -166,6 +183,10 @@ export default function CityPage({ t, setPage }) {
     }
   };
 
+  // ── Images for the "Our Strategic Host City" badges ──
+  // Visa-Free Entry → visaImage, Digital Hub → digitalHubImage, 5-Star Venues → Image1 (Image2.png)
+  const hostCityImages = [visaImage, digitalHubImage, Image1];
+
   return (
     <div className={pageStyles.pageShell}>
 
@@ -193,7 +214,7 @@ export default function CityPage({ t, setPage }) {
         </div>
       </div>
 
-      {/* ── 2. INFO SECTION ── */}
+      {/* ── 2. INFO SECTION (Our Strategic Host City) ── */}
       <div ref={infoSectionRef}>
         <FadeUp>
           <div className={pageStyles.infoSection}>
@@ -204,11 +225,11 @@ export default function CityPage({ t, setPage }) {
             </div>
 
             <div className={pageStyles.infoPhotoGrid}>
-              {[Image1, Image2, Image9].map((img, i) => (
+              {hostCityImages.map((img, i) => (
                 <div key={i} className={pageStyles.infoPhotoWrap}>
                   <img
                     src={img}
-                    alt={`Lomé highlight ${i + 1}`}
+                    alt={city.info.badges[i]}
                     className={pageStyles.infoPhoto}
                   />
                   <span className={pageStyles.infoPhotoBadge}>

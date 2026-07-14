@@ -5,7 +5,7 @@ import {
   FaCheckCircle, FaExclamationTriangle
 } from 'react-icons/fa';
 import pageStyles from '../Styles/ContactPage.module.css';
-import ContactHero from '../Assets/Images/Image2.jpg';
+import ContactHero from '../Assets/Images/Image2.png';
 
 // ─── EmailJS credentials ──────────────────────────────────────────────────────
 const EMAILJS_SERVICE_ID  = 'service_oqw60pt';
