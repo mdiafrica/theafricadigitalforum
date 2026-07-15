@@ -1,7 +1,7 @@
 // AboutPage.jsx
 import { useState, useEffect, useRef } from 'react';
 import pageStyles from '../Styles/AboutPage.module.css';
-import AboutHero from '../Assets/Images/Image11.png';
+import AboutHero from '../Assets/Images/Image8.png';
 import CliffordImg from '../Assets/Images/clifford.png';
 import MarchImg from '../Assets/Images/Marc.png';
 

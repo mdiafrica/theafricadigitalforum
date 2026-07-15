@@ -7,7 +7,7 @@ import { CATEGORY_COLORS } from '../constants/categoryColors';
 import Image1 from '../Assets/Images/Image2.png';
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
-import Image4 from '../Assets/Images/Image4.jpg';
+import Image4 from '../Assets/Images/Image4.png';
 import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image6.png';
 import Image8 from '../Assets/Images/Image8.png';

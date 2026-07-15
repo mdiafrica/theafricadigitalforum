@@ -1,7 +1,7 @@
 // WhyADFPage.jsx
 import { useState, useEffect, useRef } from 'react';
 import pageStyles from '../Styles/WhyADFPage.module.css';
-import WhyHero from '../Assets/Images/Image5.jpg';
+import WhyHero from '../Assets/Images/Image4.png';
 import image2 from '../Assets/Images/Image2.png';
 
 function useInView(options = {}) {
@@ -79,8 +79,14 @@ export default function WhyADFPage({ t }) {
           <div className={pageStyles.whyAttendGrid}>
             <FadeUp delay={0.1}>
               <div className={pageStyles.impactNumberCard}>
-                {/* ONE WORD – numbers + dollar sign only */}
-                <div className={pageStyles.impactNumber}>$1,000,000,000,000</div>
+                {/* Number with violet $ and black digits */}
+                <div className={pageStyles.impactNumberWrapper}>
+                  <span className={pageStyles.impactNumberDollar}>$</span>
+                  <span className={pageStyles.impactNumber}>1,000,000,000,000</span>
+                </div>
+                
+                {/* One bigger divider below the number */}
+                <div className={pageStyles.impactNumberDivider} />
               </div>
             </FadeUp>
 

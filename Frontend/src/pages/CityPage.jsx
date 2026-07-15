@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from '../Styles/shared.module.css';
 import pageStyles from '../Styles/CityPage.module.css';
-import Image1 from '../Assets/Images/Image2.png';      // ← this is Image2.png (5‑Star Venues)
+import Image1 from '../Assets/Images/Image2.png';      
 import Image2 from '../Assets/Images/Image5.jpg';
 import Image3 from '../Assets/Images/Image3.jpg';
-import Image4 from '../Assets/Images/Image4.jpg';
+import Image4 from '../Assets/Images/Image4.png';
 import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';

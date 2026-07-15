@@ -14,11 +14,15 @@
 
 /* ----- Hero Section ----- */
 .hero {
-  padding: 120px 5% 100px;
+  padding: 160px 5% 140px;
   text-align: center;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .heroContent {
@@ -29,18 +33,18 @@
 .heroTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(32px, 4.5vw, 52px);
   letter-spacing: 0.08em;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: #ffffff;
 }
 
 .heroText {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
   max-width: 680px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.7;
   text-align: center;
 }
 
@@ -98,39 +102,53 @@
   transform: scale(1.02);
 }
 
-/* ========== IMPACT NUMBER CARD – VIOLET ON BLACK (REDUCED AGAIN) ========== */
+/* ========== IMPACT NUMBER CARD – BLACK WITH VIOLET $ ========== */
 .impactNumberCard {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  min-height: 200px;              /* reduced to match smaller number */
-  padding: 24px 20px;
+  align-items: flex-start;
+  min-height: 180px;
+  padding: 20px 16px;
   border-radius: 24px;
-  background: #0a0a0a;
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  background: transparent;
   position: relative;
-  border: 1px solid rgba(139, 92, 246, 0.12);
 }
 
-.impactNumberCard::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 40%, rgba(139, 92, 246, 0.06), transparent 70%);
-  pointer-events: none;
+.impactNumberWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.impactNumberDollar {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(32px, 3vw, 42px);
+  font-weight: 800;
+  color: #7c3aed;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  z-index: 1;
 }
 
 .impactNumber {
   font-family: 'Montserrat', sans-serif;
-  font-size: clamp(28px, 3vw, 42px);    /* significantly smaller */
+  font-size: clamp(28px, 2.6vw, 38px);
   font-weight: 800;
+  color: #1a1a1a;
   line-height: 1;
-  letter-spacing: -0.01em;
-  color: #a78bfa;
-  text-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+  letter-spacing: -0.02em;
   z-index: 1;
+}
+
+/* One bigger divider below the number */
+.impactNumberDivider {
+  width: 100px;
+  height: 3px;
+  background: #8b5cf6;
+  margin-top: 16px;
+  border-radius: 2px;
 }
 
 /* ----- Heading with violet divider ----- */
@@ -224,6 +242,7 @@
   height: 3px;
   background: #8b5cf6;
   margin: 0 0 24px 0;
+  border-radius: 2px;
 }
 
 .agendaDescription {
@@ -308,10 +327,11 @@
 
 @media (max-width: 768px) {
   .hero {
-    padding: 100px 5% 80px;
+    padding: 120px 5% 100px;
+    min-height: 50vh;
   }
   .heroText {
-    font-size: 14px;
+    font-size: 15px;
   }
   .section,
   .sectionAlt {
@@ -336,11 +356,22 @@
     text-align: center;
   }
   .impactNumberCard {
-    min-height: 160px;
-    padding: 18px 14px;
+    min-height: 140px;
+    padding: 16px 12px;
+    align-items: center;
+  }
+  .impactNumberWrapper {
+    justify-content: center;
+  }
+  .impactNumberDollar {
+    font-size: clamp(28px, 4vw, 36px);
   }
   .impactNumber {
-    font-size: clamp(24px, 4.5vw, 32px); /* smaller on tablet */
+    font-size: clamp(24px, 3.5vw, 32px);
+  }
+  .impactNumberDivider {
+    width: 80px;
+    margin-top: 12px;
   }
   .agendaSection {
     padding: 80px 5%;
@@ -357,6 +388,10 @@
 }
 
 @media (max-width: 480px) {
+  .hero {
+    padding: 100px 5% 80px;
+    min-height: 40vh;
+  }
   .heroTitle {
     font-size: 28px;
     letter-spacing: 0.05em;
@@ -383,10 +418,22 @@
     font-size: 14px;
   }
   .impactNumberCard {
-    min-height: 120px;
-    padding: 14px 10px;
+    min-height: 100px;
+    padding: 12px 8px;
+    align-items: center;
+  }
+  .impactNumberWrapper {
+    justify-content: center;
+  }
+  .impactNumberDollar {
+    font-size: clamp(22px, 5vw, 28px);
   }
   .impactNumber {
-    font-size: clamp(20px, 5vw, 26px); /* even smaller on mobile */
+    font-size: clamp(18px, 4vw, 24px);
+  }
+  .impactNumberDivider {
+    width: 60px;
+    height: 2px;
+    margin-top: 10px;
   }
 }
