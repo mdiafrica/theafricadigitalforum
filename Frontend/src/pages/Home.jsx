@@ -13,6 +13,10 @@ import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image9 from '../Assets/Images/image9.jpg';
 import Image8 from '../Assets/Images/Image8.png';
+import ADFLeadership from '../Assets/Images/ADFLeadership.png';
+import MetaImage from '../Assets/Images/meta.png';
+import MfundoNkuhluImage from '../Assets/Images/Mfundo-Nkuhlu.png';
+import KenyaITImage from '../Assets/Images/kenyaIT.jpg';
 
 // ── REAL SPEAKER IMAGES ──
 import speaker1 from '../Assets/Images/LACINA KONE.png';
@@ -29,15 +33,43 @@ import speaker11 from "../Assets/Images/Iyinoluwa Aboyeji.jpg";
 
 // ── POST IMAGES MAPPING ──
 const POST_IMAGES = {
-  1: Image6,
+  1: ADFLeadership,
   2: Image2,
   3: Image3,
   4: Image4,
   5: Image7,
   6: Image9,
   7: Image8,
-  8: Image1,
+  8: MetaImage,
+  9: KenyaITImage,
+  10: MfundoNkuhluImage,
 };
+
+function parsePostDate(post) {
+  const raw = post.publishedAt || post.date || '';
+  const timestamp = Date.parse(raw);
+  if (!isNaN(timestamp)) return timestamp;
+
+  const monthMap = {
+    janvier: 'January',
+    février: 'February',
+    mars: 'March',
+    avril: 'April',
+    mai: 'May',
+    juin: 'June',
+    juillet: 'July',
+    août: 'August',
+    septembre: 'September',
+    octobre: 'October',
+    novembre: 'November',
+    décembre: 'December',
+  };
+
+  const normalized = raw.replace(/(\d+)\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{4})/i,
+    (_, day, month, year) => `${day} ${monthMap[month.toLowerCase()]} ${year}`);
+  const fallback = Date.parse(normalized);
+  return isNaN(fallback) ? 0 : fallback;
+}
 
 // ── EMAILJS CREDENTIALS ──
 const EMAILJS_SERVICE_ID = 'service_oqw60pt';
@@ -45,6 +77,18 @@ const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
 const EMAILJS_PUBLIC_KEY = 'CRiokfjvcAxMuJHMB';
 
 const sliderImages = [{ url: Image1 }, { url: Image2 }, { url: Image6 }];
+
+function updateMetaTag(name, content, attr = 'property') {
+  if (typeof document === 'undefined') return;
+  const selector = attr === 'property' ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  let tag = document.head.querySelector(selector);
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attr, name);
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute('content', content);
+}
 
 // ── Hooks ──
 function useInView(options = {}) {
@@ -105,7 +149,7 @@ function FadeUp({ children, delay = 0, style = {} }) {
 
 // ── Stats config ──
 const statConfig = [
-  { target: 1000, suffix: '+', icon: 'ti-users', color: '#7C3AED' },
+  { target: 3000, suffix: '+', icon: 'ti-users', color: '#7C3AED' },
   { target: 50, suffix: '+', icon: 'ti-world', color: '#7C3AED' },
   { target: 150, suffix: '+', icon: 'ti-microphone', color: '#7C3AED' },
   { target: 200, suffix: '+', icon: 'ti-rocket', color: '#7C3AED' },
@@ -423,7 +467,8 @@ function LatestArticlesSection({ setPage, t }) {
       ...post,
       image: POST_IMAGES[post.id] || null,
     }))
-    .sort((a, b) => b.id - a.id)
+    .slice()
+    .sort((a, b) => parsePostDate(b) - parsePostDate(a))
     .slice(0, 3);
 
   useEffect(() => {
@@ -477,8 +522,8 @@ function LatestArticlesSection({ setPage, t }) {
     }
   };
 
-  const goToArticle = (postId) => {
-    setPage('article', postId);
+  const goToArticle = (post) => {
+    setPage('article', post.slug || post.id);
   };
 
   return (
@@ -539,7 +584,7 @@ function LatestArticlesSection({ setPage, t }) {
             <FadeUp key={index} delay={0.15 + index * 0.08}>
               <div
                 className={styles.latestCard}
-                onClick={() => goToArticle(post.id)}
+                onClick={() => goToArticle(post)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className={styles.latestImgWrap}>
@@ -570,6 +615,43 @@ function LatestArticlesSection({ setPage, t }) {
 
 // ── Main HomePage ──
 export default function HomePage({ setPage, t, lang }) {
+  const heroT = t.home.hero;
+
+  useEffect(() => {
+    const pageUrl = window.location.href;
+    const pageTitle = heroT.title || 'Africa Digital Forum';
+    const pageDescription = heroT.tagline || "Africa's premier platform for digital transformation, innovation, technology and investment.";
+    const pageImage = sliderImages[0]?.url
+      ? new URL(sliderImages[0].url, window.location.origin).href
+      : 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png';
+
+    document.title = `${pageTitle} | Africa Digital Forum`;
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:title', pageTitle);
+    updateMetaTag('og:description', pageDescription);
+    updateMetaTag('og:url', pageUrl);
+    updateMetaTag('og:image', pageImage);
+    updateMetaTag('og:image:secure_url', pageImage);
+    updateMetaTag('twitter:card', 'summary_large_image', 'name');
+    updateMetaTag('twitter:title', pageTitle, 'name');
+    updateMetaTag('twitter:description', pageDescription, 'name');
+    updateMetaTag('twitter:image', pageImage, 'name');
+
+    return () => {
+      document.title = 'Africa Digital Forum | Africa\'s Premier Digital Innovation & Technology Forum';
+      updateMetaTag('og:title', 'Africa Digital Forum');
+      updateMetaTag('og:description', "Africa's premier platform for digital transformation, innovation, technology and investment.");
+      updateMetaTag('og:url', 'https://theafricadigitalforum.com/');
+      updateMetaTag('og:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('og:image:secure_url', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('og:type', 'website');
+      updateMetaTag('twitter:card', 'summary_large_image', 'name');
+      updateMetaTag('twitter:title', 'Africa Digital Forum', 'name');
+      updateMetaTag('twitter:description', "Africa's premier platform for digital transformation.", 'name');
+      updateMetaTag('twitter:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png', 'name');
+    };
+  }, [heroT]);
+
   return (
     <>
       <Hero setPage={setPage} t={t} />

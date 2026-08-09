@@ -15,29 +15,43 @@ import SingleArticlePage from './pages/SingleArticlePage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 
-const getPageFromPathname = (pathname) => {
+const getRouteFromPathname = (pathname) => {
   const normalized = pathname.replace(/^\/+|\/+$/g, '');
+  const segments = normalized.split('/').filter(Boolean);
+
+  if (segments[0] === 'article') {
+    const articleKey = segments[1] ? decodeURIComponent(segments[1]) : null;
+    return { page: articleKey ? 'article' : 'blog', articleKey };
+  }
+
   const routeMap = {
-    '': 'home',
-    'about': 'about',
-    'whyadf': 'whyadf',
-    'why-adf': 'whyadf',
-    'city': 'city',
-    'blog': 'blog',
-    'contact': 'contact',
-    'privacy': 'privacy',
-    'terms': 'terms',
-    'tickets': 'tickets',
-    'register': 'register',
+    '': { page: 'home', articleKey: null },
+    'about': { page: 'about', articleKey: null },
+    'whyadf': { page: 'whyadf', articleKey: null },
+    'why-adf': { page: 'whyadf', articleKey: null },
+    'city': { page: 'city', articleKey: null },
+    'blog': { page: 'blog', articleKey: null },
+    'contact': { page: 'contact', articleKey: null },
+    'privacy': { page: 'privacy', articleKey: null },
+    'terms': { page: 'terms', articleKey: null },
+    'tickets': { page: 'tickets', articleKey: null },
+    'register': { page: 'register', articleKey: null },
   };
 
-  return routeMap[normalized] || 'home';
+  return routeMap[segments[0] || ''] || { page: 'home', articleKey: null };
+};
+
+const getPathFromRoute = (page, articleKey) => {
+  if (page === 'article' && articleKey) return `/article/${encodeURIComponent(articleKey)}`;
+  if (page === 'article') return '/article';
+  if (page === 'home') return '/';
+  return `/${page}`;
 };
 
 function App() {
   const [lang, setLang] = useState('en');
   const [page, setPage] = useState('home');
-  const [articleId, setArticleId] = useState(null);
+  const [articleKey, setArticleKey] = useState(null);
   const [scrollTarget, setScrollTarget] = useState(null);
   const hasInitializedRoute = useRef(false);
 
@@ -53,9 +67,9 @@ function App() {
     setPage(pageName);
     setScrollTarget(target);
     if (pageName === 'article') {
-      setArticleId(data);
+      setArticleKey(data || null);
     } else {
-      setArticleId(null);
+      setArticleKey(null);
     }
   };
 
@@ -69,8 +83,8 @@ function App() {
     };
 
     const handlePopState = () => {
-      const nextPage = getPageFromPathname(window.location.pathname);
-      handleSetPage(nextPage);
+      const route = getRouteFromPathname(window.location.pathname);
+      handleSetPage(route.page, route.articleKey);
     };
 
     window.addEventListener('navigate', handleNavigation);
@@ -86,16 +100,19 @@ function App() {
   useEffect(() => {
     if (!hasInitializedRoute.current) {
       hasInitializedRoute.current = true;
-      const initialPage = getPageFromPathname(window.location.pathname);
-      if (initialPage !== page) {
-        handleSetPage(initialPage);
+      const initialRoute = getRouteFromPathname(window.location.pathname);
+      if (initialRoute.page !== page || initialRoute.articleKey !== articleKey) {
+        handleSetPage(initialRoute.page, initialRoute.articleKey);
       }
       return;
     }
 
-    const nextPath = page === 'home' ? '/' : `/${page}`;
-    window.history.replaceState({ page }, '', nextPath);
-  }, [page]);
+    const nextPath = getPathFromRoute(page, articleKey);
+    const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentPath !== nextPath) {
+      window.history.pushState({ page, articleKey }, '', nextPath);
+    }
+  }, [page, articleKey]);
 
   // Auto‑detect French timezone
   useEffect(() => {
@@ -147,7 +164,7 @@ function App() {
       case 'blog':
         return <BlogPage setPage={handleSetPage} t={t} />;
       case 'article':
-        return <SingleArticlePage setPage={handleSetPage} postId={articleId} t={t} />;
+        return <SingleArticlePage setPage={handleSetPage} postId={articleKey} t={t} />;
       case 'contact':
         return <ContactPage t={t} />;
       case 'privacy':

@@ -41,12 +41,12 @@ function FadeUp({ children, delay = 0 }) {
   );
 }
 
-// ─── Social icons (static) ──────────────────────────────────────────────────
+// ─── Social icons ─────────────────────────────────────────────────────────
 const SOCIALS = [
-  { label: <FaFacebookF />, href: '#' },
-  { label: <FaInstagram />, href: '#' },
-  { label: <FaTwitter />,   href: '#' },
-  { label: <FaYoutube />,   href: '#' },
+  { label: <FaFacebookF />, href: 'https://www.facebook.com/theafricadigitalforum/', ariaLabel: 'Facebook' },
+  { label: <FaInstagram />, href: 'https://www.instagram.com/theafricadigitalforum/', ariaLabel: 'Instagram' },
+  { label: <FaTwitter />, href: 'https://x.com/ADFafrica', ariaLabel: 'X' },
+  { label: <FaYoutube />, href: 'https://youtube.com/@theafricadigitalforum', ariaLabel: 'YouTube' },
 ];
 
 // ─── Map icon to contact item (using static icons, but content from translations) ──
@@ -132,7 +132,16 @@ export default function ContactPage({ t }) {
               <p className={pageStyles.socialLabel}>{contact.info.socialLabel}</p>
               <div className={pageStyles.socialRow}>
                 {SOCIALS.map((s, i) => (
-                  <a key={i} href={s.href} className={pageStyles.socialBtn}>{s.label}</a>
+                  <a
+                    key={i}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.ariaLabel}
+                    className={pageStyles.socialBtn}
+                  >
+                    {s.label}
+                  </a>
                 ))}
               </div>
             </div>

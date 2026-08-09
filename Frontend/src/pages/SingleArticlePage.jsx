@@ -12,15 +12,23 @@ import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image7.jpeg';
 import Image8 from '../Assets/Images/Image8.png';
 import Image9 from '../Assets/Images/image9.jpg';
+import ADFLeadership from '../Assets/Images/ADFLeadership.png';
+import MetaImage from '../Assets/Images/meta.png';
+
+import MfundoNkuhluImage from '../Assets/Images/Mfundo-Nkuhlu.png';
+import KenyaITImage from '../Assets/Images/kenyaIT.jpg';
 
 const POST_IMAGES = {
-  1: Image6,
+  1: ADFLeadership,
   2: Image2,
   3: Image3,
   4: Image4,
   5: Image7,
   6: Image9,
   7: Image8,
+  8: MetaImage,
+  9: KenyaITImage,
+  10: MfundoNkuhluImage,
 };
 
 // ── EMAILJS CREDENTIALS ──
@@ -122,6 +130,44 @@ function FadeUp({ children, delay = 0, style = {} }) {
   );
 }
 
+function updateMetaTag(name, content, attr = 'property') {
+  if (typeof document === 'undefined') return;
+  const selector = attr === 'property' ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  let tag = document.head.querySelector(selector);
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attr, name);
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute('content', content);
+}
+
+function parsePostDate(post) {
+  const raw = post.publishedAt || post.date || '';
+  const timestamp = Date.parse(raw);
+  if (!isNaN(timestamp)) return timestamp;
+
+  const monthMap = {
+    janvier: 'January',
+    février: 'February',
+    mars: 'March',
+    avril: 'April',
+    mai: 'May',
+    juin: 'June',
+    juillet: 'July',
+    août: 'August',
+    septembre: 'September',
+    octobre: 'October',
+    novembre: 'November',
+    décembre: 'December',
+  };
+
+  const normalized = raw.replace(/(\d+)\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{4})/i,
+    (_, day, month, year) => `${day} ${monthMap[month.toLowerCase()]} ${year}`);
+  const fallback = Date.parse(normalized);
+  return isNaN(fallback) ? 0 : fallback;
+}
+
 export default function SingleArticlePage({ setPage, postId, t }) {
   const blogT = t.blog;
   const singleT = blogT.singleArticle;
@@ -135,7 +181,7 @@ export default function SingleArticlePage({ setPage, postId, t }) {
     image: POST_IMAGES[post.id] || null,
   }));
 
-  const article = posts.find(p => p.id === Number(postId));
+  const article = posts.find((p) => p.slug === postId || p.id === Number(postId));
 
   // ── Scroll to hero when article loads ──
   useEffect(() => {
@@ -144,6 +190,41 @@ export default function SingleArticlePage({ setPage, postId, t }) {
         heroRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
+  }, [article]);
+
+  useEffect(() => {
+    if (!article) return;
+
+    const pageUrl = window.location.href;
+    const pageTitle = article.title;
+    const pageDescription = article.excerpt || article.content?.slice(0, 140) || 'Read our latest article on Africa’s digital transformation.';
+    const pageImage = article.image ? new URL(article.image, window.location.origin).href : 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png';
+
+    document.title = `${pageTitle} | Africa Digital Forum`;
+    updateMetaTag('og:type', 'article');
+    updateMetaTag('og:title', pageTitle);
+    updateMetaTag('og:description', pageDescription);
+    updateMetaTag('og:url', pageUrl);
+    updateMetaTag('og:image', pageImage);
+    updateMetaTag('og:image:secure_url', pageImage);
+    updateMetaTag('twitter:card', 'summary_large_image', 'name');
+    updateMetaTag('twitter:title', pageTitle, 'name');
+    updateMetaTag('twitter:description', pageDescription, 'name');
+    updateMetaTag('twitter:image', pageImage, 'name');
+
+    return () => {
+      document.title = 'Africa Digital Forum | Africa\'s Premier Digital Innovation & Technology Forum';
+      updateMetaTag('og:type', 'website');
+      updateMetaTag('og:title', 'Africa Digital Forum');
+      updateMetaTag('og:description', "Africa's premier platform for digital transformation, innovation, technology and investment.");
+      updateMetaTag('og:url', 'https://theafricadigitalforum.com/');
+      updateMetaTag('og:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('og:image:secure_url', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('twitter:card', 'summary_large_image', 'name');
+      updateMetaTag('twitter:title', 'Africa Digital Forum', 'name');
+      updateMetaTag('twitter:description', "Africa's premier platform for digital transformation.", 'name');
+      updateMetaTag('twitter:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png', 'name');
+    };
   }, [article]);
 
   if (!article) {
@@ -177,7 +258,11 @@ export default function SingleArticlePage({ setPage, postId, t }) {
   }
 
   const categoryColor = getCategoryColor(article.category);
-  const relatedArticles = posts.filter(p => p.id !== article.id).slice(0, 3);
+  const relatedArticles = posts
+    .filter(p => p.id !== article.id)
+    .slice()
+    .sort((a, b) => parsePostDate(b) - parsePostDate(a))
+    .slice(0, 3);
 
   // ── Newsletter state ──
   const [email, setEmail] = useState('');
@@ -397,7 +482,7 @@ export default function SingleArticlePage({ setPage, postId, t }) {
                         <div
                           key={post.id}
                           className={styles.sidebarRelatedItem}
-                          onClick={() => setPage('article', post.id)}
+                          onClick={() => setPage('article', post.slug || post.id)}
                         >
                           <div className={styles.sidebarRelatedImgWrap}>
                             <img 
@@ -449,7 +534,7 @@ export default function SingleArticlePage({ setPage, postId, t }) {
           <div className={styles.moreGrid}>
             {posts.filter(p => p.id !== article.id).slice(0, 3).map((post, index) => (
               <FadeUp key={post.id} delay={0.08 * (index + 1)}>
-                <div className={styles.moreCard} onClick={() => setPage('article', post.id)}>
+                <div className={styles.moreCard} onClick={() => setPage('article', post.slug || post.id)}>
                   <div className={styles.moreImgWrap}>
                     <img 
                       src={post.image || '/placeholder-image.jpg'} 

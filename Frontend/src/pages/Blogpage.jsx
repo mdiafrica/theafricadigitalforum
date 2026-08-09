@@ -12,22 +12,65 @@ import Image6 from '../Assets/Images/Image6.png';
 import Image7 from '../Assets/Images/Image6.png';
 import Image8 from '../Assets/Images/Image8.png';
 import Image9 from '../Assets/Images/image9.jpg';
+import ADFLeadership from '../Assets/Images/ADFLeadership.png';
+import MetaImage from '../Assets/Images/meta.png';
+import MfundoNkuhluImage from '../Assets/Images/Mfundo-Nkuhlu.png';
+import KenyaITImage from '../Assets/Images/kenyaIT.jpg';
 
 const POST_IMAGES = {
-  1: Image6,
+  1: ADFLeadership,
   2: Image2,
   3: Image3,
   4: Image4,
   5: Image7,
   6: Image9,
   7: Image8,
+  8: MetaImage,
+  9: KenyaITImage,
+  10: MfundoNkuhluImage,
 };
+
+function parsePostDate(post) {
+  const raw = post.publishedAt || post.date || '';
+  const timestamp = Date.parse(raw);
+  if (!isNaN(timestamp)) return timestamp;
+
+  const monthMap = {
+    janvier: 'January',
+    février: 'February',
+    mars: 'March',
+    avril: 'April',
+    mai: 'May',
+    juin: 'June',
+    juillet: 'July',
+    août: 'August',
+    septembre: 'September',
+    octobre: 'October',
+    novembre: 'November',
+    décembre: 'December',
+  };
+
+  const normalized = raw.replace(/(\d+)\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{4})/i,
+    (_, day, month, year) => `${day} ${monthMap[month.toLowerCase()]} ${year}`);
+  const fallback = Date.parse(normalized);
+  return isNaN(fallback) ? 0 : fallback;
+}
 
 // ── EMAILJS CREDENTIALS ──
 const EMAILJS_SERVICE_ID  = 'service_oqw60pt';
 const EMAILJS_TEMPLATE_ID = 'template_t9fam69';
 const EMAILJS_PUBLIC_KEY  = 'CRiokfjvcAxMuJHMB';
-
+function updateMetaTag(name, content, attr = 'property') {
+  if (typeof document === 'undefined') return;
+  const selector = attr === 'property' ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  let tag = document.head.querySelector(selector);
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attr, name);
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute('content', content);
+}
 // ── Intersection Observer hook ──
 function useInView(options = {}) {
   const ref = useRef(null);
@@ -94,6 +137,44 @@ export default function BlogPage({ setPage, t }) {
     image: POST_IMAGES[post.id] || null,
   }));
 
+  const orderedPosts = posts.slice().sort((a, b) => parsePostDate(b) - parsePostDate(a));
+  const FEATURED_POST = orderedPosts[0];
+
+  useEffect(() => {
+    const pageUrl = window.location.href;
+    const pageTitle = blogT.pageTitle || 'Blog';
+    const pageDescription = blogT.pageSub || 'Latest perspectives and analysis on Africa’s digital transformation.';
+    const pageImage = FEATURED_POST?.image
+      ? new URL(FEATURED_POST.image, window.location.origin).href
+      : 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png';
+
+    document.title = `${pageTitle} | Africa Digital Forum`;
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:title', pageTitle);
+    updateMetaTag('og:description', pageDescription);
+    updateMetaTag('og:url', pageUrl);
+    updateMetaTag('og:image', pageImage);
+    updateMetaTag('og:image:secure_url', pageImage);
+    updateMetaTag('twitter:card', 'summary_large_image', 'name');
+    updateMetaTag('twitter:title', pageTitle, 'name');
+    updateMetaTag('twitter:description', pageDescription, 'name');
+    updateMetaTag('twitter:image', pageImage, 'name');
+
+    return () => {
+      document.title = 'Africa Digital Forum | Africa\'s Premier Digital Innovation & Technology Forum';
+      updateMetaTag('og:type', 'website');
+      updateMetaTag('og:title', 'Africa Digital Forum');
+      updateMetaTag('og:description', "Africa's premier platform for digital transformation, innovation, technology and investment.");
+      updateMetaTag('og:url', 'https://theafricadigitalforum.com/');
+      updateMetaTag('og:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('og:image:secure_url', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png');
+      updateMetaTag('twitter:card', 'summary_large_image', 'name');
+      updateMetaTag('twitter:title', 'Africa Digital Forum', 'name');
+      updateMetaTag('twitter:description', "Africa's premier platform for digital transformation.", 'name');
+      updateMetaTag('twitter:image', 'https://theafricadigitalforum.com/assets/Logo-COtdmCdo.png', 'name');
+    };
+  }, [FEATURED_POST, blogT.pageTitle, blogT.pageSub]);
+
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(6);
@@ -119,7 +200,7 @@ export default function BlogPage({ setPage, t }) {
   const CATEGORIES = blogT.categories || ['All'];
 
   // ── Filter articles ──
-  const filtered = posts.filter(p => {
+  const filtered = orderedPosts.filter(p => {
     const matchCat = activeCategory === 'All' || p.category === activeCategory;
     const matchSearch = !searchQuery ||
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -136,11 +217,10 @@ export default function BlogPage({ setPage, t }) {
     setVisibleCount(6);
   }, [activeCategory, searchQuery]);
 
-  const sidebarPosts = posts.slice(0, 4);
-  const FEATURED_POST = posts[0];
+  const sidebarPosts = orderedPosts.slice(0, 4);
 
-  const goToArticle = (postId) => {
-    setPage('article', postId);
+  const goToArticle = (post) => {
+    setPage('article', post.slug || post.id);
   };
 
   // ── EMAILJS SEND ──
@@ -233,7 +313,7 @@ export default function BlogPage({ setPage, t }) {
         {FEATURED_POST && (
           <FadeUp delay={0.1}>
             <div className={styles.heroGrid}>
-              <div className={styles.featuredCard} onClick={() => goToArticle(FEATURED_POST.id)}>
+              <div className={styles.featuredCard} onClick={() => goToArticle(FEATURED_POST)}>
                 <img 
                   src={FEATURED_POST.image || '/placeholder-image.jpg'} 
                   alt={FEATURED_POST.title} 
@@ -264,7 +344,7 @@ export default function BlogPage({ setPage, t }) {
 
               <div className={styles.sidebarStories}>
                 {sidebarPosts.slice(1).map((post, i) => (
-                  <div key={i} className={styles.sideStory} onClick={() => goToArticle(post.id)}>
+                  <div key={i} className={styles.sideStory} onClick={() => goToArticle(post)}>
                     <div className={styles.sideStoryImgWrap}>
                       <img 
                         src={post.image || '/placeholder-image.jpg'} 
@@ -353,7 +433,7 @@ export default function BlogPage({ setPage, t }) {
               <div className={styles.articlesGrid}>
                 {visiblePosts.map((post, i) => (
                   <FadeUp key={i} delay={i * 0.04}>
-                    <article className={styles.articleCard} onClick={() => goToArticle(post.id)}>
+                    <article className={styles.articleCard} onClick={() => goToArticle(post)}>
                       <div className={styles.articleImgWrap}>
                         <img 
                           src={post.image || '/placeholder-image.jpg'} 
