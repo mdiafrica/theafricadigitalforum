@@ -20,49 +20,59 @@ type SocialIcon = (props: React.SVGProps<SVGSVGElement>) => React.ReactElement
  */
 const LINK_TARGETS: (string | null)[][] = [
   ["/", "/about", "/about", "/about", "/why-adf"],
-  ["/blog", "/host-city", "/#speakers", "https://mdiafrica.org/en/", "/contact"],
+  [
+    "/blog",
+    "/host-city",
+    "/#speakers",
+    "https://mdiafrica.org/en/",
+    "/contact",
+  ],
   [
     "https://www.facebook.com/theafricadigitalforum/",
     "https://www.linkedin.com/company/theafricadigitalforum/",
-    "https://x.com/theafricadigitalforum",
+    "https://x.com/ADFafrica",
     "https://www.instagram.com/theafricadigitalforum/",
     "https://youtube.com/@theafricadigitalforum",
   ],
 ]
 
-const SOCIALS: { icon: SocialIcon; href: string; label: string; color: string }[] =
-  [
-    {
-      icon: FacebookIcon,
-      href: "https://www.facebook.com/theafricadigitalforum/",
-      label: "Facebook",
-      color: "#1877F2",
-    },
-    {
-      icon: LinkedinIcon,
-      href: "https://www.linkedin.com/company/theafricadigitalforum/",
-      label: "LinkedIn",
-      color: "#0A66C2",
-    },
-    {
-      icon: XIcon,
-      href: "https://x.com/theafricadigitalforum",
-      label: "X",
-      color: "#ffffff",
-    },
-    {
-      icon: InstagramIcon,
-      href: "https://www.instagram.com/theafricadigitalforum/",
-      label: "Instagram",
-      color: "#E4405F",
-    },
-    {
-      icon: YoutubeIcon,
-      href: "https://youtube.com/@theafricadigitalforum",
-      label: "YouTube",
-      color: "#FF0000",
-    },
-  ]
+const SOCIALS: {
+  icon: SocialIcon
+  href: string
+  label: string
+  color: string
+}[] = [
+  {
+    icon: FacebookIcon,
+    href: "https://www.facebook.com/theafricadigitalforum/",
+    label: "Facebook",
+    color: "#1877F2",
+  },
+  {
+    icon: LinkedinIcon,
+    href: "https://www.linkedin.com/company/theafricadigitalforum/",
+    label: "LinkedIn",
+    color: "#0A66C2",
+  },
+  {
+    icon: XIcon,
+    href: "https://x.com/ADFafrica",
+    label: "X",
+    color: "#ffffff",
+  },
+  {
+    icon: InstagramIcon,
+    href: "https://www.instagram.com/theafricadigitalforum/",
+    label: "Instagram",
+    color: "#E4405F",
+  },
+  {
+    icon: YoutubeIcon,
+    href: "https://youtube.com/@theafricadigitalforum",
+    label: "YouTube",
+    color: "#FF0000",
+  },
+]
 
 const LEGAL_LINKS = [
   { label: "Privacy Policy", to: "/privacy" },
@@ -154,7 +164,11 @@ export function SiteFooter() {
                     </a>
                   )
                 return target.startsWith("/#") ? (
-                  <a key={label} href={target.slice(1)} className={FOOTER_LINK_CLASS}>
+                  <a
+                    key={label}
+                    href={target.slice(1)}
+                    className={FOOTER_LINK_CLASS}
+                  >
                     {label}
                   </a>
                 ) : (

@@ -1,7 +1,7 @@
 export const whyadf = {
   heroTitle: "Pourquoi Africa Digital Forum",
   heroText:
-    "Établir un écosystème « numérique africain » authentique, caractérisé par un marché numérique unifié, des solutions logicielles localisées et une coordination régionale de la cybersécurité, est une nécessité structurelle pour le développement durable.",
+    "Établir un écosystème du « Digital Africain », caractérisé par un marché numérique unique, des solutions logicielles développées localement et une coordination régionale en matière de cybersécurité, constitue une nécessité structurelle pour un développement durable.",
 
   aiSection: {
     heading:
@@ -15,7 +15,7 @@ export const whyadf = {
     mainTitle:
       "Un programme en six points pour une croissance inclusive et la souveraineté",
     description:
-      "Des perspectives présidentielles à la mise en œuvre pratique, découvrez comment les dirigeants transforment les ambitions numériques en un impact durable à travers l'Afrique.",
+      "Des visions présidentielles aux actions concrètes, découvrez comment les leaders façonnent un avenir numérique durable pour l'Afrique.",
     items: [
       {
         icon: "ti-device-laptop",

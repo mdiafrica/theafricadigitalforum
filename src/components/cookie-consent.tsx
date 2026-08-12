@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Link } from "@tanstack/react-router"
 import {
   BarChart3,
   Check,
@@ -16,17 +15,16 @@ import {
   Settings2,
   Shield,
   X,
-  type LucideIcon,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 import {
   getCookieConsent,
   getCookieCount,
   resetCookieConsent,
   saveCookieConsent,
-  type CookieCategory,
-  type CookiePreferences,
 } from "@/lib/cookies"
+import type { CookieCategory, CookiePreferences } from "@/lib/cookies"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 
@@ -93,7 +91,10 @@ export function CookieConsent() {
     return () => clearTimeout(timer)
   }, [])
 
-  const save = (prefs: CookiePreferences, type: "all" | "essential" | "custom") => {
+  const save = (
+    prefs: CookiePreferences,
+    type: "all" | "essential" | "custom"
+  ) => {
     setIsSaving(true)
     saveCookieConsent(prefs, type)
     setTimeout(() => {
@@ -129,9 +130,9 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-label="Cookie Consent"
-      className="fixed inset-0 z-[1200] flex items-end justify-center bg-black/30 p-5 duration-300 animate-in fade-in"
+      className="fixed inset-0 z-[1200] flex animate-in items-end justify-center bg-black/30 p-5 duration-300 fade-in"
     >
-      <div className="w-full max-w-[720px] duration-300 animate-in slide-in-from-bottom-4">
+      <div className="w-full max-w-[720px] animate-in duration-300 slide-in-from-bottom-4">
         <div className="max-h-[80vh] overflow-y-auto rounded-2xl border border-primary/[0.08] bg-white p-6 text-[#1a1a1a] shadow-[0_20px_60px_rgba(0,0,0,0.2)] sm:p-7">
           {/* Header */}
           <div className="mb-4 flex gap-4">
@@ -190,7 +191,7 @@ export function CookieConsent() {
 
           {/* Categories */}
           {showDetails && (
-            <div className="mt-4 border-t border-black/[0.06] pt-4 duration-300 animate-in fade-in">
+            <div className="mt-4 animate-in border-t border-black/[0.06] pt-4 duration-300 fade-in">
               {CATEGORIES.map((category) => (
                 <div
                   key={category.id}
@@ -243,23 +244,25 @@ export function CookieConsent() {
 
           {/* Footer */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3 border-t border-black/[0.06] pt-4 text-[13px] font-medium text-[#6b7280]">
-            <Link
-              to="/privacy"
-              onClick={() => setVisible(false)}
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
             >
               <Lock className="size-3.5" />
               Privacy Policy
-            </Link>
+            </a>
             <span className="text-black/20">•</span>
-            <Link
-              to="/terms"
-              onClick={() => setVisible(false)}
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
             >
               <FileText className="size-3.5" />
               Terms of Use
-            </Link>
+            </a>
             <span className="text-black/20">•</span>
             <button
               type="button"

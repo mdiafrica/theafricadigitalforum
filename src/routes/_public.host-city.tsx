@@ -9,8 +9,8 @@ import {
   Plane,
   Monitor,
   ShieldCheck,
-  type LucideIcon,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
 import { Reveal } from "@/components/motion"
@@ -18,19 +18,15 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import heroBg from "@/assets/images/Image6.jpg"
 import promoBg from "@/assets/images/image9.jpg"
-import ctaBg from "@/assets/images/Image2.jpg"
+import ctaBg from "@/assets/images/Image5.jpg"
+import visaImg from "@/assets/images/visa.jpg"
+import digitalHubImg from "@/assets/images/digitalhub.jpg"
 import img1 from "@/assets/images/Image2.jpg"
-import img2 from "@/assets/images/Image5.jpg"
-import img9 from "@/assets/images/image9.jpg"
 import card1 from "@/assets/images/Image3.jpg"
-import card2 from "@/assets/images/Image2.jpg"
 import card3 from "@/assets/images/Image4.jpg"
-import card4 from "@/assets/images/Image6.jpg"
-import card5 from "@/assets/images/Image5.jpg"
-import card6 from "@/assets/images/Image7.jpeg"
 
-const INFO_PHOTOS = [img1, img2, img9]
-const CARD_IMAGES = [card1, card2, card3, card4, card5, card6]
+const INFO_PHOTOS = [visaImg, digitalHubImg, img1]
+const CARD_IMAGES = [heroBg, visaImg, card3, digitalHubImg, ctaBg, img1, card1]
 const CARD_ICONS: LucideIcon[] = [
   Globe,
   MapPin,
@@ -71,7 +67,10 @@ function HostCityRoute() {
   }))
 
   const scrollBy = (delta: number) =>
-    trackRef.current?.parentElement?.scrollBy({ left: delta, behavior: "smooth" })
+    trackRef.current?.parentElement?.scrollBy({
+      left: delta,
+      behavior: "smooth",
+    })
 
   return (
     <div className="bg-white font-nav text-[#1a1a1a]">
@@ -184,10 +183,10 @@ function HostCityRoute() {
               <ChevronLeft className="size-7" />
             </Button>
 
-            <div className="group flex-1 overflow-x-auto rounded-2xl [scrollbar-width:none]">
+            <div className="group flex-1 [scrollbar-width:none] overflow-x-auto rounded-2xl">
               <div
                 ref={trackRef}
-                className="flex w-max gap-6 py-5 animate-[adf-marquee_40s_linear_infinite] group-hover:[animation-play-state:paused]"
+                className="flex w-max animate-[adf-marquee_40s_linear_infinite] gap-6 py-5 group-hover:[animation-play-state:paused]"
               >
                 {[...cards, ...cards].map((card, i) => (
                   <PillarCard key={i} card={card} />
@@ -264,7 +263,7 @@ function PillarCard({ card }: { card: PillarCardData }) {
         <div className="mb-3 text-lg leading-[1.4] font-bold text-[#1a1a1a]">
           {card.title}
         </div>
-        <p className="mb-4 line-clamp-4 text-[13px] leading-[1.6] text-[#666666]">
+        <p className="mb-4 text-[13px] leading-[1.75] text-[#666666] max-md:text-xs max-md:leading-[1.6]">
           {card.description}
         </p>
         <div className="flex items-center gap-2 border-t border-[#f0f0f0] pt-3 text-xs text-[#888888]">

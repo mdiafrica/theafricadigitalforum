@@ -12,15 +12,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import heroBg from "@/assets/images/Image1.png"
+import heroBg from "@/assets/images/Image8.jpg"
 import marcPhoto from "@/assets/images/Marc.png"
 import cliffordPhoto from "@/assets/images/clifford.png"
 
 const TEAM_PHOTOS = [marcPhoto, cliffordPhoto]
 const TEAM_LOCATIONS = ["Togo / Senegal", "Ghana / Rwanda"]
 const TEAM_SOCIALS = [
-  { linkedin: "https://linkedin.com/in/marcaboflan", email: "marc@africadigitalforum.com" },
-  { linkedin: "https://www.linkedin.com/in/ecgyetuah/", email: "clifford@africadigitalforum.com" },
+  {
+    linkedin: "https://linkedin.com/in/marcaboflan",
+    email: "marc@africadigitalforum.com",
+  },
+  {
+    linkedin: "https://www.linkedin.com/in/ecgyetuah/",
+    email: "clifford@africadigitalforum.com",
+  },
 ]
 
 export const Route = createFileRoute("/_public/about")({
@@ -123,7 +129,7 @@ function AboutRoute() {
             <div className="mb-12 h-0.5 w-12 rounded-sm bg-primary" />
           </Reveal>
 
-          <div className="grid justify-center gap-6 [grid-template-columns:repeat(auto-fit,minmax(300px,580px))]">
+          <div className="grid [grid-template-columns:repeat(auto-fit,minmax(300px,580px))] justify-center gap-6">
             {team.map((member, i) => (
               <Reveal key={member.name} delay={i === 0 ? 0.05 : 0.15}>
                 <DirectorCard member={member} />

@@ -3,7 +3,7 @@ export const home = {
     date: "Mai 2027 • Lomé • Togo",
     title: "Africa Digital Forum",
     tagline:
-      "Africa Digital Forum - Façonner l'avenir numérique de l'Afrique. Le rendez-vous incontournable du continent pour les leaders des médias, de l'IA, de la technologie, de l'innovation et de la transformation numérique.",
+      "Africa Digital Forum - Façonner l'avenir numérique de l'Afrique. Le rendez-vous incontournable du continent des leaders de l'IA, de la tech et des médias du continent",
     button: "En savoir plus",
     slides: [
       { title: "Lomé la magnifique", location: "Côte de Lomé, Togo" },
@@ -22,19 +22,19 @@ export const home = {
   ],
 
   dialoguesLabel: "Dialogues de haut niveau",
-  dialoguesTitle: "Où la vision rencontre l'action",
+  dialoguesTitle: "Là où la vision devient action",
   dialoguesSubtitle:
-    "Des perspectives présidentielles à la mise en œuvre pratique, découvrez comment les dirigeants transforment les ambitions numériques en un impact durable à travers l'Afrique.",
+    "Des visions présidentielles aux actions concrètes, découvrez comment les leaders façonnent un avenir numérique durable pour l'Afrique.",
 
   dialogues: [
     {
       title: "Dialogue présidentiel",
-      text: "Le Président du Togo partagera la vision nationale de la transformation numérique et tracera les grandes lignes de l'avenir numérique de l'Afrique, en soulignant les priorités clés pour construire un continent connecté et axé sur l'innovation.",
+      text: "Le Président du Togo exposera la vision stratégique du pays pour la transformation numérique et partagera sa perspective sur l'avenir numérique de l'Afrique en soulignant les priorités clés pour construire un continent connecté et axé sur l'innovation.",
       icon: "ti-crown",
     },
     {
       title: "Forum ministériel",
-      text: "Les ministres de toute l'Afrique discuteront de la gouvernance numérique et de l'intégration continentale, en mettant l'accent sur les politiques et la coopération nécessaires pour bâtir une économie numérique unifiée et prête pour l'avenir.",
+      text: "Des ministres de l'ensemble du continent débattront des enjeux de gouvernance numérique, d'intégration régionale et de coopération stratégique mais aussi sur les politiques, les cadres réglementaires et les partenariats indispensables pour bâtir une économie numérique compétitive",
       icon: "ti-building-community",
     },
     {
@@ -44,26 +44,26 @@ export const home = {
     },
     {
       title: "Forum des startups et des investisseurs",
-      text: "Les startups les plus prometteuses d'Afrique se connecteront avec des sociétés de capital-risque, des investisseurs providentiels, des institutions de financement du développement et des innovateurs d'entreprise pour présenter des solutions révolutionnaires, débloquer des opportunités d'investissement et accélérer la croissance de l'économie numérique du continent.",
+      text: "Ce forum réunira les startups africaines à fort potentiel, les investisseurs en capital-risque, les business angels, les institutions de financement du développement et les grandes entreprises. Les participants auront l'opportunité de présenter des solutions innovantes, de nouer des partenariats stratégiques, de mobiliser des financements et d'accélérer le développement de leurs entreprises",
       icon: "ti-rocket",
     },
     {
       title: "Sommet de l'IA et de l'innovation",
-      text: "Les leaders technologiques mondiaux, les experts en IA, les chercheurs et les innovateurs exploreront le pouvoir transformateur de l'intelligence artificielle et des technologies émergentes, en abordant leur impact sur les entreprises, les médias, la gouvernance, l'éducation et la compétitivité à long terme de l'Afrique.",
+      text: "Des leaders de la tech, des experts en IA, des chercheurs et des innovateurs exploreront le potentiel transformateur de l'intelligence artificielle et des technologies émergentes. en abordant leur impact sur les entreprises, les médias, la gouvernance, l'éducation ainsi que sur la compétitivité à long terme de l'Afrique.",
       icon: "ti-brain",
     },
     {
       title: "Gala des prix",
-      text: "Une cérémonie de remise de prix prestigieuse reconnaissant les individus et les organisations qui stimulent la transformation numérique de l'Afrique et façonnent l'avenir du continent. Une soirée pour célébrer les Champions numériques de l'Afrique.",
+      text: "Le Gala des Awards mettra à l'honneur les personnalités, les institutions, les entreprises, les startups et les initiatives qui contribuent de manière exceptionnelle à la transformation numérique de l'Afrique. Cette soirée prestigieuse célébrera les Champions du Numérique en Afrique,",
       icon: "ti-trophy",
     },
   ],
 
   speakersSection: {
     label: "Intervenants attendus",
-    title: "Des voix qui façonnent l'avenir numérique de l'Afrique",
+    title: "Les voix qui façonnent l'avenir numérique de l'Afrique",
     subtitle:
-      "Rencontrez les leaders visionnaires, les décideurs politiques et les innovateurs qui monteront sur scène à l'ADF 2027.",
+      "Rencontrez les dirigeants, décideurs, entrepreneurs, chercheurs et innovateurs qui prendront la parole á l'Africa Digital Forum 2027",
   },
 
   speakers: [
@@ -145,7 +145,7 @@ export const home = {
     label: "Du blog",
     title: "Derniers articles",
     subtitle:
-      "Perspectives, analyses et histoires du parcours de transformation numérique de l'Afrique.",
+      "Analyses, tendances, interviews et réflexions au cœur de la transformation numérique de l'Afrique.",
     readMore: "Lire la suite",
     viewAll: "Voir tous les articles",
     newsletter: {

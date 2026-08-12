@@ -85,7 +85,7 @@ function ArticleRoute() {
             <img
               src={post.coverUrl}
               alt={post.title}
-              className="size-full scale-[1.02] object-cover"
+              className="size-full scale-[1.01] object-cover [object-position:center_40%]"
             />
           ) : (
             <div className="size-full bg-gradient-to-br from-primary/40 to-[#0a0a0a]" />
@@ -108,7 +108,7 @@ function ArticleRoute() {
                     {post.category}
                   </span>
                 )}
-                <h1 className="mb-[18px] line-clamp-3 text-[clamp(28px,3.8vw,46px)] leading-[1.18] font-extrabold tracking-[-0.02em] text-balance text-white">
+                <h1 className="mb-4 line-clamp-3 text-[clamp(22px,2.8vw,38px)] leading-[1.12] font-extrabold tracking-[-0.02em] text-balance text-white max-[900px]:text-[clamp(20px,4.5vw,32px)]">
                   {post.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-white/75">

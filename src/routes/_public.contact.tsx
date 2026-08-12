@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
-import { Mail, MapPin, Phone, type LucideIcon } from "lucide-react"
+import { Mail, MapPin, Phone  } from "lucide-react"
+import type {LucideIcon} from "lucide-react";
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -22,9 +23,15 @@ import heroBg from "@/assets/images/Image2.jpg"
 
 const INFO_ICONS: LucideIcon[] = [MapPin, Mail, Phone]
 const SOCIALS = [
-  { icon: FacebookIcon, href: "https://www.facebook.com/theafricadigitalforum/" },
-  { icon: XIcon, href: "https://x.com/theafricadigitalforum" },
-  { icon: InstagramIcon, href: "https://www.instagram.com/theafricadigitalforum/" },
+  {
+    icon: FacebookIcon,
+    href: "https://www.facebook.com/theafricadigitalforum/",
+  },
+  { icon: XIcon, href: "https://x.com/ADFafrica" },
+  {
+    icon: InstagramIcon,
+    href: "https://www.instagram.com/theafricadigitalforum/",
+  },
   { icon: YoutubeIcon, href: "https://youtube.com/@theafricadigitalforum" },
 ]
 

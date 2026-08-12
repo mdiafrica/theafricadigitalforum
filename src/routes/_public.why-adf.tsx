@@ -6,14 +6,13 @@ import {
   MicVocal,
   ShieldCheck,
   Wifi,
-  type LucideIcon,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
 import { Reveal } from "@/components/motion"
 import { Card } from "@/components/ui/card"
-import heroBg from "@/assets/images/Image5.jpg"
-import aiImage from "@/assets/images/AI.png"
+import heroBg from "@/assets/images/Image4.jpg"
 import agendaBg from "@/assets/images/Image2.jpg"
 
 const AGENDA_ICONS: LucideIcon[] = [
@@ -53,19 +52,19 @@ function WhyAdfRoute() {
     <div className="font-nav">
       {/* Hero */}
       <section
-        className="-mt-[85px] bg-cover bg-center px-[5%] pt-[120px] pb-[100px] text-center"
+        className="-mt-[85px] flex min-h-[70vh] items-center justify-center bg-cover bg-center px-[5%] pt-[160px] pb-[140px] text-center max-[480px]:min-h-[40vh] max-[480px]:pt-[100px] max-[480px]:pb-[80px] max-md:min-h-[50vh] max-md:pt-[120px] max-md:pb-[100px]"
         style={{
           backgroundImage: `linear-gradient(180deg, rgba(5,13,26,0.6) 0%, rgba(5,13,26,0.95) 100%), url(${heroBg})`,
         }}
       >
         <div className="mx-auto max-w-[800px]">
           <Reveal>
-            <h1 className="mb-4 text-[clamp(28px,4vw,48px)] font-extrabold tracking-[0.08em] text-white">
+            <h1 className="mb-5 text-[clamp(32px,4.5vw,52px)] font-extrabold tracking-[0.08em] text-white max-[480px]:text-[28px] max-[480px]:tracking-[0.05em]">
               {why.heroTitle}
             </h1>
           </Reveal>
           <Reveal delay={0.2}>
-            <p className="mx-auto max-w-[680px] text-base leading-[1.6] text-white/70">
+            <p className="mx-auto max-w-[680px] text-lg leading-[1.7] text-white/75 max-md:text-[15px]">
               {why.heroText}
             </p>
           </Reveal>
@@ -76,11 +75,17 @@ function WhyAdfRoute() {
       <section className="bg-white px-[5%] py-[80px]">
         <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-6 md:grid-cols-2 md:gap-[60px]">
           <Reveal delay={0.1}>
-            <img
-              src={aiImage}
-              alt="AI economic impact on Africa"
-              className="mx-auto w-full max-w-[600px] transition-transform duration-300 hover:scale-[1.02]"
-            />
+            <div className="flex min-h-[180px] flex-col items-start justify-center rounded-[24px] max-[480px]:min-h-[100px] max-md:min-h-[140px] max-md:items-center">
+              <div className="flex items-center max-md:justify-center">
+                <span className="text-[clamp(32px,3vw,42px)] leading-none font-extrabold tracking-[-0.02em] text-[#7c3aed] max-[480px]:text-[clamp(22px,5vw,28px)] max-md:text-[clamp(28px,4vw,36px)]">
+                  $
+                </span>
+                <span className="text-[clamp(28px,2.6vw,38px)] leading-none font-extrabold tracking-[-0.02em] text-[#1a1a1a] max-[480px]:text-[clamp(18px,4vw,24px)] max-md:text-[clamp(24px,3.5vw,32px)]">
+                  1,000,000,000,000
+                </span>
+              </div>
+              <div className="mt-4 h-[3px] w-[100px] rounded-[2px] bg-[#8b5cf6] max-[480px]:mt-2.5 max-[480px]:h-0.5 max-[480px]:w-[60px] max-md:mt-3 max-md:w-20" />
+            </div>
           </Reveal>
           <Reveal>
             <div className="text-center md:text-left">
@@ -116,14 +121,14 @@ function WhyAdfRoute() {
               <h2 className="mb-5 text-2xl leading-[1.2] font-extrabold tracking-[0.05em] text-white">
                 {why.agenda.mainTitle}
               </h2>
-              <div className="mb-6 h-[3px] w-[60px] bg-[#8b5cf6]" />
+              <div className="mb-6 h-[3px] w-[60px] rounded-[2px] bg-[#8b5cf6]" />
               <p className="max-w-[700px] text-[15px] leading-[1.6] text-white/70">
                 {why.agenda.description}
               </p>
             </div>
           </Reveal>
 
-          <div className="mx-auto grid max-w-[1400px] gap-8 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
+          <div className="mx-auto grid max-w-[1400px] [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))] gap-8">
             {why.agenda.items.map((item, i) => {
               const Icon = AGENDA_ICONS[i % AGENDA_ICONS.length]
               return (
