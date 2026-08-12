@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --open",
-    "build": "vite build && node prerender.js",
+    "dev": "node init && vite --open",
+    "build": "node init && vite build && node prerender.js",
     "prerender": "node prerender.js",
     "preview": "vite preview",
-    "start": "vite --open"
+    "start": "node init && vite --open"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
