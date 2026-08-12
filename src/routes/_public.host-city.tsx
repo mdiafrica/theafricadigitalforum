@@ -73,13 +73,13 @@ function HostCityRoute() {
     })
 
   return (
-    <div className="bg-white font-nav text-[#1a1a1a]">
+    <div className="bg-white font-nav text-ink">
       {/* Hero */}
       <section
         className="relative -mt-[85px] flex h-[480px] items-center justify-center overflow-hidden bg-cover bg-center pt-[85px] text-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(5,13,26,0.45)] to-[rgba(5,13,26,0.72)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/45 to-background/72" />
         <div className="relative px-5">
           <Reveal>
             <h1 className="mb-3 text-[clamp(36px,5vw,64px)] leading-[1.1] font-extrabold tracking-[-0.02em] text-white">
@@ -97,7 +97,7 @@ function HostCityRoute() {
               onClick={() =>
                 infoRef.current?.scrollIntoView({ behavior: "smooth" })
               }
-              className="h-auto rounded border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold tracking-[0.04em] text-white hover:bg-white hover:text-[#050d1a] dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:text-[#050d1a]"
+              className="h-auto rounded border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold tracking-[0.04em] text-white hover:bg-white hover:text-background dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:text-background"
             >
               {city.hero.cta}
             </Button>
@@ -108,13 +108,13 @@ function HostCityRoute() {
       {/* Info + photo grid */}
       <div ref={infoRef}>
         <Reveal>
-          <div className="grid items-stretch border-b border-[#e8e8e8] bg-white md:grid-cols-[1fr_1.6fr]">
+          <div className="grid items-stretch border-b border-ink/10 bg-white md:grid-cols-[1fr_1.6fr]">
             <div className="flex flex-col justify-center px-12 py-14">
-              <h2 className="mb-2.5 text-[clamp(22px,2.5vw,32px)] font-extrabold tracking-[-0.02em] text-[#1a1a1a]">
+              <h2 className="mb-2.5 text-[clamp(22px,2.5vw,32px)] font-extrabold tracking-[-0.02em] text-ink">
                 {city.info.heading}
               </h2>
-              <div className="mb-5 h-[3px] w-10 rounded-sm bg-[#1a1a1a]" />
-              <p className="text-sm leading-[1.8] text-[#666666]">
+              <div className="mb-5 h-[3px] w-10 rounded-sm bg-ink" />
+              <p className="text-sm leading-[1.8] text-ink-muted">
                 {city.info.body}
               </p>
             </div>
@@ -130,7 +130,7 @@ function HostCityRoute() {
                     alt={`Lomé highlight ${i + 1}`}
                     className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-[rgba(5,13,26,0.72)] px-2.5 py-1 text-[11px] font-semibold text-white">
+                  <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-background/72 px-2.5 py-1 text-[11px] font-semibold text-white">
                     {city.info.badges[i]}
                   </span>
                 </div>
@@ -143,10 +143,10 @@ function HostCityRoute() {
       {/* Promo banner */}
       <Reveal>
         <div
-          className="relative flex flex-col items-center justify-between gap-6 bg-[#0d1f3c] bg-cover bg-center px-[8%] py-16 md:flex-row"
+          className="relative flex flex-col items-center justify-between gap-6 bg-secondary bg-cover bg-center px-[8%] py-16 md:flex-row"
           style={{ backgroundImage: `url(${promoBg})` }}
         >
-          <div className="absolute inset-0 bg-[rgba(5,13,26,0.6)]" />
+          <div className="absolute inset-0 bg-background/60" />
           <div className="relative text-center md:text-left">
             <h3 className="mb-1.5 text-[clamp(22px,3vw,36px)] font-extrabold tracking-[-0.01em] text-white">
               {city.promo.heading}
@@ -155,7 +155,7 @@ function HostCityRoute() {
           </div>
           <Button
             render={<Link to="/why-adf" />}
-            className="relative h-auto shrink-0 rounded bg-white px-8 py-3 text-sm font-bold whitespace-nowrap text-[#050d1a] hover:bg-[#e8e8e8]"
+            className="relative h-auto shrink-0 rounded bg-white px-8 py-3 text-sm font-bold whitespace-nowrap text-background hover:bg-ink/10"
           >
             {city.promo.button}
           </Button>
@@ -166,7 +166,7 @@ function HostCityRoute() {
       <Reveal>
         <div className="bg-white px-[8%] py-16">
           <div className="mb-8">
-            <h2 className="mb-2.5 text-[clamp(20px,2.5vw,28px)] font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
+            <h2 className="mb-2.5 text-[clamp(20px,2.5vw,28px)] font-extrabold tracking-[-0.01em] text-ink">
               {city.cards.title}
             </h2>
             <div className="h-[3px] w-12 rounded-sm bg-primary" />
@@ -178,7 +178,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll left"
               onClick={() => scrollBy(-400)}
-              className="absolute -left-6 z-10 size-12 rounded-full border-[#e8e8e8] bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-[#e8e8e8] dark:bg-white dark:hover:bg-primary"
+              className="absolute -left-6 z-10 size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronLeft className="size-7" />
             </Button>
@@ -199,7 +199,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll right"
               onClick={() => scrollBy(400)}
-              className="absolute -right-6 z-10 size-12 rounded-full border-[#e8e8e8] bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-[#e8e8e8] dark:bg-white dark:hover:bg-primary"
+              className="absolute -right-6 z-10 size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronRight className="size-7" />
             </Button>
@@ -210,10 +210,10 @@ function HostCityRoute() {
       {/* CTA band */}
       <Reveal>
         <div
-          className="relative overflow-hidden bg-[#0d1f3c] bg-cover bg-center px-[8%] py-[100px] text-center"
+          className="relative overflow-hidden bg-secondary bg-cover bg-center px-[8%] py-[100px] text-center"
           style={{ backgroundImage: `url(${ctaBg})` }}
         >
-          <div className="absolute inset-0 bg-[rgba(5,13,26,0.55)]" />
+          <div className="absolute inset-0 bg-background/55" />
           <div className="relative">
             <h2 className="mb-3 text-[clamp(28px,4vw,52px)] font-extrabold tracking-[-0.02em] text-white">
               {city.cta.title}
@@ -223,7 +223,7 @@ function HostCityRoute() {
             </p>
             <Button
               render={<Link to="/contact" />}
-              className="h-auto rounded bg-white px-10 py-3.5 text-[15px] font-bold text-[#050d1a] hover:bg-[#e8e8e8]"
+              className="h-auto rounded bg-white px-10 py-3.5 text-[15px] font-bold text-background hover:bg-ink/10"
             >
               {city.cta.button}
             </Button>
@@ -245,7 +245,7 @@ type PillarCardData = {
 
 function PillarCard({ card }: { card: PillarCardData }) {
   return (
-    <Card className="group w-[360px] shrink-0 overflow-hidden rounded-2xl border-[#e8e8e8] bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+    <Card className="group w-[360px] shrink-0 overflow-hidden rounded-2xl border-ink/10 bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
       <div className="relative h-[220px] overflow-hidden">
         <img
           src={card.img}
@@ -260,13 +260,13 @@ function PillarCard({ card }: { card: PillarCardData }) {
         <div className="mb-2 text-[11px] font-semibold tracking-[1px] text-primary uppercase">
           {card.subtitle}
         </div>
-        <div className="mb-3 text-lg leading-[1.4] font-bold text-[#1a1a1a]">
+        <div className="mb-3 text-lg leading-[1.4] font-bold text-ink">
           {card.title}
         </div>
-        <p className="mb-4 text-[13px] leading-[1.75] text-[#666666] max-md:text-xs max-md:leading-[1.6]">
+        <p className="mb-4 text-[13px] leading-[1.75] text-ink-muted max-md:text-xs max-md:leading-[1.6]">
           {card.description}
         </p>
-        <div className="flex items-center gap-2 border-t border-[#f0f0f0] pt-3 text-xs text-[#888888]">
+        <div className="flex items-center gap-2 border-t border-ink/5 pt-3 text-xs text-ink-muted/80">
           <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:scale-110 group-hover:bg-primary/20">
             <card.Icon className="size-3.5" />
           </span>
