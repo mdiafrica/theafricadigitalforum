@@ -1,0 +1,28 @@
+# /etc/caddy/Caddyfile — host Caddy terminates TLS and proxies to the
+# pm2-managed app (127.0.0.1:3000) and SeaweedFS S3 (127.0.0.1:8333).
+# TLS is issued automatically once the domain's DNS points at this box.
+
+(site) {
+	encode zstd gzip
+
+	# Public media: /media/<key> → SeaweedFS public bucket.
+	# Matches STORAGE_PUBLIC_BASE_URL=https://<domain>/media in .env.
+	handle_path /media/* {
+		rewrite * /adf-public{uri}
+		reverse_proxy 127.0.0.1:8333
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:3000
+	}
+}
+
+theafricadigitalforum.com, www.theafricadigitalforum.com {
+	import site
+}
+
+# Plain-HTTP access by server IP — lets us verify the deployment before
+# the domain's DNS is switched over.
+http://191.215.37.78 {
+	import site
+}

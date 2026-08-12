@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
+import { nitro } from "nitro/vite"
 import viteReact from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 
@@ -15,7 +16,7 @@ const config = defineConfig({
     // can't handle when the package is externalized.
     noExternal: ["@base-ui/react", "@platejs/math"],
   },
-  plugins: [tailwindcss(), tanstackStart(), viteReact()],
+  plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
 })
 
 export default config

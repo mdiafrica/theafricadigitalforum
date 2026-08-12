@@ -1,0 +1,12 @@
+node_modules
+dist
+.docker
+.git
+.env
+.env.*
+!.env.example
+legacy-frontend
+frontend
+docs
+*.log
+.claude

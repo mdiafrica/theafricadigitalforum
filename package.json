@@ -16,7 +16,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env src/server/scripts/seed-admin.ts",
-    "db:seed:speakers": "tsx --env-file=.env src/server/scripts/seed-speakers.ts"
+    "db:seed:speakers": "tsx --env-file=.env src/server/scripts/seed-speakers.ts",
+    "start": "node .output/server/index.mjs",
+    "ship": "./deploy/ship.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1080.0",
@@ -95,6 +97,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "jsdom": "^28",
+    "nitro": "3.0.260415-beta",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tsx": "^4.23.0",
