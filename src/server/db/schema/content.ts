@@ -59,6 +59,46 @@ export const speakerTranslation = pgTable(
   ]
 )
 
+export const advisor = pgTable(
+  "advisor",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    photoMediaId: uuid("photo_media_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    twitterUrl: text("twitter_url"),
+    linkedinUrl: text("linkedin_url"),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("advisor_sort_order_idx").on(table.sortOrder)]
+)
+
+export const advisorTranslation = pgTable(
+  "advisor_translation",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    advisorId: uuid("advisor_id")
+      .notNull()
+      .references(() => advisor.id, { onDelete: "cascade" }),
+    locale: text("locale").$type<"en" | "fr">().notNull(),
+    /** Honorifics localize (H.E. / S.E.), so the name is per-locale. */
+    name: text("name").notNull(),
+    role: text("role").default("").notNull(),
+  },
+  (table) => [
+    unique("advisor_translation_advisor_id_locale_uq").on(
+      table.advisorId,
+      table.locale
+    ),
+    index("advisor_translation_advisor_id_idx").on(table.advisorId),
+  ]
+)
+
 export const sponsor = pgTable(
   "sponsor",
   {
@@ -155,6 +195,24 @@ export const speakerTranslationRelations = relations(
     speaker: one(speaker, {
       fields: [speakerTranslation.speakerId],
       references: [speaker.id],
+    }),
+  })
+)
+
+export const advisorRelations = relations(advisor, ({ one, many }) => ({
+  translations: many(advisorTranslation),
+  photoMedia: one(media, {
+    fields: [advisor.photoMediaId],
+    references: [media.id],
+  }),
+}))
+
+export const advisorTranslationRelations = relations(
+  advisorTranslation,
+  ({ one }) => ({
+    advisor: one(advisor, {
+      fields: [advisorTranslation.advisorId],
+      references: [advisor.id],
     }),
   })
 )

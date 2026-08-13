@@ -20,6 +20,7 @@ import {
 } from "./list-toolbar-button"
 import { MarkToolbarButton } from "./mark-toolbar-button"
 import { MediaToolbarButton } from "./media-toolbar-button"
+import { TableToolbarButton } from "./table-toolbar-button"
 import { ToolbarGroup } from "./toolbar"
 import { TurnIntoToolbarButton } from "./turn-into-toolbar-button"
 
@@ -82,6 +83,7 @@ export function FixedToolbarButtons() {
       <ToolbarGroup>
         <LinkToolbarButton />
         <MediaToolbarButton />
+        <TableToolbarButton />
       </ToolbarGroup>
     </div>
   )

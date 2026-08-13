@@ -1,22 +1,21 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { Copy, ImagePlus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { useSessionQuery } from "@/domains/auth"
 import {
-  ALLOWED_IMAGE_TYPES,
   useDeleteMediaMutation,
-  useMediaListQuery,
-  useUploadMediaMutation,
-  type MediaItem,
+  useMediaListQuery
+  
 } from "@/domains/media"
+import type {MediaItem} from "@/domains/media";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
+import { MediaUploadButton } from "@/components/admin/media-upload-button"
 import { PageHeader } from "@/components/admin/page-header"
 import { Pagination } from "@/components/admin/pagination"
 import { EmptyState, QueryError } from "@/components/admin/query-states"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Spinner } from "@/components/ui/spinner"
 import { hasOrgPermission } from "@/lib/auth/permissions"
 import { getErrorMessage } from "@/lib/error"
 
@@ -30,45 +29,12 @@ export function MediaLibraryView() {
   const [page, setPage] = useState(1)
   const sessionQuery = useSessionQuery()
   const listQuery = useMediaListQuery({ page })
-  const uploadMutation = useUploadMediaMutation()
   const deleteMutation = useDeleteMediaMutation()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState<{
-    done: number
-    total: number
-  } | null>(null)
 
   const session = sessionQuery.data
   const caller = { globalRole: session?.user.role, orgRole: session?.orgRole }
   const canUpload = hasOrgPermission(caller, { media: ["upload"] })
   const canDelete = hasOrgPermission(caller, { media: ["delete"] })
-
-  const handleFiles = async (files: FileList | null) => {
-    if (!files?.length) return
-    const list = Array.from(files)
-    setUploading({ done: 0, total: list.length })
-    let failed = 0
-    for (const file of list) {
-      try {
-        await uploadMutation.mutateAsync(file)
-      } catch (error) {
-        failed += 1
-        toast.error(`${file.name}: ${getErrorMessage(error, "upload failed")}`)
-      }
-      setUploading((state) =>
-        state ? { ...state, done: state.done + 1 } : state
-      )
-    }
-    setUploading(null)
-    if (failed < list.length) {
-      toast.success(
-        list.length === 1
-          ? "Image uploaded."
-          : `${list.length - failed} of ${list.length} images uploaded.`
-      )
-    }
-    if (fileInputRef.current) fileInputRef.current.value = ""
-  }
 
   const copyUrl = (item: MediaItem) => {
     void navigator.clipboard.writeText(item.url).then(() => {
@@ -82,34 +48,7 @@ export function MediaLibraryView() {
         title="Media"
         description="Images for blog posts, speakers and page content. WebP renditions and blur placeholders are generated automatically."
       >
-        {canUpload && (
-          <>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept={ALLOWED_IMAGE_TYPES.join(",")}
-              className="hidden"
-              onChange={(event) => void handleFiles(event.target.files)}
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading !== null}
-            >
-              {uploading ? (
-                <>
-                  <Spinner />
-                  Uploading {uploading.done + 1}/{uploading.total}…
-                </>
-              ) : (
-                <>
-                  <ImagePlus data-icon="inline-start" />
-                  Upload images
-                </>
-              )}
-            </Button>
-          </>
-        )}
+        {canUpload && <MediaUploadButton multiple label="Upload images" />}
       </PageHeader>
 
       {listQuery.isPending ? (

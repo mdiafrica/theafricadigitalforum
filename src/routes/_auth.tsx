@@ -2,6 +2,9 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router"
 
 /** Auth shell — centered card, no site chrome. */
 export const Route = createFileRoute("/_auth")({
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex, nofollow" }],
+  }),
   component: AuthLayout,
 })
 

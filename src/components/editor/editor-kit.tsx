@@ -1,4 +1,5 @@
-import { TrailingBlockPlugin, type Value } from "platejs"
+import { TrailingBlockPlugin  } from "platejs"
+import type {Value} from "platejs";
 import type { TPlateEditor } from "platejs/react"
 
 import { AutoformatKit } from "./kits/autoformat-kit"
@@ -13,6 +14,7 @@ import { ListKit } from "./kits/list-kit"
 import { MathKit } from "./kits/math-kit"
 import { MediaKit } from "./kits/media-kit"
 import { SlashKit } from "./kits/slash-kit"
+import { TableKit } from "./kits/table-kit"
 import { FixedToolbarKit, FloatingToolbarKit } from "./kits/toolbar-kit"
 
 /**
@@ -31,6 +33,7 @@ export const ContentKit = [
   ...MediaKit,
   ...MathKit,
   ...FontKit,
+  ...TableKit,
 ]
 
 /** The full ADF editor: content plugins plus editing chrome. */

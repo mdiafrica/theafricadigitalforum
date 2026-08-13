@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
-import { Mail, MapPin, Phone  } from "lucide-react"
-import type {LucideIcon} from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 import { z } from "zod"
 
 import { useI18n } from "@/i18n/context"
+import { pageHead } from "@/lib/seo"
 import { submitContact } from "@/domains/submissions"
 import { Reveal } from "@/components/motion"
 import { Button } from "@/components/ui/button"
@@ -42,18 +43,11 @@ const LABEL_CLASS =
 
 export const Route = createFileRoute("/_public/contact")({
   head: () => ({
-    meta: [
-      { title: "Contact | Africa Digital Forum" },
-      {
-        name: "description",
-        content: "Get in touch with the Africa Digital Forum team.",
-      },
-      { property: "og:title", content: "Contact | Africa Digital Forum" },
-      {
-        property: "og:description",
-        content: "Get in touch with the Africa Digital Forum team.",
-      },
-    ],
+    ...pageHead({
+      title: "Contact | Africa Digital Forum",
+      description: "Get in touch with the Africa Digital Forum team.",
+      path: "/contact",
+    }),
   }),
   component: ContactRoute,
 })

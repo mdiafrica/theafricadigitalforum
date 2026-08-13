@@ -18,6 +18,7 @@ import {
   LogOut,
   Mic,
   UserCircle,
+  UserRoundCheck,
   Users,
 } from "lucide-react"
 
@@ -61,7 +62,12 @@ export const Route = createFileRoute("/admin")({
     const session = await requireStaff({ context, location })
     return { session }
   },
-  head: () => ({ meta: [{ title: "Admin | Africa Digital Forum" }] }),
+  head: () => ({
+    meta: [
+      { title: "Admin | Africa Digital Forum" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AdminLayout,
 })
 
@@ -84,6 +90,7 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     items: [
       { to: "/admin/posts", label: "Posts", icon: FileText },
       { to: "/admin/speakers", label: "Speakers", icon: Mic },
+      { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
       { to: "/admin/events", label: "Events", icon: CalendarDays },
       { to: "/admin/sponsors", label: "Sponsors", icon: Building2 },
       { to: "/admin/pages", label: "Pages", icon: Layout },
@@ -201,7 +208,7 @@ function UserMenu() {
   const user = sessionQuery.data?.user
   const initials =
     user?.name
-      ?.split(/\s+/)
+      .split(/\s+/)
       .map((part) => part[0])
       .slice(0, 2)
       .join("")

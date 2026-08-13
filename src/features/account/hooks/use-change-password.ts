@@ -5,10 +5,10 @@ import { toast } from "sonner"
 import { authClient, unwrap } from "@/lib/auth/auth-client"
 import { getErrorMessage } from "@/lib/error"
 import {
-  type ChangePasswordInput,
   changePasswordSchema,
   defaultChangePasswordValues,
 } from "../model/account.schemas"
+import type { ChangePasswordInput } from "../model/account.schemas"
 
 export function useChangePassword() {
   const mutation = useMutation({

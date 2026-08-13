@@ -44,7 +44,7 @@ function AdminDashboard() {
   const contactQuery = useContactSubmissionsQuery({ pageSize: 3 })
   const newsletterQuery = useNewsletterSubscribersQuery({ pageSize: 1 })
 
-  const firstName = session?.user.name?.split(/\s+/)[0]
+  const firstName = session?.user.name.split(/\s+/)[0]
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">

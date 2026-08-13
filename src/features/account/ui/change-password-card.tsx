@@ -12,7 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Spinner } from "@/components/ui/spinner"
 import { useChangePassword } from "../hooks/use-change-password"
 
@@ -39,10 +39,9 @@ export function ChangePasswordCard() {
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel htmlFor={field.name}>Current password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="current-password"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}
@@ -58,10 +57,9 @@ export function ChangePasswordCard() {
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel htmlFor={field.name}>New password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="new-password"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}
@@ -79,10 +77,9 @@ export function ChangePasswordCard() {
                   <FieldLabel htmlFor={field.name}>
                     Confirm new password
                   </FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="new-password"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}

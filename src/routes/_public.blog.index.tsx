@@ -4,12 +4,14 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowRight, Clock, Mail, Search, X } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
+import { pageHead } from "@/lib/seo"
 import {
   publishedPostCategoriesQueryOptions,
-  publishedPostsQueryOptions,
-  type PublicListParams,
-  type PublicPostListItem,
+  publishedPostsQueryOptions
+  
+  
 } from "@/domains/posts"
+import type {PublicListParams, PublicPostListItem} from "@/domains/posts";
 import type { Locale } from "@/lib/schemas"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { NewsletterForm } from "@/components/newsletter-form"
@@ -19,18 +21,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export const Route = createFileRoute("/_public/blog/")({
   head: () => ({
-    meta: [
-      { title: "Blog | Africa Digital Forum" },
-      {
-        name: "description",
-        content: "News, insights and stories from the Africa Digital Forum.",
-      },
-      { property: "og:title", content: "Blog | Africa Digital Forum" },
-      {
-        property: "og:description",
-        content: "News, insights and stories from the Africa Digital Forum.",
-      },
-    ],
+    ...pageHead({
+      title: "Blog | Africa Digital Forum",
+      description: "News, insights and stories from the Africa Digital Forum.",
+      path: "/blog",
+    }),
   }),
   // SSR primes the default locale; a client-side locale switch refetches.
   loader: ({ context }) =>
@@ -105,7 +100,7 @@ function BlogRoute() {
               className="h-auto gap-2 rounded-full px-[22px] py-2.5 text-[13px] font-bold shadow-[0_4px_12px_rgba(124,58,237,0.25)] hover:bg-[#6d28d9]"
             >
               <Mail className="size-4" />
-              {blog.subscribeBtn ?? "Subscribe"}
+              {blog.subscribeBtn}
             </Button>
           </div>
         </div>

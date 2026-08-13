@@ -13,6 +13,7 @@ import {
 import type { LucideIcon } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
+import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -38,18 +39,11 @@ const CARD_ICONS: LucideIcon[] = [
 
 export const Route = createFileRoute("/_public/host-city")({
   head: () => ({
-    meta: [
-      { title: "Host City | Africa Digital Forum" },
-      {
-        name: "description",
-        content: "Discover the host city of the Africa Digital Forum.",
-      },
-      { property: "og:title", content: "Host City | Africa Digital Forum" },
-      {
-        property: "og:description",
-        content: "Discover the host city of the Africa Digital Forum.",
-      },
-    ],
+    ...pageHead({
+      title: "Host City | Africa Digital Forum",
+      description: "Lomé, Togo — the host city of the Africa Digital Forum.",
+      path: "/host-city",
+    }),
   }),
   component: HostCityRoute,
 })

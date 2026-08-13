@@ -7,10 +7,12 @@ import { invitationPreviewQueryOptions, useSessionQuery } from "@/domains/auth"
 import { authClient, unwrap } from "@/lib/auth/auth-client"
 import { getErrorMessage } from "@/lib/error"
 import {
-  type ExistingUserInput,
-  type NewUserInput,
   existingUserSchema,
   newUserSchema,
+} from "../model/accept-invitation.schemas"
+import type {
+  ExistingUserInput,
+  NewUserInput,
 } from "../model/accept-invitation.schemas"
 
 export type AcceptInvitationStep =
@@ -114,7 +116,7 @@ export function useAcceptInvitationFlow(invitationId: string) {
       username: "",
       password: "",
       confirmPassword: "",
-    } as NewUserInput,
+    },
     validators: { onSubmit: newUserSchema },
     onSubmit: async ({ value }) => {
       await newUserMutation.mutateAsync(value).catch(() => {})
@@ -122,7 +124,7 @@ export function useAcceptInvitationFlow(invitationId: string) {
   })
 
   const existingUserForm = useForm({
-    defaultValues: { password: "" } as ExistingUserInput,
+    defaultValues: { password: "" },
     validators: { onSubmit: existingUserSchema },
     onSubmit: async ({ value }) => {
       await existingUserMutation.mutateAsync(value).catch(() => {})

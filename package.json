@@ -46,6 +46,7 @@
     "@platejs/media": "^53.1.4",
     "@platejs/resizable": "^53.0.0",
     "@platejs/slash-command": "^53.0.0",
+    "@platejs/table": "^53.0.9",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.10",
     "@t3-oss/env-core": "^0.13.11",

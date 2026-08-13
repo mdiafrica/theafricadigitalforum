@@ -9,6 +9,7 @@ import {
   publishedPostsQueryOptions,
 } from "@/domains/posts"
 import type { Locale } from "@/lib/schemas"
+import { absoluteUrl, pageHead } from "@/lib/seo"
 import { RichTextView } from "@/components/editor/rich-text-view"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { Button } from "@/components/ui/button"
@@ -20,17 +21,48 @@ export const Route = createFileRoute("/_public/blog/$slug")({
       publishedPostQueryOptions(params.slug, "en")
     )
     if (!post) throw notFound()
-    return { title: post.title, excerpt: post.excerpt }
+    return {
+      title: post.title,
+      excerpt: post.excerpt,
+      coverUrl: post.coverUrl,
+      authorName: post.authorName,
+      publishedAt: post.publishedAt,
+    }
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     if (!loaderData) return {}
     return {
-      meta: [
-        { title: `${loaderData.title} | Africa Digital Forum` },
-        { name: "description", content: loaderData.excerpt },
-        { property: "og:title", content: loaderData.title },
-        { property: "og:description", content: loaderData.excerpt },
-        { property: "og:type", content: "article" },
+      ...pageHead({
+        title: `${loaderData.title} | Africa Digital Forum`,
+        description: loaderData.excerpt,
+        path: `/blog/${params.slug}`,
+        image: loaderData.coverUrl,
+        type: "article",
+      }),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: loaderData.title,
+            description: loaderData.excerpt,
+            ...(loaderData.coverUrl
+              ? { image: absoluteUrl(loaderData.coverUrl) }
+              : {}),
+            author: { "@type": "Person", name: loaderData.authorName },
+            publisher: {
+              "@type": "Organization",
+              name: "Africa Digital Forum",
+            },
+            ...(loaderData.publishedAt
+              ? {
+                  datePublished: new Date(loaderData.publishedAt).toISOString(),
+                }
+              : {}),
+            mainEntityOfPage: absoluteUrl(`/blog/${params.slug}`),
+          }),
+        },
       ],
     }
   },

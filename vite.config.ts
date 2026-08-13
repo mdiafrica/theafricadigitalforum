@@ -15,6 +15,11 @@ const config = defineConfig({
     // @platejs/math's dist imports katex's CSS, which node's ESM loader
     // can't handle when the package is externalized.
     noExternal: ["@base-ui/react", "@platejs/math"],
+    // sharp ships a native binary the server bundle can't carry (the
+    // bundled copy throws "Could not load the sharp module" in prod).
+    // Explicit external entries take priority over nitro's noExternal:
+    // true, so it resolves from node_modules at runtime instead.
+    external: ["sharp"],
   },
   plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
 })

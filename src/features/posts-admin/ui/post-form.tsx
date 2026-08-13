@@ -105,7 +105,7 @@ export function PostForm({
                     value={field.state.value}
                     onChange={(event) => onSlugChange(event.target.value)}
                     onBlur={field.handleBlur}
-                    placeholder="my-post-title"
+                    placeholder="auto-generated from title"
                     aria-invalid={field.state.meta.errors.length > 0}
                     disabled={isSubmitting}
                   />

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthRouteImport } from './routes/_auth'
@@ -22,6 +23,7 @@ import { Route as AdminPagesRouteImport } from './routes/admin.pages'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorRouteImport } from './routes/admin.editor'
+import { Route as AdminAdvisorsRouteImport } from './routes/admin.advisors'
 import { Route as AdminAccountRouteImport } from './routes/admin.account'
 import { Route as PublicWhyAdfRouteImport } from './routes/_public.why-adf'
 import { Route as PublicTermsRouteImport } from './routes/_public.terms'
@@ -41,6 +43,11 @@ import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
 import { Route as PublicBlogSlugRouteImport } from './routes/_public.blog.$slug'
 import { Route as AuthAcceptInvitationInvitationIdRouteImport } from './routes/_auth.accept-invitation.$invitationId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -102,6 +109,11 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
 const AdminEditorRoute = AdminEditorRouteImport.update({
   id: '/editor',
   path: '/editor',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdvisorsRoute = AdminAdvisorsRouteImport.update({
+  id: '/advisors',
+  path: '/advisors',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAccountRoute = AdminAccountRouteImport.update({
@@ -199,6 +211,7 @@ const AuthAcceptInvitationInvitationIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -210,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
+  '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -229,6 +243,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -239,6 +254,7 @@ export interface FileRoutesByTo {
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
+  '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -261,6 +277,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -272,6 +289,7 @@ export interface FileRoutesById {
   '/_public/terms': typeof PublicTermsRoute
   '/_public/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
+  '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -295,6 +313,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/sitemap.xml'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -306,6 +325,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/why-adf'
     | '/admin/account'
+    | '/admin/advisors'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -325,6 +345,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sitemap.xml'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -335,6 +356,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/why-adf'
     | '/admin/account'
+    | '/admin/advisors'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -356,6 +378,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_public'
     | '/admin'
+    | '/sitemap.xml'
     | '/_auth/forgot-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
@@ -367,6 +390,7 @@ export interface FileRouteTypes {
     | '/_public/terms'
     | '/_public/why-adf'
     | '/admin/account'
+    | '/admin/advisors'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -390,11 +414,19 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -484,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/editor'
       fullPath: '/admin/editor'
       preLoaderRoute: typeof AdminEditorRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/advisors': {
+      id: '/admin/advisors'
+      path: '/advisors'
+      fullPath: '/admin/advisors'
+      preLoaderRoute: typeof AdminAdvisorsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/account': {
@@ -672,6 +711,7 @@ const PublicRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminAccountRoute: typeof AdminAccountRoute
+  AdminAdvisorsRoute: typeof AdminAdvisorsRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -688,6 +728,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccountRoute: AdminAccountRoute,
+  AdminAdvisorsRoute: AdminAdvisorsRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminMediaRoute: AdminMediaRoute,
@@ -708,6 +749,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

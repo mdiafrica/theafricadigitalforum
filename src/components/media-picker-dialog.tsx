@@ -1,12 +1,13 @@
 import * as React from "react"
 import { ImageIcon, XIcon } from "lucide-react"
 
-import { useMediaListQuery, type MediaItem } from "@/domains/media"
+import { useMediaListQuery  } from "@/domains/media"
+import type {MediaItem} from "@/domains/media";
+import { MediaUploadButton } from "@/components/admin/media-upload-button"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,8 +16,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
 /**
- * Media picker — selects an image from the media library (upload new images
- * at /admin/media). Returns the media id + url to the parent.
+ * Media picker — pick from the library or upload in place. Returns the
+ * media id + url to the parent.
  */
 export function MediaPickerDialog({
   imageUrl,
@@ -56,12 +57,19 @@ export function MediaPickerDialog({
           )}
         </DialogTrigger>
         <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>{label}</DialogTitle>
-            <DialogDescription>
-              From the media library — upload new images in the Media section.
-            </DialogDescription>
-          </DialogHeader>
+          <div className="flex items-center justify-between gap-3 pr-6">
+            <DialogHeader>
+              <DialogTitle>{label}</DialogTitle>
+            </DialogHeader>
+            <MediaUploadButton
+              variant="outline"
+              size="sm"
+              onUploaded={(item) => {
+                onSelect(item)
+                setOpen(false)
+              }}
+            />
+          </div>
 
           {mediaQuery.isPending && (
             <div className="grid grid-cols-4 gap-3">
@@ -76,9 +84,7 @@ export function MediaPickerDialog({
             </p>
           )}
           {mediaQuery.data && mediaQuery.data.items.length === 0 && (
-            <p className="py-6 text-sm text-muted-foreground">
-              No images yet — upload some in the Media section first.
-            </p>
+            <p className="py-6 text-sm text-muted-foreground">No images yet.</p>
           )}
           {mediaQuery.data && mediaQuery.data.items.length > 0 && (
             <div className="grid max-h-[50vh] grid-cols-4 gap-3 overflow-y-auto">

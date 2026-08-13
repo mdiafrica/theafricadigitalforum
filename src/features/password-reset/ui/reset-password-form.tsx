@@ -12,7 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Spinner } from "@/components/ui/spinner"
 import { useResetPasswordForm } from "../hooks/use-password-reset-forms"
 
@@ -39,10 +39,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel htmlFor={field.name}>New password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="new-password"
                     autoFocus
                     value={field.state.value}
@@ -59,10 +58,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="new-password"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}

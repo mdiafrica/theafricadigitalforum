@@ -11,6 +11,7 @@ git fetch origin "$BRANCH"
 git checkout -B "$BRANCH" "origin/$BRANCH"
 
 pnpm install --frozen-lockfile
+pnpm db:migrate
 pnpm build
 
 # Reload under pm2 (start on first run).

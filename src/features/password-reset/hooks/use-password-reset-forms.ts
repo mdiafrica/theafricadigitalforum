@@ -7,10 +7,12 @@ import { toast } from "sonner"
 import { authClient, unwrap } from "@/lib/auth/auth-client"
 import { getErrorMessage } from "@/lib/error"
 import {
-  type ForgotPasswordInput,
-  type ResetPasswordInput,
   forgotPasswordSchema,
   resetPasswordSchema,
+} from "../model/password-reset.schemas"
+import type {
+  ForgotPasswordInput,
+  ResetPasswordInput,
 } from "../model/password-reset.schemas"
 
 export function useForgotPasswordForm() {
@@ -32,7 +34,7 @@ export function useForgotPasswordForm() {
   })
 
   const form = useForm({
-    defaultValues: { email: "" } as ForgotPasswordInput,
+    defaultValues: { email: "" },
     validators: { onSubmit: forgotPasswordSchema },
     onSubmit: async ({ value }) => {
       await mutation.mutateAsync(value).catch(() => {})
@@ -64,7 +66,7 @@ export function useResetPasswordForm({ token }: { token: string }) {
   })
 
   const form = useForm({
-    defaultValues: { password: "", confirmPassword: "" } as ResetPasswordInput,
+    defaultValues: { password: "", confirmPassword: "" },
     validators: { onSubmit: resetPasswordSchema },
     onSubmit: async ({ value }) => {
       await mutation.mutateAsync(value).catch(() => {})

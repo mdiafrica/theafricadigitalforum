@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { pageHead } from "@/lib/seo"
+
 import {
   LegalContact,
   LegalIntro,
@@ -11,13 +13,11 @@ import {
 
 export const Route = createFileRoute("/_public/terms")({
   head: () => ({
-    meta: [
-      { title: "Terms of Use | Africa Digital Forum" },
-      {
-        name: "description",
-        content: "Terms of Use for the Africa Digital Forum website.",
-      },
-    ],
+    ...pageHead({
+      title: "Terms of Use | Africa Digital Forum",
+      description: "Terms of Use for the Africa Digital Forum website.",
+      path: "/terms",
+    }),
   }),
   component: TermsRoute,
 })
@@ -38,15 +38,15 @@ function TermsRoute() {
           The name &ldquo;Africa Digital Forum,&rdquo; its logo, textual content
           (Vision, Mission, Pillars), and visual materials are the exclusive
           property of the <strong>Media and Digital Institute (MDI)</strong>,
-          unless otherwise stated. Any unauthorized reproduction or exploitation is
-          strictly prohibited.
+          unless otherwise stated. Any unauthorized reproduction or exploitation
+          is strictly prohibited.
         </LegalText>
       </LegalSection>
 
       <LegalSection title="Site Usage">
         <LegalText>
-          Users agree to use the site in an ethical and professional manner. It is
-          prohibited to:
+          Users agree to use the site in an ethical and professional manner. It
+          is prohibited to:
         </LegalText>
         <LegalList
           items={[
@@ -59,18 +59,18 @@ function TermsRoute() {
 
       <LegalSection title="Limitation of Liability">
         <LegalText>
-          While we strive to provide accurate and up-to-date information, the ADF
-          cannot be held responsible for errors, temporary unavailability of the
-          site, or damages resulting from the use of links to third-party sites
-          (e.g., Hostinger, speakers' social networks).
+          While we strive to provide accurate and up-to-date information, the
+          ADF cannot be held responsible for errors, temporary unavailability of
+          the site, or damages resulting from the use of links to third-party
+          sites (e.g., Hostinger, speakers' social networks).
         </LegalText>
       </LegalSection>
 
       <LegalSection title="Updates to Policies">
         <LegalText>
-          The Africa Digital Forum may update its policies at any time. We are not
-          obliged to notify users of these updates, as users are responsible for
-          periodically checking the document for any changes.
+          The Africa Digital Forum may update its policies at any time. We are
+          not obliged to notify users of these updates, as users are responsible
+          for periodically checking the document for any changes.
         </LegalText>
       </LegalSection>
 
@@ -81,8 +81,7 @@ function TermsRoute() {
         </LegalText>
         <LegalContact>
           <p>
-            <strong>Email:</strong>{" "}
-            <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+            <strong>Email:</strong> <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
           </p>
         </LegalContact>
       </LegalSection>

@@ -15,6 +15,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Spinner } from "@/components/ui/spinner"
 import { useSignInForm } from "../hooks/use-sign-in-form"
 
@@ -121,10 +122,9 @@ export function SignInForm({ redirectTo }: { redirectTo?: string }) {
                       Forgot password?
                     </Link>
                   </div>
-                  <Input
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     autoComplete="current-password"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}

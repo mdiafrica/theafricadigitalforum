@@ -10,6 +10,7 @@ import {
 import type { LucideIcon } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
+import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Card } from "@/components/ui/card"
 import heroBg from "@/assets/images/Image4.jpg"
@@ -26,20 +27,12 @@ const AGENDA_ICONS: LucideIcon[] = [
 
 export const Route = createFileRoute("/_public/why-adf")({
   head: () => ({
-    meta: [
-      { title: "Why ADF | Africa Digital Forum" },
-      {
-        name: "description",
-        content:
-          "Why the Africa Digital Forum matters: agenda, themes and what to expect.",
-      },
-      { property: "og:title", content: "Why ADF | Africa Digital Forum" },
-      {
-        property: "og:description",
-        content:
-          "Why the Africa Digital Forum matters: agenda, themes and what to expect.",
-      },
-    ],
+    ...pageHead({
+      title: "Why ADF | Africa Digital Forum",
+      description:
+        "Why the Africa Digital Forum matters: agenda, themes and what to expect.",
+      path: "/why-adf",
+    }),
   }),
   component: WhyAdfRoute,
 })

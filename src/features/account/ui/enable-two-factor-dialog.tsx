@@ -17,7 +17,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { totpCodeSchema } from "../model/account.schemas"
 import { parseTotpUri } from "../model/totp-uri"
-import { useTwoFactorSetup } from "../hooks/use-two-factor-setup"
+import type { useTwoFactorSetup } from "../hooks/use-two-factor-setup"
 import { PasswordConfirmForm } from "./password-confirm-form"
 
 /**

@@ -1,15 +1,18 @@
 import { Link } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, Mail } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
-import { POSTS } from "@/data/posts"
+import { publishedPostsQueryOptions } from "@/domains/posts"
 import { Button } from "@/components/ui/button"
 import { NewsletterForm } from "@/components/newsletter-form"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function LatestArticles() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const latest = t.home.latest
-  const posts = POSTS.slice(0, 3)
+  const postsQuery = useQuery(publishedPostsQueryOptions(lang))
+  const posts = (postsQuery.data ?? []).slice(0, 3)
 
   return (
     <section className="bg-[#f5f5f5] px-[5%] py-20 font-nav">
@@ -36,10 +39,15 @@ export function LatestArticles() {
           </div>
         </div>
 
-        <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post, i) => {
-            const override = t.home.latestPosts[i]
-            return (
+        {postsQuery.isPending ? (
+          <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-[320px] rounded-2xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
               <Link
                 key={post.id}
                 to="/blog/$slug"
@@ -47,22 +55,28 @@ export function LatestArticles() {
                 className="group block overflow-hidden rounded-2xl border border-black/[0.04] bg-white transition-transform duration-300 hover:-translate-y-1.5"
               >
                 <div className="relative h-[180px] overflow-hidden">
-                  <img
-                    src={post.image}
-                    alt={override?.title ?? post.title}
-                    loading="lazy"
-                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
-                    {override?.category ?? post.category}
-                  </span>
+                  {post.coverUrl ? (
+                    <img
+                      src={post.coverUrl}
+                      alt={post.title}
+                      loading="lazy"
+                      className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="size-full bg-gradient-to-br from-primary/40 to-[#0a0a0a]" />
+                  )}
+                  {post.category && (
+                    <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
+                      {post.category}
+                    </span>
+                  )}
                 </div>
                 <div className="px-[22px] pt-5 pb-6">
-                  <h3 className="mb-2.5 line-clamp-2 text-base font-bold tracking-[-0.01em] text-[#1a1a1a] [line-height:1.4]">
-                    {override?.title ?? post.title}
+                  <h3 className="mb-2.5 line-clamp-2 text-base [line-height:1.4] font-bold tracking-[-0.01em] text-[#1a1a1a]">
+                    {post.title}
                   </h3>
                   <p className="line-clamp-3 text-[13px] leading-[1.6] text-black/70">
-                    {override?.excerpt ?? post.excerpt}
+                    {post.excerpt}
                   </p>
                   <span className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-bold text-primary transition-all group-hover:gap-2.5">
                     {latest.readMore}
@@ -70,9 +84,9 @@ export function LatestArticles() {
                   </span>
                 </div>
               </Link>
-            )
-          })}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-2 text-center">
           <Button

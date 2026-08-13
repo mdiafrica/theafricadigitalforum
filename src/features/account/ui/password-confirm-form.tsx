@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Spinner } from "@/components/ui/spinner"
 import { passwordConfirmSchema } from "../model/account.schemas"
 
@@ -59,9 +59,8 @@ export function PasswordConfirmForm({
 
       <Field data-invalid={!!error}>
         <FieldLabel htmlFor={id}>Password</FieldLabel>
-        <Input
+        <PasswordInput
           id={id}
-          type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           disabled={isPending}

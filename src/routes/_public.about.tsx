@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 import { BookOpen, Clock, Mail, MapPin, User } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
+import { pageHead } from "@/lib/seo"
+import { publicAdvisorsQueryOptions } from "@/domains/advisors"
 import { Reveal } from "@/components/motion"
 import { LinkedinIcon } from "@/components/brand-icons"
 import { Button } from "@/components/ui/button"
@@ -30,28 +33,27 @@ const TEAM_SOCIALS = [
 ]
 
 export const Route = createFileRoute("/_public/about")({
+  // SSR primes the default locale; the page must never 500 over this fetch.
+  loader: ({ context }) =>
+    context.queryClient
+      .ensureQueryData(publicAdvisorsQueryOptions("en"))
+      .catch(() => null),
   head: () => ({
-    meta: [
-      { title: "About | Africa Digital Forum" },
-      {
-        name: "description",
-        content:
-          "Who we are: the team and mission behind the Africa Digital Forum.",
-      },
-      { property: "og:title", content: "About | Africa Digital Forum" },
-      {
-        property: "og:description",
-        content:
-          "Who we are: the team and mission behind the Africa Digital Forum.",
-      },
-    ],
+    ...pageHead({
+      title: "About | Africa Digital Forum",
+      description:
+        "Who we are: the team and mission behind the Africa Digital Forum.",
+      path: "/about",
+    }),
   }),
   component: AboutRoute,
 })
 
 function AboutRoute() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const about = t.about
+  const advisorsQuery = useQuery(publicAdvisorsQueryOptions(lang))
+  const advisors = advisorsQuery.data ?? []
 
   const team = about.team.map((member, i) => ({
     ...member,
@@ -157,29 +159,65 @@ function AboutRoute() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            <div className="mb-12 grid grid-cols-2 gap-5 lg:grid-cols-4">
-              {[0, 1, 2, 3].map((i) => (
-                <Card
-                  key={i}
-                  className="flex flex-col items-center gap-3 rounded-2xl border-white/10 bg-white/[0.05] px-4 pt-8 pb-7"
-                >
-                  <div className="flex size-16 items-center justify-center rounded-full border-2 border-primary/35 bg-primary/[0.18] text-primary">
-                    <User className="size-6" />
-                  </div>
-                  <div className="h-2.5 w-20 rounded-md bg-white/[0.12]" />
-                  <div className="h-2 w-14 rounded-md bg-primary/25" />
-                </Card>
-              ))}
-            </div>
-          </Reveal>
+          {advisors.length > 0 ? (
+            <Reveal delay={0.1}>
+              <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+                {advisors.map((advisor) => (
+                  <Card
+                    key={advisor.id}
+                    className="flex flex-col items-center gap-3 rounded-2xl border-white/10 bg-white/[0.05] px-4 pt-8 pb-7"
+                  >
+                    <div className="flex size-16 items-center justify-center overflow-hidden rounded-full border-2 border-primary/35 bg-primary/[0.18] text-primary">
+                      {advisor.photoUrl ? (
+                        <img
+                          src={advisor.photoUrl}
+                          alt={advisor.name}
+                          loading="lazy"
+                          className="size-full object-cover object-top"
+                        />
+                      ) : (
+                        <User className="size-6" />
+                      )}
+                    </div>
+                    <p className="text-sm leading-tight font-bold text-white">
+                      {advisor.name}
+                    </p>
+                    {advisor.role && (
+                      <p className="-mt-1.5 text-xs text-primary/90">
+                        {advisor.role}
+                      </p>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </Reveal>
+          ) : (
+            <>
+              <Reveal delay={0.1}>
+                <div className="mb-12 grid grid-cols-2 gap-5 lg:grid-cols-4">
+                  {[0, 1, 2, 3].map((i) => (
+                    <Card
+                      key={i}
+                      className="flex flex-col items-center gap-3 rounded-2xl border-white/10 bg-white/[0.05] px-4 pt-8 pb-7"
+                    >
+                      <div className="flex size-16 items-center justify-center rounded-full border-2 border-primary/35 bg-primary/[0.18] text-primary">
+                        <User className="size-6" />
+                      </div>
+                      <div className="h-2.5 w-20 rounded-md bg-white/[0.12]" />
+                      <div className="h-2 w-14 rounded-md bg-primary/25" />
+                    </Card>
+                  ))}
+                </div>
+              </Reveal>
 
-          <Reveal delay={0.2}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-6 py-2.5 text-[13px] font-semibold tracking-[0.06em] text-[#a78bfa] uppercase">
-              <Clock className="size-4" />
-              {about.advisoryBadge}
-            </div>
-          </Reveal>
+              <Reveal delay={0.2}>
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-6 py-2.5 text-[13px] font-semibold tracking-[0.06em] text-[#a78bfa] uppercase">
+                  <Clock className="size-4" />
+                  {about.advisoryBadge}
+                </div>
+              </Reveal>
+            </>
+          )}
         </div>
       </section>
     </div>

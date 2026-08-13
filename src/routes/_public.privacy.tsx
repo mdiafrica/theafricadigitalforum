@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { pageHead } from "@/lib/seo"
+
 import {
   LegalContact,
   LegalIntro,
@@ -13,14 +15,12 @@ import {
 
 export const Route = createFileRoute("/_public/privacy")({
   head: () => ({
-    meta: [
-      { title: "Privacy Policy | Africa Digital Forum" },
-      {
-        name: "description",
-        content:
-          "Privacy Policy, Terms of Use and Cookie Policy for the Africa Digital Forum.",
-      },
-    ],
+    ...pageHead({
+      title: "Privacy Policy | Africa Digital Forum",
+      description:
+        "Privacy Policy, Terms of Use and Cookie Policy for the Africa Digital Forum.",
+      path: "/privacy",
+    }),
   }),
   component: PrivacyRoute,
 })

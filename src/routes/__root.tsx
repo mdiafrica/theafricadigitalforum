@@ -8,6 +8,7 @@ import type { QueryClient } from "@tanstack/react-query"
 
 import { I18nProvider } from "@/i18n/context"
 import { Toaster } from "@/components/ui/sonner"
+import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/seo"
 import appCss from "../styles.css?url"
 
 const SITE_TITLE =
@@ -25,14 +26,52 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: "description", content: SITE_DESCRIPTION },
         { name: "theme-color", content: "#050d1a" },
         { property: "og:type", content: "website" },
-        { property: "og:site_name", content: "Africa Digital Forum" },
-        { property: "og:title", content: "Africa Digital Forum" },
+        { property: "og:site_name", content: SITE_NAME },
+        { property: "og:title", content: SITE_NAME },
         { property: "og:description", content: SITE_DESCRIPTION },
+        { property: "og:image", content: absoluteUrl("/icon-512.png") },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: "Africa Digital Forum" },
+        { name: "twitter:title", content: SITE_NAME },
         { name: "twitter:description", content: SITE_DESCRIPTION },
+        { name: "twitter:image", content: absoluteUrl("/icon-512.png") },
       ],
-      links: [{ rel: "stylesheet", href: appCss }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: absoluteUrl("/icon-512.png"),
+            sameAs: [
+              "https://www.facebook.com/theafricadigitalforum/",
+              "https://www.linkedin.com/company/theafricadigitalforum/",
+              "https://x.com/ADFafrica",
+              "https://www.instagram.com/theafricadigitalforum/",
+              "https://youtube.com/@theafricadigitalforum",
+            ],
+          }),
+        },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "192x192",
+          href: "/icon-192.png",
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "512x512",
+          href: "/icon-512.png",
+        },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/manifest.json" },
+      ],
     }),
     notFoundComponent: () => (
       <main className="container mx-auto px-6 py-24 text-center">
