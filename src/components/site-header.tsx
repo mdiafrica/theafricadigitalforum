@@ -58,8 +58,10 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const navLabels = t.nav
 
+  // Header stays at z-40 — below the shared z-50 portal layer so
+  // dropdowns/sheets opened from the bar paint over it, not behind it.
   return (
-    <header className="fixed inset-x-0 top-0 z-[200] flex h-[85px] items-center justify-between border-b border-white/[0.12] bg-black px-[5%] font-nav tracking-[0.02em]">
+    <header className="fixed inset-x-0 top-0 z-40 flex h-[85px] items-center justify-between border-b border-white/[0.12] bg-black px-[5%] font-nav tracking-[0.02em]">
       <Link
         to="/"
         aria-label="Africa Digital Forum — home"
