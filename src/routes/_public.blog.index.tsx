@@ -1,17 +1,15 @@
 import { useMemo, useRef, useState } from "react"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { ArrowRight, Clock, Mail, Search, X } from "lucide-react"
+import { ArrowRight, Clock, Mail, Newspaper, Search, X } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
 import { pageHead } from "@/lib/seo"
 import {
   publishedPostCategoriesQueryOptions,
-  publishedPostsQueryOptions
-  
-  
+  publishedPostsQueryOptions,
 } from "@/domains/posts"
-import type {PublicListParams, PublicPostListItem} from "@/domains/posts";
+import type { PublicListParams, PublicPostListItem } from "@/domains/posts"
 import type { Locale } from "@/lib/schemas"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { NewsletterForm } from "@/components/newsletter-form"
@@ -188,9 +186,15 @@ function BlogRoute() {
         ) : posts.length === 0 ? (
           <div className="mb-16 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[#d8d8d8] bg-white py-16 text-center">
             <div className="flex size-12 items-center justify-center rounded-full bg-[#f0edf7] text-primary">
-              <Search className="size-5" />
+              {isFiltering ? (
+                <Search className="size-5" />
+              ) : (
+                <Newspaper className="size-5" />
+              )}
             </div>
-            <p className="max-w-sm text-sm text-[#666666]">{blog.noResults}</p>
+            <p className="max-w-sm text-sm text-[#666666]">
+              {isFiltering ? blog.noResults : blog.empty}
+            </p>
           </div>
         ) : (
           <div className="grid gap-6 pb-16 md:grid-cols-2 lg:grid-cols-3">

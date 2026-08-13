@@ -11,6 +11,7 @@ export function AdvisorsView() {
       title="Advisory board"
       description="Members shown on the About page, in display order."
       noun="member"
+      nouns="members"
       resource="advisor"
       useListQuery={useAdvisorsAdminQuery}
       useSaveMutation={useSaveAdvisorMutation}

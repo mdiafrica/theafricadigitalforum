@@ -46,6 +46,8 @@ export type PeopleViewConfig = {
   description: string
   /** Lowercase singular, used in button labels and toasts ("speaker"). */
   noun: string
+  /** Lowercase plural, used in the empty state ("speakers"). */
+  nouns: string
   resource: "speaker" | "advisor"
   useListQuery: () => UseQueryResult<PersonAdminItem[]>
   useSaveMutation: () => UseMutationResult<
@@ -101,7 +103,7 @@ export function PeopleView(config: PeopleViewConfig) {
 
       {listQuery.data && listQuery.data.length === 0 && (
         <EmptyState icon={UserRound}>
-          No {config.title.toLowerCase()} yet.
+          No {config.nouns} yet.
           {canEdit ? ` Add the first ${config.noun} to get started.` : ""}
         </EmptyState>
       )}

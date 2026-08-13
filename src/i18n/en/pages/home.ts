@@ -148,6 +148,7 @@ export const home = {
       "Insights, analysis, and stories from Africa's digital transformation journey.",
     readMore: "Read More",
     viewAll: "View All Articles",
+    empty: "No articles yet — the first stories are on their way.",
     newsletter: {
       label: "Subscribe for updates",
       placeholder: "Your email address",

@@ -11,6 +11,7 @@ export function SpeakersView() {
       title="Speakers"
       description="The line-up shown on the home page, in display order."
       noun="speaker"
+      nouns="speakers"
       resource="speaker"
       useListQuery={useSpeakersAdminQuery}
       useSaveMutation={useSaveSpeakerMutation}

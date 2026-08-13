@@ -45,6 +45,10 @@ export function LatestArticles() {
               <Skeleton key={i} className="h-[320px] rounded-2xl" />
             ))}
           </div>
+        ) : posts.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-black/10 bg-white py-14 text-center text-sm text-black/50">
+            {latest.empty}
+          </p>
         ) : (
           <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
@@ -88,16 +92,18 @@ export function LatestArticles() {
           </div>
         )}
 
-        <div className="mt-2 text-center">
-          <Button
-            variant="outline"
-            render={<Link to="/blog" />}
-            className="h-auto rounded-full border-[1.5px] border-primary bg-transparent px-6 py-2.5 text-[13px] font-bold tracking-[0.06em] text-primary hover:bg-primary hover:text-white dark:border-primary dark:bg-transparent dark:hover:bg-primary"
-          >
-            {latest.viewAll}
-            <ArrowRight data-icon="inline-end" className="size-4" />
-          </Button>
-        </div>
+        {posts.length > 0 && (
+          <div className="mt-2 text-center">
+            <Button
+              variant="outline"
+              render={<Link to="/blog" />}
+              className="h-auto rounded-full border-[1.5px] border-primary bg-transparent px-6 py-2.5 text-[13px] font-bold tracking-[0.06em] text-primary hover:bg-primary hover:text-white dark:border-primary dark:bg-transparent dark:hover:bg-primary"
+            >
+              {latest.viewAll}
+              <ArrowRight data-icon="inline-end" className="size-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   )

@@ -12,6 +12,7 @@ export const blog = {
   searchPlaceholder: "Rechercher des articles, sujets, auteurs…",
   noResults:
     "Aucun article ne correspond à votre recherche. Essayez un autre terme ou une autre catégorie.",
+  empty: "Pas encore d'articles — les premières histoires arrivent bientôt.",
   showingResults: "{shown} résultat{plural} sur {total}",
   loadMore: "Charger plus d’articles",
 

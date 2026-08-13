@@ -11,6 +11,7 @@ export const blog = {
   sectionTitle: "Latest Articles",
   searchPlaceholder: "Search articles, topics, authors…",
   noResults: "No articles match your search. Try another term or category.",
+  empty: "No articles yet — the first stories are on their way.",
   showingResults: "Showing {shown} of {total} result{plural}",
   loadMore: "Load More Articles",
 
