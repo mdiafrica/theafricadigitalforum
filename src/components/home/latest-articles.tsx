@@ -4,10 +4,11 @@ import { ArrowRight, Mail, Newspaper } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
 import { publishedPostsQueryOptions } from "@/domains/posts"
+import type { PublicPostListItem } from "@/domains/posts"
 import { Button } from "@/components/ui/button"
 import { EmptyCard } from "@/components/empty-card"
 import { NewsletterForm } from "@/components/newsletter-form"
-import { PostCard } from "@/components/post-card"
+import { CoverImage } from "@/components/post-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function LatestArticles() {
@@ -52,10 +53,9 @@ export function LatestArticles() {
         ) : (
           <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
-              <PostCard
+              <HomeArticleCard
                 key={post.id}
                 post={post}
-                locale={lang}
                 readMoreLabel={latest.readMore}
               />
             ))}
@@ -76,5 +76,46 @@ export function LatestArticles() {
         )}
       </div>
     </section>
+  )
+}
+
+/** Compact card for the home page — lighter than the blog's PostCard. */
+function HomeArticleCard({
+  post,
+  readMoreLabel,
+}: {
+  post: PublicPostListItem
+  readMoreLabel: string
+}) {
+  return (
+    <Link
+      to="/blog/$slug"
+      params={{ slug: post.slug }}
+      className="group block overflow-hidden rounded-2xl border border-ink/5 bg-white transition-transform duration-300 hover:-translate-y-1.5"
+    >
+      <div className="relative h-[180px] overflow-hidden">
+        <CoverImage
+          post={post}
+          className="transition-transform duration-500 group-hover:scale-105"
+        />
+        {post.category && (
+          <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
+            {post.category}
+          </span>
+        )}
+      </div>
+      <div className="px-[22px] pt-5 pb-6">
+        <h3 className="mb-2.5 line-clamp-2 text-base [line-height:1.4] font-bold tracking-[-0.01em] text-ink">
+          {post.title}
+        </h3>
+        <p className="line-clamp-3 text-[13px] leading-[1.6] text-ink/70">
+          {post.excerpt}
+        </p>
+        <span className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-bold text-primary transition-all group-hover:gap-2.5">
+          {readMoreLabel}
+          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+        </span>
+      </div>
+    </Link>
   )
 }
