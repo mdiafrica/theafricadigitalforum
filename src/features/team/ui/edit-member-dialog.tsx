@@ -135,6 +135,10 @@ function EditMemberForm({
         <Field>
           <FieldLabel htmlFor="member-role">Role</FieldLabel>
           <Select
+            items={INVITABLE_ROLE_OPTIONS.map((option) => ({
+              value: option.value,
+              label: option.label,
+            }))}
             value={values.role}
             onValueChange={(role) => role && set({ role })}
           >

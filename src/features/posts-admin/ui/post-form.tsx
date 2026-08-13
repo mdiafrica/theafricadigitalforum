@@ -67,6 +67,12 @@ export function PostForm({
   )
 
   const authorsQuery = useAssignableAuthorsQuery(canAssignAuthor)
+  const authorItems = (authorsQuery.data ?? []).map((member) => ({
+    value: member.userId,
+    label: member.isBoard
+      ? `ADF Editorial Board (${member.name})`
+      : member.name,
+  }))
   const categoriesQuery = useQuery(publicCategoriesQueryOptions("en"))
   const categoryOptions = (categoriesQuery.data ?? []).map((category) => ({
     value: category.id,
@@ -169,6 +175,7 @@ export function PostForm({
                   <Field>
                     <FieldLabel htmlFor="post-author">Author</FieldLabel>
                     <Select
+                      items={authorItems}
                       value={field.state.value}
                       onValueChange={(value) => field.handleChange(value ?? "")}
                     >
@@ -178,11 +185,9 @@ export function PostForm({
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {(authorsQuery.data ?? []).map((member) => (
-                          <SelectItem key={member.userId} value={member.userId}>
-                            {member.isBoard
-                              ? `ADF Editorial Board (${member.name})`
-                              : member.name}
+                        {authorItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
