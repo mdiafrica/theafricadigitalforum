@@ -98,9 +98,12 @@ function HomeArticleCard({
           post={post}
           className="transition-transform duration-500 group-hover:scale-105"
         />
-        {post.category && (
-          <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
-            {post.category}
+        {post.categories[0] && (
+          <span
+            className="absolute top-3 right-3 rounded-full px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase"
+            style={{ backgroundColor: post.categories[0].color }}
+          >
+            {post.categories[0].name}
           </span>
         )}
       </div>

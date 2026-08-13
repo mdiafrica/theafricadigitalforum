@@ -233,6 +233,14 @@
     font-weight: 600;
     color: var(--primary);
   }
+  .article-prose table {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .article-prose td,
+  .article-prose th {
+    color: #1a1a1a;
+  }
 }
 
 /* Host-city pillar carousel — infinite marquee of duplicated cards. */

@@ -1,6 +1,7 @@
 import { z } from "zod"
 
-import { postSlugSchema, type PostTranslationsInput } from "@/domains/posts"
+import { postSlugSchema } from "@/domains/posts"
+import type { PostTranslationsInput } from "@/domains/posts"
 
 /**
  * Client form shape: both locales always present (empty FR = not saved);
@@ -12,13 +13,15 @@ const localeFields = z.object({
     .string()
     .trim()
     .max(1000, "Keep the excerpt under 1000 characters"),
-  category: z.string().trim().max(100),
   body: z.array(z.looseObject({})),
 })
 
 export const postFormSchema = z.object({
   slug: postSlugSchema,
   coverMediaId: z.string().nullable(),
+  /** Empty string = default byline (the caller / unchanged). */
+  authorId: z.string(),
+  categoryIds: z.array(z.string()),
   en: localeFields.extend({
     title: z.string().trim().min(1, "The English title is required").max(300),
   }),
@@ -31,7 +34,6 @@ export type PostFormValues = z.infer<typeof postFormSchema>
 export const emptyLocaleValues: PostFormValues["fr"] = {
   title: "",
   excerpt: "",
-  category: "",
   body: [],
 }
 

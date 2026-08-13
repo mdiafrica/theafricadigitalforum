@@ -5,13 +5,15 @@ import type { Value } from "platejs"
 
 import { useI18n } from "@/i18n/context"
 import {
+  publishedPostCategoriesQueryOptions,
   publishedPostQueryOptions,
-  publishedPostsQueryOptions,
+  relatedPostsQueryOptions,
 } from "@/domains/posts"
 import type { Locale } from "@/lib/schemas"
 import { absoluteUrl, pageHead } from "@/lib/seo"
 import { RichTextView } from "@/components/editor/rich-text-view"
 import { NewsletterForm } from "@/components/newsletter-form"
+import { PostCard, formatPostDate } from "@/components/post-card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -25,7 +27,8 @@ export const Route = createFileRoute("/_public/blog/$slug")({
       title: post.title,
       excerpt: post.excerpt,
       coverUrl: post.coverUrl,
-      authorName: post.authorName,
+      authorName: post.byline.name,
+      isBoard: post.byline.isBoard,
       publishedAt: post.publishedAt,
     }
   },
@@ -50,7 +53,10 @@ export const Route = createFileRoute("/_public/blog/$slug")({
             ...(loaderData.coverUrl
               ? { image: absoluteUrl(loaderData.coverUrl) }
               : {}),
-            author: { "@type": "Person", name: loaderData.authorName },
+            author: {
+              "@type": loaderData.isBoard ? "Organization" : "Person",
+              name: loaderData.authorName,
+            },
             publisher: {
               "@type": "Organization",
               name: "Africa Digital Forum",
@@ -82,7 +88,8 @@ function ArticleRoute() {
   const single = t.blog.singleArticle
 
   const postQuery = useQuery(publishedPostQueryOptions(slug, lang))
-  const relatedQuery = useQuery(publishedPostsQueryOptions(lang))
+  const relatedQuery = useQuery(relatedPostsQueryOptions(slug, lang))
+  const categoriesQuery = useQuery(publishedPostCategoriesQueryOptions(lang))
 
   if (postQuery.isPending) {
     return (
@@ -99,10 +106,10 @@ function ArticleRoute() {
   const post = postQuery.data
   if (!post) throw notFound()
 
-  const related = (relatedQuery.data ?? [])
-    .filter((item) => item.slug !== slug)
-    .slice(0, 3)
-  const authorInitials = post.authorName
+  const related = relatedQuery.data?.related ?? []
+  const more = relatedQuery.data?.more ?? []
+  const allCategories = categoriesQuery.data ?? []
+  const authorInitials = post.byline.name
     .split(" ")
     .map((w) => w[0])
     .slice(0, 2)
@@ -135,10 +142,18 @@ function ArticleRoute() {
               </Button>
 
               <div className="mt-[84px] max-w-[800px]">
-                {post.category && (
-                  <span className="mb-[18px] inline-block rounded-full bg-primary px-3.5 py-[5px] text-[11px] font-bold tracking-[0.06em] text-white uppercase shadow-[0_4px_14px_rgba(0,0,0,0.25)]">
-                    {post.category}
-                  </span>
+                {post.categories.length > 0 && (
+                  <div className="mb-[18px] flex flex-wrap gap-2">
+                    {post.categories.map((category) => (
+                      <span
+                        key={category.id}
+                        className="inline-block rounded-full px-3.5 py-[5px] text-[11px] font-bold tracking-[0.06em] text-white uppercase shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
+                        style={{ backgroundColor: category.color }}
+                      >
+                        {category.name}
+                      </span>
+                    ))}
+                  </div>
                 )}
                 <h1 className="mb-4 line-clamp-3 text-[clamp(22px,2.8vw,38px)] leading-[1.12] font-extrabold tracking-[-0.02em] text-balance text-white max-[900px]:text-[clamp(20px,4.5vw,32px)]">
                   {post.title}
@@ -167,8 +182,17 @@ function ArticleRoute() {
       {/* Content + sidebar */}
       <section className="mx-auto max-w-[1340px] px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
-          {/* Article body */}
-          <div>
+          {/* Article card (legacy contentMain) */}
+          <div className="rounded-[22px] border border-primary/[0.06] bg-white p-7 shadow-[0_1px_2px_rgba(20,10,40,0.04),0_12px_32px_rgba(20,10,40,0.05)] sm:p-10 lg:px-14 lg:py-12">
+            {post.categories[0] && (
+              <div
+                className="mb-5 text-xs font-bold tracking-[0.08em] uppercase"
+                style={{ color: post.categories[0].color }}
+              >
+                {post.categories[0].name}
+              </div>
+            )}
+
             <div
               style={
                 {
@@ -184,15 +208,39 @@ function ArticleRoute() {
             </div>
 
             {/* Author bio */}
-            <div className="mt-12 flex items-center gap-4 rounded-2xl border border-black/[0.06] bg-white p-6">
+            <div className="mt-12 flex items-start gap-4 rounded-2xl border border-black/[0.06] bg-[#faf9fc] p-6">
               <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary ring-2 ring-primary/20">
                 {authorInitials}
               </div>
-              <div>
-                <p className="font-bold text-[#1a1a1a]">{post.authorName}</p>
-                <p className="text-sm text-[#666666]">Africa Digital Forum</p>
+              <div className="min-w-0">
+                <p className="font-bold text-[#1a1a1a]">{post.byline.name}</p>
+                <p className="mt-1 text-sm leading-[1.65] text-[#555555]">
+                  {post.byline.bio ?? "Africa Digital Forum"}
+                </p>
               </div>
             </div>
+
+            {/* Topics */}
+            {post.categories.length > 0 && (
+              <div className="mt-8 flex flex-wrap items-center gap-2.5 border-t border-black/[0.06] pt-6">
+                <span className="text-sm font-bold text-[#1a1a1a]">
+                  {single.topicsLabel}
+                </span>
+                {post.categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to="/blog"
+                    className="rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
+                    style={{
+                      borderColor: category.color,
+                      color: category.color,
+                    }}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -210,6 +258,29 @@ function ArticleRoute() {
                 buttonClassName="h-auto w-full rounded-lg py-2.5 font-bold hover:bg-[#6d28d9]"
               />
             </div>
+
+            {allCategories.length > 0 && (
+              <div className="rounded-2xl border border-black/[0.06] bg-white p-6">
+                <h4 className="mb-4 text-lg font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
+                  {single.categoriesTitle}
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {allCategories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to="/blog"
+                      className="rounded-full border px-3 py-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
+                      style={{
+                        borderColor: category.color,
+                        color: category.color,
+                      }}
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {related.length > 0 && (
               <div className="rounded-2xl border border-black/[0.06] bg-white p-6">
@@ -236,17 +307,59 @@ function ArticleRoute() {
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-primary/5" />
                         )}
                       </div>
-                      <h5 className="line-clamp-3 text-[13px] leading-[1.4] font-semibold text-[#1a1a1a] group-hover:text-primary">
-                        {rel.title}
-                      </h5>
+                      <div className="min-w-0">
+                        <h5 className="line-clamp-2 text-[13px] leading-[1.4] font-semibold text-[#1a1a1a] group-hover:text-primary">
+                          {rel.title}
+                        </h5>
+                        <p className="mt-1 text-[11px] text-[#999999]">
+                          {formatPostDate(rel.publishedAt, lang)} ·{" "}
+                          {rel.readTimeMin} min
+                        </p>
+                      </div>
                     </Link>
                   ))}
                 </div>
+                <Link
+                  to="/blog"
+                  className="mt-5 inline-flex items-center gap-1.5 border-t border-black/[0.06] pt-4 text-[13px] font-bold text-primary hover:underline"
+                >
+                  {single.viewAll} →
+                </Link>
               </div>
             )}
           </aside>
         </div>
       </section>
+
+      {/* More from the blog */}
+      {more.length > 0 && (
+        <section className="mx-auto max-w-[1340px] px-6 pb-20">
+          <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="h-[22px] w-1 shrink-0 rounded-sm bg-primary" />
+              <h2 className="text-[clamp(20px,2.5vw,26px)] font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
+                {single.moreTitle}
+              </h2>
+            </div>
+            <Link
+              to="/blog"
+              className="text-[13px] font-bold text-primary hover:underline"
+            >
+              {single.viewAll} →
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {more.map((item) => (
+              <PostCard
+                key={item.id}
+                post={item}
+                locale={lang}
+                readMoreLabel={single.readMore}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   )
 }

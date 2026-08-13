@@ -10,9 +10,11 @@ import {
   deletePost,
   getPostAdmin,
   getPublishedPostBySlug,
+  listAssignableAuthors,
   listPostsAdmin,
   listPublishedPostCategories,
   listPublishedPosts,
+  listRelatedPosts,
   publishPost,
   unpublishPost,
   updatePost,
@@ -35,9 +37,12 @@ export const postKeys = {
     [...postKeys.all, "public-categories", locale] as const,
   publicDetail: (slug: string, locale: Locale) =>
     [...postKeys.all, "public-detail", slug, locale] as const,
+  publicRelated: (slug: string, locale: Locale) =>
+    [...postKeys.all, "public-related", slug, locale] as const,
+  assignableAuthors: () => [...postKeys.all, "assignable-authors"] as const,
 }
 
-export type PublicListParams = { category?: string; query?: string }
+export type PublicListParams = { categorySlug?: string; query?: string }
 
 // --- Admin ---
 
@@ -63,6 +68,17 @@ export const postAdminDetailQueryOptions = (id: string) =>
 
 export function usePostAdminDetailQuery(id: string) {
   return useQuery(postAdminDetailQueryOptions(id))
+}
+
+export const assignableAuthorsQueryOptions = () =>
+  queryOptions({
+    queryKey: postKeys.assignableAuthors(),
+    queryFn: () => listAssignableAuthors(),
+    staleTime: 60_000,
+  })
+
+export function useAssignableAuthorsQuery(enabled: boolean) {
+  return useQuery({ ...assignableAuthorsQueryOptions(), enabled })
 }
 
 export function useCreatePostMutation() {
@@ -138,5 +154,12 @@ export const publishedPostQueryOptions = (slug: string, locale: Locale) =>
   queryOptions({
     queryKey: postKeys.publicDetail(slug, locale),
     queryFn: () => getPublishedPostBySlug({ data: { slug, locale } }),
+    staleTime: 60_000,
+  })
+
+export const relatedPostsQueryOptions = (slug: string, locale: Locale) =>
+  queryOptions({
+    queryKey: postKeys.publicRelated(slug, locale),
+    queryFn: () => listRelatedPosts({ data: { slug, locale } }),
     staleTime: 60_000,
   })

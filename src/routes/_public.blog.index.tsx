@@ -38,21 +38,20 @@ export const Route = createFileRoute("/_public/blog/")({
   component: BlogRoute,
 })
 
-const ALL_CATEGORIES = "All"
-
 function BlogRoute() {
   const { t, lang } = useI18n()
   const blog = t.blog
   const newsletterRef = useRef<HTMLDivElement>(null)
 
-  const [category, setCategory] = useState(ALL_CATEGORIES)
+  // null = all categories.
+  const [categorySlug, setCategorySlug] = useState<string | null>(null)
   const [query, setQuery] = useState("")
   const debouncedQuery = useDebouncedValue(query.trim(), 300)
 
-  const isFiltering = category !== ALL_CATEGORIES || debouncedQuery !== ""
+  const isFiltering = categorySlug !== null || debouncedQuery !== ""
   const params: PublicListParams | undefined = isFiltering
     ? {
-        category: category === ALL_CATEGORIES ? undefined : category,
+        categorySlug: categorySlug ?? undefined,
         query: debouncedQuery || undefined,
       }
     : undefined
@@ -64,10 +63,7 @@ function BlogRoute() {
   const posts = useMemo(() => postsQuery.data ?? [], [postsQuery.data])
 
   const categoriesQuery = useQuery(publishedPostCategoriesQueryOptions(lang))
-  const categories = useMemo(
-    () => [ALL_CATEGORIES, ...(categoriesQuery.data ?? [])],
-    [categoriesQuery.data]
-  )
+  const categories = categoriesQuery.data ?? []
 
   const featured = isFiltering ? undefined : posts[0]
   const sidebar = isFiltering ? [] : posts.slice(1, 4)
@@ -148,22 +144,33 @@ function BlogRoute() {
             </div>
           </div>
 
-          {categories.length > 1 && (
+          {categories.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => {
-                const active = category === cat
+              {[null, ...categories].map((cat) => {
+                const active = categorySlug === (cat?.slug ?? null)
                 return (
                   <Button
-                    key={cat}
+                    key={cat?.slug ?? "all"}
                     variant={active ? "default" : "outline"}
-                    onClick={() => setCategory(cat)}
+                    onClick={() => setCategorySlug(cat?.slug ?? null)}
+                    style={
+                      active && cat
+                        ? { backgroundColor: cat.color, borderColor: cat.color }
+                        : undefined
+                    }
                     className={
                       active
                         ? "h-auto rounded-full px-4 py-[7px] text-xs font-semibold"
                         : "h-auto rounded-full border-[#e8e8e8] bg-white px-4 py-[7px] text-xs font-semibold text-[#666666] hover:border-primary hover:text-primary dark:border-[#e8e8e8] dark:bg-white dark:hover:bg-white"
                     }
                   >
-                    {cat}
+                    {cat && (
+                      <span
+                        className="size-2 rounded-full"
+                        style={{ backgroundColor: active ? "#fff" : cat.color }}
+                      />
+                    )}
+                    {cat?.name ?? blog.allLabel}
                   </Button>
                 )
               })}
@@ -241,9 +248,12 @@ function FeaturedCard({
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[rgba(5,13,26,0.08)] to-[rgba(5,13,26,0.92)]" />
       <div className="relative z-10 p-8 sm:p-9">
-        {post.category && (
-          <span className="mb-3.5 inline-block rounded-full bg-primary px-3.5 py-1 text-[11px] font-bold tracking-[0.5px] text-white">
-            {post.category}
+        {post.categories[0] && (
+          <span
+            className="mb-3.5 inline-block rounded-full px-3.5 py-1 text-[11px] font-bold tracking-[0.5px] text-white"
+            style={{ backgroundColor: post.categories[0].color }}
+          >
+            {post.categories[0].name}
           </span>
         )}
         <h2 className="mb-3 text-[clamp(20px,2.4vw,28px)] leading-[1.3] font-extrabold tracking-[-0.02em] text-white">
@@ -291,9 +301,12 @@ function SideStory({
         />
       </div>
       <div className="flex min-w-0 flex-col justify-center gap-1">
-        {post.category && (
-          <span className="text-[10px] font-bold tracking-[0.06em] text-primary uppercase">
-            {post.category}
+        {post.categories[0] && (
+          <span
+            className="text-[10px] font-bold tracking-[0.06em] uppercase"
+            style={{ color: post.categories[0].color }}
+          >
+            {post.categories[0].name}
           </span>
         )}
         <h3 className="line-clamp-2 text-[13px] leading-[1.4] font-bold text-[#1a1a1a] group-hover:text-primary">

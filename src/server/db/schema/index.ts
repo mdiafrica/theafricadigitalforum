@@ -6,5 +6,6 @@
 export * from "./auth"
 export * from "./media"
 export * from "./posts"
+export * from "./categories"
 export * from "./submissions"
 export * from "./content"

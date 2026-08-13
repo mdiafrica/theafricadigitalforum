@@ -1,5 +1,6 @@
 import type * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
+import type { VariantProps } from "class-variance-authority"
 import type { PlateContentProps } from "platejs/react"
 import { PlateContainer, PlateContent } from "platejs/react"
 
@@ -54,7 +55,10 @@ const editorVariants = cva(
       variant: {
         default:
           "size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]",
-        field: "min-h-[280px] w-full px-6 py-4 text-base",
+        // White canvas matching the public article surface, so authors see
+        // pasted/colored content the way readers will.
+        field:
+          "min-h-[280px] w-full rounded-b-lg bg-white px-6 py-4 text-base text-[#1a1a1a] [--foreground:#1a1a1a] [--muted-foreground:#444444]",
         // Chrome-free read-only rendering (public article bodies).
         view: "w-full cursor-auto text-base",
       },

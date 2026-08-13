@@ -17,47 +17,47 @@ describe("permission matrix", () => {
     )
   })
 
-  it("secretary can draft but not publish or delete", () => {
+  it("editor can draft but not publish or delete", () => {
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), {
+      hasOrgPermission(asRole(OrgRole.Editor), {
         post: ["create", "update"],
       })
     ).toBe(true)
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { post: ["publish"] })
+      hasOrgPermission(asRole(OrgRole.Editor), { post: ["publish"] })
     ).toBe(false)
-    expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { post: ["delete"] })
-    ).toBe(false)
+    expect(hasOrgPermission(asRole(OrgRole.Editor), { post: ["delete"] })).toBe(
+      false
+    )
   })
 
-  it("admin manages the team, secretary does not", () => {
+  it("admin manages the team, editor does not", () => {
     expect(
       hasOrgPermission(asRole(OrgRole.Admin), { invitation: ["create"] })
     ).toBe(true)
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { invitation: ["create"] })
+      hasOrgPermission(asRole(OrgRole.Editor), { invitation: ["create"] })
     ).toBe(false)
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { member: ["update"] })
-    ).toBe(false)
-  })
-
-  it("secretary uploads media but cannot delete it", () => {
-    expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { media: ["upload"] })
-    ).toBe(true)
-    expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { media: ["delete"] })
+      hasOrgPermission(asRole(OrgRole.Editor), { member: ["update"] })
     ).toBe(false)
   })
 
-  it("secretary can only update speakers/sponsors, admin has full CRUD", () => {
+  it("editor uploads media but cannot delete it", () => {
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { speaker: ["update"] })
+      hasOrgPermission(asRole(OrgRole.Editor), { media: ["upload"] })
     ).toBe(true)
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary), { speaker: ["create"] })
+      hasOrgPermission(asRole(OrgRole.Editor), { media: ["delete"] })
+    ).toBe(false)
+  })
+
+  it("editor can only update speakers/sponsors, admin has full CRUD", () => {
+    expect(
+      hasOrgPermission(asRole(OrgRole.Editor), { speaker: ["update"] })
+    ).toBe(true)
+    expect(
+      hasOrgPermission(asRole(OrgRole.Editor), { speaker: ["create"] })
     ).toBe(false)
     expect(
       hasOrgPermission(asRole(OrgRole.Admin), { speaker: ["create", "delete"] })
@@ -65,7 +65,7 @@ describe("permission matrix", () => {
   })
 
   it("everyone reads submissions", () => {
-    for (const role of [OrgRole.Owner, OrgRole.Admin, OrgRole.Secretary]) {
+    for (const role of [OrgRole.Owner, OrgRole.Admin, OrgRole.Editor]) {
       expect(hasOrgPermission(asRole(role), { submission: ["read"] })).toBe(
         true
       )
@@ -79,7 +79,7 @@ describe("permission matrix", () => {
       })
     ).toBe(true)
     expect(
-      hasOrgPermission(asRole(OrgRole.Secretary, GlobalRole.SuperAdmin), {
+      hasOrgPermission(asRole(OrgRole.Editor, GlobalRole.SuperAdmin), {
         member: ["delete"],
       })
     ).toBe(true)

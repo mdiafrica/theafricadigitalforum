@@ -1,6 +1,7 @@
 import { queryOptions, useQuery } from "@tanstack/react-query"
 
 import { authClient, unwrap } from "@/lib/auth/auth-client"
+import { getMemberProfile, getMyProfile } from "./team.functions"
 
 /**
  * Team data comes from better-auth's own org endpoints via the auth client —
@@ -22,7 +23,23 @@ export type TeamInvitation = TeamOverview["invitations"][number]
 export const teamKeys = {
   all: ["team"] as const,
   overview: () => [...teamKeys.all, "overview"] as const,
+  memberProfile: (userId: string) =>
+    [...teamKeys.all, "member-profile", userId] as const,
 }
+
+export const memberProfileQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: teamKeys.memberProfile(userId),
+    queryFn: () => getMemberProfile({ data: { userId } }),
+    staleTime: 15_000,
+  })
+
+export const myProfileQueryOptions = () =>
+  queryOptions({
+    queryKey: [...teamKeys.all, "my-profile"] as const,
+    queryFn: () => getMyProfile(),
+    staleTime: 15_000,
+  })
 
 export const teamOverviewQueryOptions = () =>
   queryOptions({

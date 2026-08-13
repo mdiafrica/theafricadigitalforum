@@ -1,6 +1,11 @@
 import * as React from "react"
 import type { Value } from "platejs"
 
+import { useQuery } from "@tanstack/react-query"
+
+import { useSessionQuery } from "@/domains/auth"
+import { publicCategoriesQueryOptions } from "@/domains/categories"
+import { useAssignableAuthorsQuery } from "@/domains/posts"
 import { RichTextEditor } from "@/components/editor/rich-text-editor"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,10 +22,19 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { MultiSelect } from "@/components/ui/multi-select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import type { PostAdminDetail } from "@/domains/posts"
+import { hasOrgPermission } from "@/lib/auth/permissions"
 import type { Locale } from "@/lib/schemas"
 import { usePostForm } from "../hooks/use-post-form"
 import { MediaPickerDialog } from "@/components/media-picker-dialog"
@@ -37,12 +51,28 @@ export function PostForm({
   post?: PostAdminDetail
   headerActions?: React.ReactNode
 }) {
+  const sessionQuery = useSessionQuery()
+  const session = sessionQuery.data
+  const canAssignAuthor = hasOrgPermission(
+    { globalRole: session?.user.role, orgRole: session?.orgRole },
+    { post: ["assignAuthor"] }
+  )
+
   const { form, onEnTitleChange, onSlugChange, isSubmitting } = usePostForm({
     post,
+    canAssignAuthor,
   })
   const [coverUrl, setCoverUrl] = React.useState<string | null>(
     post?.coverUrl ?? null
   )
+
+  const authorsQuery = useAssignableAuthorsQuery(canAssignAuthor)
+  const categoriesQuery = useQuery(publicCategoriesQueryOptions("en"))
+  const categoryOptions = (categoriesQuery.data ?? []).map((category) => ({
+    value: category.id,
+    label: category.name,
+    color: category.color,
+  }))
 
   return (
     <form
@@ -117,6 +147,55 @@ export function PostForm({
               )}
             </form.Field>
 
+            <form.Field name="categoryIds">
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor="post-categories">Categories</FieldLabel>
+                  <MultiSelect
+                    id="post-categories"
+                    options={categoryOptions}
+                    values={field.state.value}
+                    onValuesChange={(values) => field.handleChange(values)}
+                    placeholder="Pick one or more categories"
+                    disabled={isSubmitting}
+                  />
+                </Field>
+              )}
+            </form.Field>
+
+            {canAssignAuthor && (
+              <form.Field name="authorId">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="post-author">Author</FieldLabel>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={(value) => field.handleChange(value ?? "")}
+                    >
+                      <SelectTrigger id="post-author" className="w-full">
+                        <SelectValue
+                          placeholder={post ? "Keep current author" : "Me"}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(authorsQuery.data ?? []).map((member) => (
+                          <SelectItem key={member.userId} value={member.userId}>
+                            {member.isBoard
+                              ? `ADF Editorial Board (${member.name})`
+                              : member.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Admin and owner bylines appear on the site as the ADF
+                      Editorial Board.
+                    </p>
+                  </Field>
+                )}
+              </form.Field>
+            )}
+
             <form.Field name="coverMediaId">
               {(field) => (
                 <Field>
@@ -188,24 +267,6 @@ function LocaleFields({
               onBlur={field.handleBlur}
               rows={3}
               placeholder="Short summary shown on cards and in search results"
-            />
-            <FieldError errors={field.state.meta.errors} />
-          </Field>
-        )}
-      </form.Field>
-
-      <form.Field name={`${locale}.category`}>
-        {(field) => (
-          <Field data-invalid={field.state.meta.errors.length > 0}>
-            <FieldLabel htmlFor={`${locale}-category`}>Category</FieldLabel>
-            <Input
-              id={`${locale}-category`}
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              placeholder={
-                locale === "en" ? "Digital Policy" : "Politique numérique"
-              }
             />
             <FieldError errors={field.state.meta.errors} />
           </Field>

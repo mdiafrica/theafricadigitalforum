@@ -23,6 +23,7 @@ import { Route as AdminPagesRouteImport } from './routes/admin.pages'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorRouteImport } from './routes/admin.editor'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAdvisorsRouteImport } from './routes/admin.advisors'
 import { Route as AdminAccountRouteImport } from './routes/admin.account'
 import { Route as PublicWhyAdfRouteImport } from './routes/_public.why-adf'
@@ -109,6 +110,11 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
 const AdminEditorRoute = AdminEditorRouteImport.update({
   id: '/editor',
   path: '/editor',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAdvisorsRoute = AdminAdvisorsRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/_public/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/_public/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
@@ -516,6 +528,13 @@ declare module '@tanstack/react-router' {
       path: '/editor'
       fullPath: '/admin/editor'
       preLoaderRoute: typeof AdminEditorRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/advisors': {
@@ -712,6 +731,7 @@ const PublicRouteWithChildren =
 interface AdminRouteChildren {
   AdminAccountRoute: typeof AdminAccountRoute
   AdminAdvisorsRoute: typeof AdminAdvisorsRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -729,6 +749,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccountRoute: AdminAccountRoute,
   AdminAdvisorsRoute: AdminAdvisorsRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminMediaRoute: AdminMediaRoute,

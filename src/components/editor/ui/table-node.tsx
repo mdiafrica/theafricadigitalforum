@@ -21,21 +21,20 @@ import {
   useTableSelectionDom,
   useTableValue,
 } from "@platejs/table/react"
-import {
-  
-  
-  
-  KEYS
+import { KEYS } from "platejs"
+import type {
+  TTableCellElement,
+  TTableElement,
+  TTableRowElement,
 } from "platejs"
-import type {TTableCellElement, TTableElement, TTableRowElement} from "platejs";
 import {
-  
   PlateElement,
   useEditorPlugin,
   useReadOnly,
-  withHOC, useElementSelector 
+  withHOC,
+  useElementSelector,
 } from "platejs/react"
-import type {PlateElementProps} from "platejs/react";
+import type { PlateElementProps } from "platejs/react"
 
 import { cn } from "@/lib/utils"
 
@@ -588,13 +587,12 @@ export const TableElement = withHOC(
       }
     }, [resolvedColSizes])
     const tableStyle = React.useMemo(
-      () =>
-        ({
-          width: `${
-            resolvedColSizes.reduce((total, colSize) => total + colSize, 0) +
-            controlColumnWidth
-          }px`,
-        }),
+      () => ({
+        width: `${
+          resolvedColSizes.reduce((total, colSize) => total + colSize, 0) +
+          controlColumnWidth
+        }px`,
+      }),
       [controlColumnWidth, resolvedColSizes]
     )
 
@@ -756,17 +754,20 @@ export function TableCellElement({
       {...props}
       as={isHeader ? "th" : "td"}
       className={cn(
-        "relative h-full overflow-visible border-none bg-background p-0",
-        element.background ? "bg-(--cellBackground)" : "bg-background",
-        isHeader && "text-left *:m-0",
+        // Proper article table: white cells, dark text, visible borders —
+        // identical in the editor and on the public article surface.
+        "relative h-full overflow-visible border-none bg-white p-0 text-[#1a1a1a]",
+        element.background && "bg-(--cellBackground)",
+        isHeader && !element.background && "bg-[#f4f3f8]",
+        isHeader && "text-left font-semibold *:m-0",
         "before:size-full",
         "data-[table-cell-selected=true]:before:z-10",
         "data-[table-cell-selected=true]:before:bg-brand/5",
         "before:absolute before:box-border before:content-[''] before:select-none",
-        borders.bottom.size && "before:border-b before:border-b-border",
-        borders.right.size && "before:border-r before:border-r-border",
-        borders.left?.size && "before:border-l before:border-l-border",
-        borders.top?.size && "before:border-t before:border-t-border"
+        borders.bottom.size && "before:border-b before:border-b-black/30",
+        borders.right.size && "before:border-r before:border-r-black/30",
+        borders.left?.size && "before:border-l before:border-l-black/30",
+        borders.top?.size && "before:border-t before:border-t-black/30"
       )}
       style={
         {

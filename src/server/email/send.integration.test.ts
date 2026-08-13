@@ -17,7 +17,7 @@ describe("sendEmail (integration, needs docker compose up)", () => {
       inviteLink: "http://localhost:3000/accept-invitation/test-id",
       invitedByName: "Test Admin",
       invitedByEmail: "admin@example.test",
-      role: "secretary",
+      role: "editor",
     })
 
     const res = await fetch(`${MAILPIT_API}/search?query=to:"${to}"`)

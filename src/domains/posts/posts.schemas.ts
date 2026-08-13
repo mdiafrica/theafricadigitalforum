@@ -16,7 +16,6 @@ export const postSlugSchema = z
 export const postTranslationInput = z.object({
   title: z.string().trim().min(1, "Title is required").max(300),
   excerpt: z.string().trim().max(1000).default(""),
-  category: z.string().trim().max(100).default(""),
   body: z.array(z.looseObject({})).default([]),
 })
 export type PostTranslationInput = z.infer<typeof postTranslationInput>
@@ -34,6 +33,9 @@ export type PostTranslationsInput = z.infer<typeof postTranslationsInput>
 export const createPostInput = z.object({
   slug: postSlugSchema,
   coverMediaId: z.uuid().nullish(),
+  /** Byline reassignment — admin-only; defaults to the caller. */
+  authorId: z.string().trim().min(1).optional(),
+  categoryIds: z.array(z.uuid()).max(20).default([]),
   translations: postTranslationsInput,
 })
 export type CreatePostInput = z.infer<typeof createPostInput>
@@ -42,6 +44,9 @@ export const updatePostInput = z.object({
   id: z.uuid(),
   slug: postSlugSchema,
   coverMediaId: z.uuid().nullish(),
+  /** Byline reassignment — admin-only; omitted = unchanged. */
+  authorId: z.string().trim().min(1).optional(),
+  categoryIds: z.array(z.uuid()).max(20).default([]),
   translations: postTranslationsInput,
 })
 export type UpdatePostInput = z.infer<typeof updatePostInput>
@@ -59,7 +64,7 @@ export type ListPostsAdminInput = z.infer<typeof listPostsAdminInput>
 
 export const listPublishedPostsInput = z.object({
   locale: localeSchema.default("en"),
-  category: z.string().trim().max(100).optional(),
+  categorySlug: z.string().trim().max(100).optional(),
   query: z.string().trim().max(200).optional(),
 })
 export type ListPublishedPostsInput = z.infer<typeof listPublishedPostsInput>
@@ -76,6 +81,12 @@ export const getPublishedPostInput = z.object({
   locale: localeSchema.default("en"),
 })
 export type GetPublishedPostInput = z.infer<typeof getPublishedPostInput>
+
+export const listRelatedPostsInput = z.object({
+  slug: z.string().trim().min(1),
+  locale: localeSchema.default("en"),
+})
+export type ListRelatedPostsInput = z.infer<typeof listRelatedPostsInput>
 
 /** Derive a slug from a title (client-side helper for the form). */
 export function slugify(title: string): string {

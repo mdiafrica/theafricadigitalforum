@@ -90,8 +90,8 @@ export function InviteMemberDialog() {
                     ))}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Admins publish content and manage the team. Secretaries
-                    draft and edit content.
+                    Admins publish content and manage the team. Editors draft
+                    and edit content.
                   </p>
                   <FieldError errors={field.state.meta.errors} />
                 </Field>

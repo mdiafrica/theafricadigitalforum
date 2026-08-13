@@ -1,7 +1,8 @@
 import { defineConfig } from "vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import { nitro } from "nitro/vite"
-import viteReact from "@vitejs/plugin-react"
+import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react"
+import babel from "@rolldown/plugin-babel"
 import tailwindcss from "@tailwindcss/vite"
 
 const config = defineConfig({
@@ -25,7 +26,14 @@ const config = defineConfig({
     //   "Cannot read properties of null (reading 'useSyncExternalStore')".
     external: ["sharp", "react", "react-dom"],
   },
-  plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
+  plugins: [
+    tailwindcss(),
+    tanstackStart(),
+    nitro(),
+    viteReact(),
+    // React Compiler (auto-memoization) — the vite 8/rolldown wiring.
+    babel({ presets: [reactCompilerPreset()] }),
+  ],
 })
 
 export default config

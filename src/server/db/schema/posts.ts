@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { user } from "./auth"
+import { postCategory } from "./categories"
 import { media } from "./media"
 
 /**
@@ -64,8 +65,6 @@ export const postTranslation = pgTable(
     locale: text("locale").$type<"en" | "fr">().notNull(),
     title: text("title").notNull(),
     excerpt: text("excerpt").default("").notNull(),
-    /** Localized category label (e.g. "Digital Policy" / "Politique numérique"). */
-    category: text("category"),
     /** Plate editor Value (array of element nodes). */
     body: jsonb("body").$type<PostBodyNode[]>().default([]).notNull(),
   },
@@ -82,6 +81,7 @@ export const postRelations = relations(post, ({ one, many }) => ({
     references: [media.id],
   }),
   author: one(user, { fields: [post.authorId], references: [user.id] }),
+  categories: many(postCategory),
 }))
 
 export const postTranslationRelations = relations(

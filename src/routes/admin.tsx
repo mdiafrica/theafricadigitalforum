@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   LogOut,
   Mic,
+  Tags,
   UserCircle,
   UserRoundCheck,
   Users,
@@ -89,6 +90,7 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     label: "Content",
     items: [
       { to: "/admin/posts", label: "Posts", icon: FileText },
+      { to: "/admin/categories", label: "Categories", icon: Tags },
       { to: "/admin/speakers", label: "Speakers", icon: Mic },
       { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
       { to: "/admin/events", label: "Events", icon: CalendarDays },

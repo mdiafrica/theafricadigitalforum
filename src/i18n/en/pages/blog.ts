@@ -14,6 +14,7 @@ export const blog = {
   empty: "No articles yet — the first stories are on their way.",
   showingResults: "Showing {shown} of {total} result{plural}",
   loadMore: "Load More Articles",
+  allLabel: "All",
 
   categories: [
     "All",

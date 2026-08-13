@@ -57,6 +57,13 @@
       "when": 1786553411716,
       "tag": "0007_colorful_ender_wiggin",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786629914685,
+      "tag": "0008_flawless_silver_samurai",
+      "breakpoints": true
     }
   ]
 }

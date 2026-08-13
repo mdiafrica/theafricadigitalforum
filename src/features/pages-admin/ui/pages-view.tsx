@@ -7,6 +7,7 @@ import {
 } from "@/domains/page-content"
 import { en } from "@/i18n/en"
 import { fr } from "@/i18n/fr"
+import { EDITORIAL_BOARD_DEFAULTS } from "@/lib/editorial-board"
 import { PageHeader } from "@/components/admin/page-header"
 import { ListSkeleton, QueryError } from "@/components/admin/query-states"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getErrorMessage } from "@/lib/error"
-import { JsonSectionForm, type JsonObject } from "./json-section-form"
+import { JsonSectionForm } from "./json-section-form"
+import type { JsonObject } from "./json-section-form"
 
 /**
  * Sections editable per page, with their i18n defaults as the starting
@@ -75,49 +77,66 @@ const PAGE_SECTIONS: Record<
       },
     },
   ],
+  site: [
+    {
+      section: "editorial-board",
+      title: "Editorial Board byline",
+      defaults: {
+        en: { ...EDITORIAL_BOARD_DEFAULTS },
+        fr: { ...EDITORIAL_BOARD_DEFAULTS },
+      },
+    },
+  ],
 }
 
 export function PagesView() {
-  const page = "home"
-  const contentQuery = usePageContentAdminQuery(page)
-
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader
         title="Pages"
         description="Edit the copy on the public pages. Sections start from the built-in text and go live as soon as you save them."
       />
-
-      {contentQuery.isPending && (
-        <ListSkeleton rows={2} className="[&>*]:h-60" />
-      )}
-
-      {contentQuery.isError && (
-        <QueryError
-          title="Couldn't load page content"
-          error={contentQuery.error}
-          onRetry={() => void contentQuery.refetch()}
-        />
-      )}
-
-      {contentQuery.data &&
-        PAGE_SECTIONS[page].map(({ section, title, defaults }) => {
-          const rows = contentQuery.data.filter((r) => r.section === section)
-          return (
-            <SectionCard
-              key={section}
-              page={page}
-              section={section}
-              title={title}
-              saved={{
-                en: rows.find((r) => r.locale === "en")?.data,
-                fr: rows.find((r) => r.locale === "fr")?.data,
-              }}
-              defaults={defaults}
-            />
-          )
-        })}
+      <PageSections page="home" />
+      <PageSections page="site" />
     </div>
+  )
+}
+
+function PageSections({ page }: { page: keyof typeof PAGE_SECTIONS }) {
+  const contentQuery = usePageContentAdminQuery(page)
+
+  if (contentQuery.isPending) {
+    return <ListSkeleton rows={1} className="[&>*]:h-60" />
+  }
+  if (contentQuery.isError) {
+    return (
+      <QueryError
+        title="Couldn't load page content"
+        error={contentQuery.error}
+        onRetry={() => void contentQuery.refetch()}
+      />
+    )
+  }
+
+  return (
+    <>
+      {PAGE_SECTIONS[page].map(({ section, title, defaults }) => {
+        const rows = contentQuery.data.filter((r) => r.section === section)
+        return (
+          <SectionCard
+            key={section}
+            page={page}
+            section={section}
+            title={title}
+            saved={{
+              en: rows.find((r) => r.locale === "en")?.data,
+              fr: rows.find((r) => r.locale === "fr")?.data,
+            }}
+            defaults={defaults}
+          />
+        )
+      })}
+    </>
   )
 }
 

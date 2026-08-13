@@ -27,7 +27,7 @@ export enum OrgRole {
   /** Seeded super_admin's org membership (belt-and-suspenders). */
   Owner = "owner",
   Admin = "admin",
-  Secretary = "secretary",
+  Editor = "editor",
 }
 
 // --- The single permanent organization (single-tenant) ---
@@ -42,6 +42,8 @@ export const ADF_ORG = {
 /** Content that goes through a draft → published workflow. */
 const PUBLISHABLE = ["create", "read", "update", "publish", "delete"] as const
 const CRUD = ["create", "read", "update", "delete"] as const
+/** Posts additionally support reassigning the byline (admin-only). */
+const POST_ACTIONS = [...PUBLISHABLE, "assignAuthor"] as const
 
 export const orgStatements = {
   // better-auth org defaults (organization, member, invitation, team, ac) —
@@ -51,11 +53,12 @@ export const orgStatements = {
   ...orgDefaultStatements,
   member: ["create", "read", "update", "delete"],
   invitation: ["create", "read", "cancel"],
-  post: PUBLISHABLE,
+  post: POST_ACTIONS,
   event: PUBLISHABLE,
   speaker: CRUD,
   advisor: CRUD,
   sponsor: CRUD,
+  category: CRUD,
   pageContent: ["read", "update"],
   media: ["upload", "delete"],
   submission: ["read"],
@@ -70,11 +73,12 @@ export const orgRoles = {
 
   // Admin runs the site: publish + delete + team management.
   [OrgRole.Admin]: orgAccessControl.newRole({
-    post: PUBLISHABLE,
+    post: POST_ACTIONS,
     event: PUBLISHABLE,
     speaker: CRUD,
     advisor: CRUD,
     sponsor: CRUD,
+    category: CRUD,
     pageContent: ["read", "update"],
     media: ["upload", "delete"],
     submission: ["read"],
@@ -82,13 +86,14 @@ export const orgRoles = {
     invitation: ["create", "read", "cancel"],
   }),
 
-  // Secretary drafts/edits but can't publish, delete, or manage people.
-  [OrgRole.Secretary]: orgAccessControl.newRole({
+  // Editor drafts/edits but can't publish, delete, or manage people.
+  [OrgRole.Editor]: orgAccessControl.newRole({
     post: ["create", "read", "update"],
     event: ["create", "read", "update"],
     speaker: ["read", "update"],
     advisor: ["read", "update"],
     sponsor: ["read", "update"],
+    category: ["read"],
     pageContent: ["read", "update"],
     media: ["upload"],
     submission: ["read"],
@@ -140,5 +145,5 @@ export function hasOrgPermission(
   if (!orgRole) return false
   const role = orgRoles[orgRole as OrgRole]
   if (!role) return false
-  return role.authorize(request as never).success
+  return role.authorize(request).success
 }

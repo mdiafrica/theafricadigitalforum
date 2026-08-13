@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { teamKeys } from "@/domains/team"
+import { teamKeys, updateMemberProfile } from "@/domains/team"
+import type { UpdateMemberProfileInput } from "@/domains/team"
 import { authClient, unwrap } from "@/lib/auth/auth-client"
 import { getErrorMessage } from "@/lib/error"
 import type { InvitableRole } from "../model/team.schemas"
@@ -26,6 +27,17 @@ export function useTeamMutations() {
     },
     onError: (error) =>
       toast.error(getErrorMessage(error, "Could not update the role.")),
+  })
+
+  const updateProfile = useMutation({
+    mutationFn: (input: UpdateMemberProfileInput) =>
+      updateMemberProfile({ data: input }),
+    onSuccess: () => {
+      toast.success("Member updated.")
+      void invalidate()
+    },
+    onError: (error) =>
+      toast.error(getErrorMessage(error, "Could not update the member.")),
   })
 
   const removeMember = useMutation({
@@ -86,5 +98,12 @@ export function useTeamMutations() {
       toast.error(getErrorMessage(error, "Could not unban the user.")),
   })
 
-  return { updateRole, removeMember, cancelInvitation, banUser, unbanUser }
+  return {
+    updateRole,
+    updateProfile,
+    removeMember,
+    cancelInvitation,
+    banUser,
+    unbanUser,
+  }
 }

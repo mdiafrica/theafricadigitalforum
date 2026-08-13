@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useSessionQuery } from "@/domains/auth"
 import { PageHeader } from "@/components/admin/page-header"
 import { ChangePasswordCard } from "@/features/account/ui/change-password-card"
+import { ProfileCard } from "@/features/account/ui/profile-card"
 import { TwoFactorCard } from "@/features/account/ui/two-factor-card"
 
 export const Route = createFileRoute("/admin/account")({
@@ -20,6 +21,7 @@ function AccountPage() {
         title="Account"
         description={user ? `Signed in as ${user.email}` : "Security settings"}
       />
+      <ProfileCard />
       <TwoFactorCard enabled={user?.twoFactorEnabled ?? false} />
       <ChangePasswordCard />
     </div>

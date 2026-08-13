@@ -22,7 +22,7 @@ import { sendEmail } from "./email"
 /**
  * better-auth server instance. Mounted at /api/auth/$.
  * Single-tenant: one permanent org, invite-only accounts, two permission
- * layers (admin plugin = global super_admin; org plugin = admin/secretary).
+ * layers (admin plugin = global super_admin; org plugin = admin/editor).
  */
 
 /** awf's username rule: starts with a letter, 3–30 chars, [a-zA-Z0-9._], no doubled or trailing separators. */
