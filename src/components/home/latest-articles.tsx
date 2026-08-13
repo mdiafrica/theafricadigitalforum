@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, Mail } from "lucide-react"
+import { ArrowRight, Mail, Newspaper } from "lucide-react"
 
 import { useI18n } from "@/i18n/context"
 import { publishedPostsQueryOptions } from "@/domains/posts"
 import { Button } from "@/components/ui/button"
+import { EmptyCard } from "@/components/empty-card"
 import { NewsletterForm } from "@/components/newsletter-form"
+import { PostCard } from "@/components/post-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function LatestArticles() {
@@ -46,48 +48,16 @@ export function LatestArticles() {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-black/10 bg-white py-14 text-center text-sm text-black/50">
-            {latest.empty}
-          </p>
+          <EmptyCard icon={Newspaper}>{t.blog.empty}</EmptyCard>
         ) : (
           <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
-              <Link
+              <PostCard
                 key={post.id}
-                to="/blog/$slug"
-                params={{ slug: post.slug }}
-                className="group block overflow-hidden rounded-2xl border border-black/[0.04] bg-white transition-transform duration-300 hover:-translate-y-1.5"
-              >
-                <div className="relative h-[180px] overflow-hidden">
-                  {post.coverUrl ? (
-                    <img
-                      src={post.coverUrl}
-                      alt={post.title}
-                      loading="lazy"
-                      className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="size-full bg-gradient-to-br from-primary/40 to-[#0a0a0a]" />
-                  )}
-                  {post.category && (
-                    <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
-                      {post.category}
-                    </span>
-                  )}
-                </div>
-                <div className="px-[22px] pt-5 pb-6">
-                  <h3 className="mb-2.5 line-clamp-2 text-base [line-height:1.4] font-bold tracking-[-0.01em] text-[#1a1a1a]">
-                    {post.title}
-                  </h3>
-                  <p className="line-clamp-3 text-[13px] leading-[1.6] text-black/70">
-                    {post.excerpt}
-                  </p>
-                  <span className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-bold text-primary transition-all group-hover:gap-2.5">
-                    {latest.readMore}
-                    <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </Link>
+                post={post}
+                locale={lang}
+                readMoreLabel={latest.readMore}
+              />
             ))}
           </div>
         )}

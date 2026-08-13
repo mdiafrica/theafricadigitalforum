@@ -148,7 +148,6 @@ export const home = {
       "Analyses, tendances, interviews et réflexions au cœur de la transformation numérique de l'Afrique.",
     readMore: "Lire la suite",
     viewAll: "Voir tous les articles",
-    empty: "Pas encore d'articles — les premières histoires arrivent bientôt.",
     newsletter: {
       label: "Abonnez-vous aux mises à jour",
       placeholder: "Votre adresse e-mail",

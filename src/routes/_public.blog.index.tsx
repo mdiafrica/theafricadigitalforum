@@ -12,6 +12,8 @@ import {
 import type { PublicListParams, PublicPostListItem } from "@/domains/posts"
 import type { Locale } from "@/lib/schemas"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
+import { EmptyCard } from "@/components/empty-card"
+import { CoverImage, PostCard, formatPostDate } from "@/components/post-card"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,13 +37,6 @@ export const Route = createFileRoute("/_public/blog/")({
     ]),
   component: BlogRoute,
 })
-
-function formatDate(value: Date | string | null, locale: Locale) {
-  if (!value) return ""
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
-    dateStyle: "medium",
-  }).format(new Date(value))
-}
 
 const ALL_CATEGORIES = "All"
 
@@ -184,18 +179,9 @@ function BlogRoute() {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="mb-16 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[#d8d8d8] bg-white py-16 text-center">
-            <div className="flex size-12 items-center justify-center rounded-full bg-[#f0edf7] text-primary">
-              {isFiltering ? (
-                <Search className="size-5" />
-              ) : (
-                <Newspaper className="size-5" />
-              )}
-            </div>
-            <p className="max-w-sm text-sm text-[#666666]">
-              {isFiltering ? blog.noResults : blog.empty}
-            </p>
-          </div>
+          <EmptyCard icon={isFiltering ? Search : Newspaper} className="mb-16">
+            {isFiltering ? blog.noResults : blog.empty}
+          </EmptyCard>
         ) : (
           <div className="grid gap-6 pb-16 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
@@ -234,30 +220,6 @@ function BlogRoute() {
   )
 }
 
-function CoverImage({
-  post,
-  className,
-}: {
-  post: PublicPostListItem
-  className?: string
-}) {
-  if (!post.coverUrl) {
-    return (
-      <div
-        className={`absolute inset-0 size-full bg-gradient-to-br from-primary/25 via-primary/10 to-white ${className ?? ""}`}
-      />
-    )
-  }
-  return (
-    <img
-      src={post.coverUrl}
-      alt={post.title}
-      loading="lazy"
-      className={`absolute inset-0 size-full object-cover ${className ?? ""}`}
-    />
-  )
-}
-
 function FeaturedCard({
   post,
   locale,
@@ -293,7 +255,7 @@ function FeaturedCard({
         <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/70">
           <span className="font-semibold text-white/90">{post.authorName}</span>
           <span className="text-white/40">·</span>
-          <span>{formatDate(post.publishedAt, locale)}</span>
+          <span>{formatPostDate(post.publishedAt, locale)}</span>
           <span className="text-white/40">·</span>
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-3.5" />
@@ -339,56 +301,8 @@ function SideStory({
         </h3>
         <span className="inline-flex items-center gap-1.5 text-[11px] text-[#999999]">
           <Clock className="size-3" />
-          {post.readTimeMin} min · {formatDate(post.publishedAt, locale)}
+          {post.readTimeMin} min · {formatPostDate(post.publishedAt, locale)}
         </span>
-      </div>
-    </Link>
-  )
-}
-
-function PostCard({
-  post,
-  locale,
-  readMoreLabel,
-}: {
-  post: PublicPostListItem
-  locale: Locale
-  readMoreLabel: string
-}) {
-  return (
-    <Link
-      to="/blog/$slug"
-      params={{ slug: post.slug }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-[#e8e8e8] bg-white transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)]"
-    >
-      <div className="relative h-[200px] overflow-hidden">
-        <CoverImage
-          post={post}
-          className="transition-transform duration-500 group-hover:scale-[1.08]"
-        />
-        {post.category && (
-          <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-[10px] font-bold tracking-[0.06em] text-white uppercase">
-            {post.category}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="mb-2.5 line-clamp-2 text-base leading-[1.4] font-bold tracking-[-0.01em] text-[#1a1a1a] group-hover:text-primary">
-          {post.title}
-        </h3>
-        <p className="mb-4 line-clamp-3 flex-1 text-[13px] leading-[1.6] text-[#666666]">
-          {post.excerpt}
-        </p>
-        <div className="flex items-center justify-between border-t border-[#f0f0f0] pt-3.5 text-xs text-[#888888]">
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="size-3.5" />
-            {post.readTimeMin} min · {formatDate(post.publishedAt, locale)}
-          </span>
-          <span className="inline-flex items-center gap-1 font-bold text-primary transition-all group-hover:gap-2">
-            {readMoreLabel}
-            <ArrowRight className="size-3.5" />
-          </span>
-        </div>
       </div>
     </Link>
   )
