@@ -35,7 +35,7 @@ export function Speakers() {
           {section.subtitle}
         </p>
 
-        <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {speakersQuery.isPending &&
             Array.from({ length: 8 }, (_, i) => (
               <Skeleton key={i} className="h-72 w-full rounded-[20px]" />

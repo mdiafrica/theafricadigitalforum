@@ -58,7 +58,7 @@ export function NewsletterForm({
         event.preventDefault()
         void form.handleSubmit()
       }}
-      className={cn("flex gap-2", className)}
+      className={cn("flex flex-wrap gap-2", className)}
     >
       <form.Field name="email">
         {(field) => (
@@ -72,7 +72,7 @@ export function NewsletterForm({
             aria-label={copy.placeholder}
             aria-invalid={field.state.meta.errors.length > 0}
             disabled={subscribe.isPending}
-            className={cn("flex-1", inputClassName)}
+            className={cn("min-w-0 flex-1 basis-[180px]", inputClassName)}
           />
         )}
       </form.Field>

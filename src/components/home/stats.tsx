@@ -44,7 +44,7 @@ export function Stats() {
     <section className="border-b border-primary/20 bg-black px-[5%] pt-[30px] pb-[70px] font-nav">
       <div
         ref={ref}
-        className="mx-auto grid max-w-[1200px] grid-cols-3 gap-[14px] lg:grid-cols-6"
+        className="mx-auto grid max-w-[1200px] grid-cols-2 gap-x-[14px] gap-y-8 sm:grid-cols-3 sm:gap-[14px] lg:grid-cols-6"
       >
         {section.items.map((stat, i) => (
           <StatCard

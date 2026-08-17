@@ -60,7 +60,7 @@ function ContactRoute() {
     <div className="bg-black font-nav">
       {/* Hero */}
       <section
-        className="relative -mt-[85px] flex h-[405px] items-center justify-center overflow-hidden bg-cover bg-center pt-[85px] text-center"
+        className="relative -mt-[85px] flex min-h-[405px] items-center justify-center overflow-hidden bg-cover bg-center pt-[105px] pb-8 text-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
         <div className="absolute inset-0 bg-black/65" />
@@ -81,9 +81,9 @@ function ContactRoute() {
       {/* Panel */}
       <div className="relative z-[2] mx-auto -mt-16 max-w-[1200px] px-[5%] pb-20">
         <Reveal delay={0.1}>
-          <div className="grid overflow-hidden rounded-2xl bg-white shadow-[0_8px_48px_rgba(0,0,0,0.25)] md:grid-cols-[360px_1fr]">
+          <div className="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-[0_8px_48px_rgba(0,0,0,0.25)] md:grid-cols-[360px_1fr]">
             {/* Info */}
-            <div className="border-b border-[#eaeef5] bg-white px-10 py-12 md:border-r md:border-b-0">
+            <div className="border-b border-[#eaeef5] bg-white px-6 py-9 sm:px-10 sm:py-12 md:border-r md:border-b-0">
               <h2 className="mb-2.5 text-[26px] font-extrabold tracking-[-0.02em] text-[#111111]">
                 {contact.info.title}
               </h2>
@@ -107,7 +107,7 @@ function ContactRoute() {
                         {item.lines.map((line) => (
                           <p
                             key={line}
-                            className="text-[13px] leading-[1.6] text-[#4a5568]"
+                            className="text-[13px] leading-[1.6] [overflow-wrap:anywhere] text-[#4a5568]"
                           >
                             {line}
                           </p>
@@ -145,7 +145,7 @@ function ContactRoute() {
             </div>
 
             {/* Form */}
-            <div className="bg-white px-10 py-12">
+            <div className="bg-white px-6 py-9 sm:px-10 sm:py-12">
               <h2 className="mb-7 text-[26px] font-extrabold tracking-[-0.02em] text-[#111111]">
                 {contact.form.title}
               </h2>

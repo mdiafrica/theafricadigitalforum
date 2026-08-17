@@ -127,7 +127,7 @@ function MediaCard({
           loading="lazy"
           className="absolute inset-0 size-full object-cover"
         />
-        <div className="absolute inset-x-0 top-0 flex justify-end gap-1 p-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute inset-x-0 top-0 flex justify-end gap-1 p-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100">
           <Button
             variant="secondary"
             size="icon-xs"

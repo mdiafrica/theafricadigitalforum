@@ -91,7 +91,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative z-[1] border-t border-white/[0.12] bg-black font-nav tracking-[0.02em]">
-      <div className="mx-auto max-w-[1400px] px-8 py-6">
+      <div className="mx-auto max-w-[1400px] px-5 py-6 sm:px-8">
         <div className="grid gap-9 border-b border-white/[0.12] pb-6 lg:grid-cols-[1.8fr_repeat(3,1fr)]">
           {/* Logo + description + organizer + newsletter */}
           <div>

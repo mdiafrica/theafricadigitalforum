@@ -131,7 +131,7 @@ function AboutRoute() {
             <div className="mb-12 h-0.5 w-12 rounded-sm bg-primary" />
           </Reveal>
 
-          <div className="grid [grid-template-columns:repeat(auto-fit,minmax(300px,580px))] justify-center gap-6">
+          <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),580px))] justify-center gap-6">
             {team.map((member, i) => (
               <Reveal key={member.name} delay={i === 0 ? 0.05 : 0.15}>
                 <DirectorCard member={member} />
@@ -236,14 +236,14 @@ type Member = {
 
 function DirectorCard({ member }: { member: Member }) {
   return (
-    <Card className="group grid grid-cols-[minmax(150px,200px)_minmax(0,1fr)] items-stretch overflow-hidden rounded-[20px] border-black/[0.06] bg-white p-0 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_16px_40px_rgba(124,58,237,0.13)]">
-      <div className="relative flex min-h-[280px] overflow-hidden bg-gradient-to-b from-[#3b0764] to-[#6d28d9]">
+    <Card className="group grid grid-cols-1 items-stretch overflow-hidden rounded-[20px] sm:grid-cols-[minmax(150px,200px)_minmax(0,1fr)] border-black/[0.06] bg-white p-0 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_16px_40px_rgba(124,58,237,0.13)]">
+      <div className="relative flex max-h-[320px] min-h-[240px] overflow-hidden bg-gradient-to-b from-[#3b0764] to-[#6d28d9] sm:max-h-none sm:min-h-[280px]">
         <img
           src={member.photo}
           alt={member.name}
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute top-0 right-0 z-[1] h-full w-8 bg-gradient-to-r from-transparent to-[#f5f5f3]" />
+        <div className="absolute top-0 right-0 z-[1] hidden h-full w-8 bg-gradient-to-r from-transparent to-[#f5f5f3] sm:block" />
         <div className="absolute inset-x-0 bottom-0 z-[2] h-[3px] bg-gradient-to-r from-primary to-[#a855f7]" />
       </div>
 
@@ -289,10 +289,10 @@ function DirectorCard({ member }: { member: Member }) {
               render={
                 <a href={`mailto:${member.socials.email}`} aria-label="Email" />
               }
-              className="h-[30px] gap-1.5 rounded-full border-primary/25 bg-transparent px-2.5 text-[11px] font-medium text-primary hover:border-primary hover:bg-primary hover:text-white dark:border-primary/25 dark:bg-transparent dark:hover:bg-primary"
+              className="h-[30px] max-w-full min-w-0 gap-1.5 rounded-full border-primary/25 bg-transparent px-2.5 text-[11px] font-medium text-primary hover:border-primary hover:bg-primary hover:text-white dark:border-primary/25 dark:bg-transparent dark:hover:bg-primary"
             >
-              <Mail className="size-3.5" />
-              {member.socials.email}
+              <Mail className="size-3.5 shrink-0" />
+              <span className="truncate">{member.socials.email}</span>
             </Button>
           </div>
         </div>
@@ -359,10 +359,10 @@ function BioDialog({ member }: { member: Member }) {
               render={
                 <a href={`mailto:${member.socials.email}`} aria-label="Email" />
               }
-              className="h-11 gap-2.5 rounded-full border-primary/30 bg-primary/[0.06] px-4 text-[13px] font-semibold text-primary hover:border-primary hover:bg-primary hover:text-white dark:border-primary/30 dark:bg-primary/[0.06] dark:hover:bg-primary"
+              className="h-11 max-w-full min-w-0 gap-2.5 rounded-full border-primary/30 bg-primary/[0.06] px-4 text-[13px] font-semibold text-primary hover:border-primary hover:bg-primary hover:text-white dark:border-primary/30 dark:bg-primary/[0.06] dark:hover:bg-primary"
             >
-              <Mail className="size-4.5" />
-              {member.socials.email}
+              <Mail className="size-4.5 shrink-0" />
+              <span className="truncate">{member.socials.email}</span>
             </Button>
           </div>
         </div>

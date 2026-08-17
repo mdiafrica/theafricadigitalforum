@@ -121,7 +121,7 @@ function BlogRoute() {
             <h2 className="text-[clamp(20px,2.5vw,26px)] font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
               {blog.sectionTitle}
             </h2>
-            <div className="relative ml-auto max-w-[260px]">
+            <div className="relative w-full sm:ml-auto sm:w-auto sm:max-w-[260px] sm:flex-1">
               <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-[#888888]" />
               <Input
                 value={query}

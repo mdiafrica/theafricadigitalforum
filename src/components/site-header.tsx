@@ -67,7 +67,11 @@ export function SiteHeader() {
         aria-label="Africa Digital Forum — home"
         className="flex shrink-0 items-center py-1"
       >
-        <img src={Logo} alt="Africa Digital Forum" className="h-[110px] w-auto" />
+        <img
+          src={Logo}
+          alt="Africa Digital Forum"
+          className="h-20 w-auto sm:h-[110px]"
+        />
       </Link>
 
       <nav className="hidden items-center gap-10 lg:flex">

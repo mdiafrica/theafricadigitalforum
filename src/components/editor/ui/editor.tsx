@@ -54,7 +54,7 @@ const editorVariants = cva(
       disabled: { true: "cursor-not-allowed opacity-50" },
       variant: {
         default:
-          "size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]",
+          "size-full px-4 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]",
         // White canvas matching the public article surface, so authors see
         // pasted/colored content the way readers will.
         field:

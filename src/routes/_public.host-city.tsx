@@ -70,7 +70,7 @@ function HostCityRoute() {
     <div className="bg-white font-nav text-ink">
       {/* Hero */}
       <section
-        className="relative -mt-[85px] flex h-[480px] items-center justify-center overflow-hidden bg-cover bg-center pt-[85px] text-center"
+        className="relative -mt-[85px] flex min-h-[480px] items-center justify-center overflow-hidden bg-cover bg-center pt-[105px] pb-8 text-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-background/45 to-background/72" />
@@ -103,7 +103,7 @@ function HostCityRoute() {
       <div ref={infoRef}>
         <Reveal>
           <div className="grid items-stretch border-b border-ink/10 bg-white md:grid-cols-[1fr_1.6fr]">
-            <div className="flex flex-col justify-center px-12 py-14">
+            <div className="flex flex-col justify-center px-6 py-10 sm:px-12 sm:py-14">
               <h2 className="mb-2.5 text-[clamp(22px,2.5vw,32px)] font-extrabold tracking-[-0.02em] text-ink">
                 {city.info.heading}
               </h2>
@@ -124,7 +124,7 @@ function HostCityRoute() {
                     alt={`Lomé highlight ${i + 1}`}
                     className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-background/72 px-2.5 py-1 text-[11px] font-semibold text-white">
+                  <span className="absolute bottom-2.5 left-2.5 max-w-[calc(100%-1.25rem)] truncate rounded-[3px] bg-background/72 px-2.5 py-1 text-[11px] font-semibold text-white">
                     {city.info.badges[i]}
                   </span>
                 </div>
@@ -172,7 +172,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll left"
               onClick={() => scrollBy(-400)}
-              className="absolute -left-6 z-10 size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
+              className="absolute -left-6 z-10 hidden size-12 rounded-full md:inline-flex border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronLeft className="size-7" />
             </Button>
@@ -193,7 +193,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll right"
               onClick={() => scrollBy(400)}
-              className="absolute -right-6 z-10 size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
+              className="absolute -right-6 z-10 hidden size-12 rounded-full md:inline-flex border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronRight className="size-7" />
             </Button>
@@ -239,7 +239,7 @@ type PillarCardData = {
 
 function PillarCard({ card }: { card: PillarCardData }) {
   return (
-    <Card className="group w-[360px] shrink-0 overflow-hidden rounded-2xl border-ink/10 bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+    <Card className="group w-[260px] shrink-0 overflow-hidden rounded-2xl sm:w-[360px] border-ink/10 bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
       <div className="relative h-[220px] overflow-hidden">
         <img
           src={card.img}

@@ -34,14 +34,14 @@ export function MediaPickerDialog({
   const mediaQuery = useMediaListQuery({ pageSize: 60 })
 
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex flex-wrap items-start gap-3">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger
           render={
             <button
               type="button"
               className={cn(
-                "flex h-32 w-56 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-muted/30 transition-colors hover:border-ring",
+                "flex h-32 w-full max-w-56 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-muted/30 transition-colors hover:border-ring sm:w-56 sm:shrink-0",
                 imageUrl && "border-solid"
               )}
             />
@@ -56,7 +56,7 @@ export function MediaPickerDialog({
             </span>
           )}
         </DialogTrigger>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="sm:max-w-3xl">
           <div className="flex items-center justify-between gap-3 pr-6">
             <DialogHeader>
               <DialogTitle>{label}</DialogTitle>
@@ -72,7 +72,7 @@ export function MediaPickerDialog({
           </div>
 
           {mediaQuery.isPending && (
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {Array.from({ length: 8 }, (_, i) => (
                 <Skeleton key={i} className="aspect-square w-full" />
               ))}
@@ -87,7 +87,7 @@ export function MediaPickerDialog({
             <p className="py-6 text-sm text-muted-foreground">No images yet.</p>
           )}
           {mediaQuery.data && mediaQuery.data.items.length > 0 && (
-            <div className="grid max-h-[50vh] grid-cols-4 gap-3 overflow-y-auto">
+            <div className="grid max-h-[50vh] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-4">
               {mediaQuery.data.items.map((item) => (
                 <button
                   key={item.id}

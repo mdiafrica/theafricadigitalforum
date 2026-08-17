@@ -21,7 +21,7 @@ export function LatestArticles() {
     <section className="bg-[#f5f5f5] px-[5%] py-20 font-nav">
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-10 flex flex-wrap items-start justify-between gap-10">
-          <div className="min-w-[280px] flex-1">
+          <div className="min-w-[min(280px,100%)] flex-1">
             <h2 className="mb-2 text-[clamp(24px,3vw,32px)] font-extrabold tracking-[-0.02em] text-[#1a1a1a] after:mt-3 after:block after:h-[3px] after:w-11 after:rounded-sm after:bg-primary">
               {latest.title}
             </h2>
@@ -29,7 +29,7 @@ export function LatestArticles() {
               {latest.subtitle}
             </p>
           </div>
-          <div className="flex min-w-[260px] shrink-0 flex-col items-end gap-1.5 pt-7">
+          <div className="flex w-full flex-col gap-1.5 sm:w-auto sm:min-w-[260px] sm:items-end sm:pt-7">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.06em] text-primary uppercase">
               <Mail className="size-3.5" />
               {latest.newsletter.label}

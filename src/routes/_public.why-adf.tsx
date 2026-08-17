@@ -66,7 +66,7 @@ function WhyAdfRoute() {
 
       {/* AI economic impact */}
       <section className="bg-white px-[5%] py-[80px]">
-        <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-6 md:grid-cols-2 md:gap-[60px]">
+        <div className="mx-auto grid max-w-[1200px] items-center gap-10 sm:px-6 md:grid-cols-2 md:gap-[60px]">
           <Reveal delay={0.1}>
             <div className="flex min-h-[180px] flex-col items-start justify-center rounded-[24px] max-[480px]:min-h-[100px] max-md:min-h-[140px] max-md:items-center">
               <div className="flex items-center max-md:justify-center">
@@ -98,11 +98,11 @@ function WhyAdfRoute() {
 
       {/* Six-point agenda */}
       <section
-        className="relative bg-cover bg-fixed bg-center px-[5%] py-[100px]"
+        className="relative bg-cover bg-center px-[5%] py-[60px] md:bg-fixed md:py-[100px]"
         style={{ backgroundImage: `url(${agendaBg})` }}
       >
         <div className="absolute inset-0 bg-background/88" />
-        <div className="relative mx-auto max-w-[1200px] px-6">
+        <div className="relative mx-auto max-w-[1200px] sm:px-6">
           <Reveal>
             <div className="mb-[60px]">
               <div className="mb-4 flex items-center gap-3">
@@ -121,7 +121,7 @@ function WhyAdfRoute() {
             </div>
           </Reveal>
 
-          <div className="mx-auto grid max-w-[1400px] [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))] gap-8">
+          <div className="mx-auto grid max-w-[1400px] [grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-6 sm:gap-8">
             {why.agenda.items.map((item, i) => {
               const Icon = AGENDA_ICONS[i % AGENDA_ICONS.length]
               return (

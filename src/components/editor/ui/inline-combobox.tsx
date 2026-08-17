@@ -196,7 +196,7 @@ export function InlineCombobox({
           <div
             ref={refs.setFloating}
             style={style}
-            className="z-50 max-h-[288px] w-[300px] overflow-y-auto rounded-md border bg-popover py-1 text-popover-foreground shadow-md"
+            className="z-50 max-h-[288px] w-[min(300px,calc(100vw-2rem))] overflow-y-auto rounded-md border bg-popover py-1 text-popover-foreground shadow-md"
           >
             {flatItems.length === 0 ? (
               <div className="mx-1 flex h-[28px] items-center px-2 text-sm text-muted-foreground select-none">

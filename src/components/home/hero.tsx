@@ -35,7 +35,7 @@ export function Hero() {
     setIndex((next + SLIDE_IMAGES.length) % SLIDE_IMAGES.length)
 
   const arrowClass =
-    "absolute top-1/2 z-10 size-12 -translate-y-1/2 rounded-full border-white/30 bg-white/10 text-[28px] leading-none font-light text-white backdrop-blur-md hover:scale-105 hover:border-primary hover:bg-primary dark:border-white/30 dark:bg-white/10 dark:hover:bg-primary"
+    "absolute top-1/2 z-10 hidden size-12 -translate-y-1/2 rounded-full sm:inline-flex border-white/30 bg-white/10 text-[28px] leading-none font-light text-white backdrop-blur-md hover:scale-105 hover:border-primary hover:bg-primary dark:border-white/30 dark:bg-white/10 dark:hover:bg-primary"
 
   return (
     <section className="relative -mt-[85px] flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black px-[5%] py-[120px] font-nav">
@@ -126,7 +126,7 @@ export function Hero() {
       </div>
 
       {/* Image caption */}
-      <div className="absolute right-7 bottom-7 z-[3] rounded-full bg-black/35 px-3.5 py-[5px] text-[11px] font-medium tracking-[0.04em] text-white/50 backdrop-blur-sm">
+      <div className="absolute right-7 bottom-7 z-[3] hidden rounded-full bg-black/35 px-3.5 py-[5px] text-[11px] font-medium tracking-[0.04em] text-white/50 backdrop-blur-sm sm:block">
         {slide.title} — {slide.location}
       </div>
     </section>
