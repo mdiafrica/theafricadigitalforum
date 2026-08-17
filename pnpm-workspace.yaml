@@ -5,3 +5,5 @@ allowBuilds:
   lightningcss: true
   unrs-resolver: true
   msw: false
+  '@prisma/client': true
+  better-sqlite3: true

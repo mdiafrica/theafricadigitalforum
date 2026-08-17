@@ -22,7 +22,7 @@ const STAT_ICONS: LucideIcon[] = [
 ]
 
 const STAT_DEFAULTS = [
-  { value: 1000, suffix: "+" },
+  { value: 3000, suffix: "+" },
   { value: 50, suffix: "+" },
   { value: 150, suffix: "+" },
   { value: 200, suffix: "+" },
