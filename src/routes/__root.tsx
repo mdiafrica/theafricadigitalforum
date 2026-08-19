@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 
-import { I18nProvider } from "@/i18n/context"
+import { getLocale } from "@/paraglide/runtime"
 import { Toaster } from "@/components/ui/sonner"
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/seo"
 import appCss from "../styles.css?url"
@@ -108,16 +108,16 @@ function RootComponent() {
   // Shells (site header/footer, admin sidebar, auth card) live in pathless
   // layout routes: _public, _auth, and the /admin layout.
   return (
-    <I18nProvider>
+    <>
       <Outlet />
       <Toaster position="top-center" />
-    </I18nProvider>
+    </>
   )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
+    <html lang={getLocale()} className="dark" style={{ colorScheme: "dark" }}>
       <head>
         <HeadContent />
       </head>

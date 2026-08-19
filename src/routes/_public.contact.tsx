@@ -6,7 +6,8 @@ import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 import { z } from "zod"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import { submitContact } from "@/domains/submissions"
 import { Reveal } from "@/components/motion"
@@ -44,17 +45,31 @@ const LABEL_CLASS =
 export const Route = createFileRoute("/_public/contact")({
   head: () => ({
     ...pageHead({
-      title: "Contact | Africa Digital Forum",
-      description: "Get in touch with the Africa Digital Forum team.",
+      title: m.meta_contact_title(),
+      description: m.meta_contact_description(),
       path: "/contact",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: ContactRoute,
 })
 
 function ContactRoute() {
-  const { t } = useI18n()
-  const contact = t.contact
+  const infoItems = [
+    {
+      title: m.contact_info_office_title(),
+      lines: [m.contact_info_office_line_1(), m.contact_info_office_line_2()],
+    },
+    {
+      title: m.contact_info_email_title(),
+      lines: [m.contact_info_email_line_1(), m.contact_info_email_line_2()],
+    },
+    {
+      title: m.contact_info_phone_title(),
+      lines: [m.contact_info_phone_line_1(), m.contact_info_phone_line_2()],
+    },
+  ]
 
   return (
     <div className="bg-black font-nav">
@@ -67,12 +82,12 @@ function ContactRoute() {
         <div className="relative px-5">
           <Reveal>
             <h1 className="mb-3 text-[clamp(32px,4vw,56px)] leading-[1.1] font-extrabold tracking-[0.05em] text-white capitalize">
-              {contact.hero.title}
+              {m.contact_hero_title()}
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mx-auto max-w-[520px] text-base leading-[1.6] text-white/85">
-              {contact.hero.subtitle}
+              {m.contact_hero_subtitle()}
             </p>
           </Reveal>
         </div>
@@ -85,15 +100,15 @@ function ContactRoute() {
             {/* Info */}
             <div className="border-b border-[#eaeef5] bg-white px-6 py-9 sm:px-10 sm:py-12 md:border-r md:border-b-0">
               <h2 className="mb-2.5 text-[26px] font-extrabold tracking-[-0.02em] text-[#111111]">
-                {contact.info.title}
+                {m.contact_info_title()}
               </h2>
               <p className="mb-8 text-sm leading-[1.7] text-[#4a5568]">
-                {contact.info.subtext}
+                {m.contact_info_subtext()}
               </p>
               <div className="mb-8 h-px bg-[#eaeef5]" />
 
               <div className="mb-9 flex flex-col gap-6">
-                {contact.info.items.map((item, i) => {
+                {infoItems.map((item, i) => {
                   const Icon = INFO_ICONS[i % INFO_ICONS.length]
                   return (
                     <div key={item.title} className="flex items-start gap-4">
@@ -120,7 +135,7 @@ function ContactRoute() {
 
               <div className="mb-8 h-px bg-[#eaeef5]" />
               <p className="mb-3.5 text-xs font-bold tracking-[0.1em] text-[#718096] uppercase">
-                {contact.info.socialLabel}
+                {m.contact_info_social_label()}
               </p>
               <div className="flex gap-2.5">
                 {SOCIALS.map(({ icon: Icon, href }, i) => (
@@ -147,7 +162,7 @@ function ContactRoute() {
             {/* Form */}
             <div className="bg-white px-6 py-9 sm:px-10 sm:py-12">
               <h2 className="mb-7 text-[26px] font-extrabold tracking-[-0.02em] text-[#111111]">
-                {contact.form.title}
+                {m.contact_form_title()}
               </h2>
               <ContactForm />
             </div>
@@ -158,7 +173,7 @@ function ContactRoute() {
       {/* Full-width map */}
       <Reveal delay={0.15}>
         <iframe
-          title={contact.map.title}
+          title={m.contact_map_title()}
           className="block h-[420px] w-full border-0"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
@@ -179,9 +194,6 @@ const contactSchema = z.object({
 })
 
 function ContactForm() {
-  const { t } = useI18n()
-  const copy = t.contact.form
-
   const submit = useMutation({
     mutationFn: (value: z.infer<typeof contactSchema>) => {
       const extra = [
@@ -200,9 +212,11 @@ function ContactForm() {
       })
     },
     onSuccess: () =>
-      toast.success(copy.success.title, { description: copy.success.text }),
+      toast.success(m.contact_form_success_title(), {
+        description: m.contact_form_success_text(),
+      }),
     onError: (error) =>
-      toast.error(copy.error.title, {
+      toast.error(m.contact_form_error_title(), {
         description: error instanceof Error ? error.message : undefined,
       }),
   })
@@ -260,18 +274,43 @@ function ContactForm() {
       }}
     >
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
-        {textField("name", copy.name)}
-        {textField("company", copy.company)}
-        {textField("phone", copy.phone, "tel")}
-        {textField("email", copy.email, "email")}
+        {textField("name", {
+          label: m.contact_form_name_label(),
+          placeholder: m.contact_form_name_placeholder(),
+        })}
+        {textField("company", {
+          label: m.contact_form_company_label(),
+          placeholder: m.contact_form_company_placeholder(),
+        })}
+        {textField(
+          "phone",
+          {
+            label: m.contact_form_phone_label(),
+            placeholder: m.contact_form_phone_placeholder(),
+          },
+          "tel"
+        )}
+        {textField(
+          "email",
+          {
+            label: m.contact_form_email_label(),
+            placeholder: m.contact_form_email_placeholder(),
+          },
+          "email"
+        )}
       </div>
-      <div className="mb-4">{textField("subject", copy.subject)}</div>
+      <div className="mb-4">
+        {textField("subject", {
+          label: m.contact_form_subject_label(),
+          placeholder: m.contact_form_subject_placeholder(),
+        })}
+      </div>
       <div className="mb-4">
         <form.Field name="message">
           {(f) => (
             <div>
               <label htmlFor="message" className={LABEL_CLASS}>
-                {copy.message.label}
+                {m.contact_form_message_label()}
               </label>
               <Textarea
                 id="message"
@@ -279,7 +318,7 @@ function ContactForm() {
                 value={f.state.value}
                 onChange={(e) => f.handleChange(e.target.value)}
                 onBlur={f.handleBlur}
-                placeholder={copy.message.placeholder}
+                placeholder={m.contact_form_message_placeholder()}
                 aria-invalid={f.state.meta.errors.length > 0}
                 disabled={submit.isPending}
                 className={`${INPUT_CLASS} resize-y`}
@@ -295,7 +334,9 @@ function ContactForm() {
           className="h-auto min-w-[180px] rounded-lg px-6 py-3.5 text-[15px] font-extrabold tracking-[0.04em] hover:bg-[#5b21b6]"
         >
           {submit.isPending && <Spinner data-icon="inline-start" />}
-          {submit.isPending ? copy.sending : copy.submit}
+          {submit.isPending
+            ? m.contact_form_sending()
+            : m.contact_form_submit()}
         </Button>
       </div>
     </form>

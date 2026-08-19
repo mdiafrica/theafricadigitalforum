@@ -1,0 +1,234 @@
+: IsNumber(expression) || IsString(expression) ? false : expression.type === "and" ? expression.expr.every((expr) => Check(expr)) : expression.type === "or" ? expression.expr.every((expr) => Check(expr)) : expression.type === "const" ? true : Throw(`Unknown expression type`);
+      }
+      TemplateLiteralFinite2.Check = Check;
+    })(TemplateLiteralFinite || (exports.TemplateLiteralFinite = TemplateLiteralFinite = {}));
+    var TemplateLiteralGeneratorError = class extends TypeBoxError {
+    };
+    exports.TemplateLiteralGeneratorError = TemplateLiteralGeneratorError;
+    var TemplateLiteralGenerator;
+    (function(TemplateLiteralGenerator2) {
+      function* Reduce(buffer) {
+        if (buffer.length === 1)
+          return yield* buffer[0];
+        for (const left of buffer[0]) {
+          for (const right of Reduce(buffer.slice(1))) {
+            yield `${left}${right}`;
+          }
+        }
+      }
+      function* And(expression) {
+        return yield* Reduce(expression.expr.map((expr) => [...Generate(expr)]));
+      }
+      function* Or(expression) {
+        for (const expr of expression.expr)
+          yield* Generate(expr);
+      }
+      function* Const(expression) {
+        return yield expression.const;
+      }
+      function* Generate(expression) {
+        return expression.type === "and" ? yield* And(expression) : expression.type === "or" ? yield* Or(expression) : expression.type === "const" ? yield* Const(expression) : (() => {
+          throw new TemplateLiteralGeneratorError("Unknown expression");
+        })();
+      }
+      TemplateLiteralGenerator2.Generate = Generate;
+    })(TemplateLiteralGenerator || (exports.TemplateLiteralGenerator = TemplateLiteralGenerator = {}));
+    var TemplateLiteralDslParser;
+    (function(TemplateLiteralDslParser2) {
+      function* ParseUnion(template) {
+        const trim = template.trim().replace(/"|'/g, "");
+        return trim === "boolean" ? yield exports.Type.Boolean() : trim === "number" ? yield exports.Type.Number() : trim === "bigint" ? yield exports.Type.BigInt() : trim === "string" ? yield exports.Type.String() : yield (() => {
+          const literals = trim.split("|").map((literal) => exports.Type.Literal(literal.trim()));
+          return literals.length === 0 ? exports.Type.Never() : literals.length === 1 ? literals[0] : exports.Type.Union(literals);
+        })();
+      }
+      function* ParseTerminal(template) {
+        if (template[1] !== "{") {
+          const L = exports.Type.Literal("$");
+          const R = ParseLiteral(template.slice(1));
+          return yield* [L, ...R];
+        }
+        for (let i = 2; i < template.length; i++) {
+          if (template[i] === "}") {
+            const L = ParseUnion(template.slice(2, i));
+            const R = ParseLiteral(template.slice(i + 1));
+            return yield* [...L, ...R];
+          }
+        }
+        yield exports.Type.Literal(template);
+      }
+      function* ParseLiteral(template) {
+        for (let i = 0; i < template.length; i++) {
+          if (template[i] === "$") {
+            const L = exports.Type.Literal(template.slice(0, i));
+            const R = ParseTerminal(template.slice(i));
+            return yield* [L, ...R];
+          }
+        }
+        yield exports.Type.Literal(template);
+      }
+      function Parse(template_dsl) {
+        return [...ParseLiteral(template_dsl)];
+      }
+      TemplateLiteralDslParser2.Parse = Parse;
+    })(TemplateLiteralDslParser || (exports.TemplateLiteralDslParser = TemplateLiteralDslParser = {}));
+    var TransformDecodeBuilder = class {
+      constructor(schema) {
+        this.schema = schema;
+      }
+      Decode(decode) {
+        return new TransformEncodeBuilder(this.schema, decode);
+      }
+    };
+    exports.TransformDecodeBuilder = TransformDecodeBuilder;
+    var TransformEncodeBuilder = class {
+      constructor(schema, decode) {
+        this.schema = schema;
+        this.decode = decode;
+      }
+      Encode(encode) {
+        const schema = TypeClone.Type(this.schema);
+        return TypeGuard.TTransform(schema) ? (() => {
+          const Encode = (value) => schema[exports.Transform].Encode(encode(value));
+          const Decode = (value) => this.decode(schema[exports.Transform].Decode(value));
+          const Codec = { Encode, Decode };
+          return { ...schema, [exports.Transform]: Codec };
+        })() : (() => {
+          const Codec = { Decode: this.decode, Encode: encode };
+          return { ...schema, [exports.Transform]: Codec };
+        })();
+      }
+    };
+    exports.TransformEncodeBuilder = TransformEncodeBuilder;
+    var TypeOrdinal = 0;
+    var TypeBuilderError = class extends TypeBoxError {
+    };
+    exports.TypeBuilderError = TypeBuilderError;
+    var TypeBuilder = class {
+      /** `[Internal]` Creates a schema without `static` and `params` types */
+      Create(schema) {
+        return schema;
+      }
+      /** `[Internal]` Throws a TypeBuilder error with the given message */
+      Throw(message) {
+        throw new TypeBuilderError(message);
+      }
+      /** `[Internal]` Discards property keys from the given record type */
+      Discard(record, keys) {
+        return keys.reduce((acc, key) => {
+          const { [key]: _, ...rest } = acc;
+          return rest;
+        }, record);
+      }
+      /** `[Json]` Omits compositing symbols from this schema */
+      Strict(schema) {
+        return JSON.parse(JSON.stringify(schema));
+      }
+    };
+    exports.TypeBuilder = TypeBuilder;
+    var JsonTypeBuilder = class extends TypeBuilder {
+      // ------------------------------------------------------------------------
+      // Modifiers
+      // ------------------------------------------------------------------------
+      /** `[Json]` Creates a Readonly and Optional property */
+      ReadonlyOptional(schema) {
+        return this.Readonly(this.Optional(schema));
+      }
+      /** `[Json]` Creates a Readonly property */
+      Readonly(schema) {
+        return { ...TypeClone.Type(schema), [exports.Readonly]: "Readonly" };
+      }
+      /** `[Json]` Creates an Optional property */
+      Optional(schema) {
+        return { ...TypeClone.Type(schema), [exports.Optional]: "Optional" };
+      }
+      // ------------------------------------------------------------------------
+      // Types
+      // ------------------------------------------------------------------------
+      /** `[Json]` Creates an Any type */
+      Any(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Any" });
+      }
+      /** `[Json]` Creates an Array type */
+      Array(schema, options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Array", type: "array", items: TypeClone.Type(schema) });
+      }
+      /** `[Json]` Creates a Boolean type */
+      Boolean(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Boolean", type: "boolean" });
+      }
+      /** `[Json]` Intrinsic function to Capitalize LiteralString types */
+      Capitalize(schema, options = {}) {
+        return { ...Intrinsic.Map(TypeClone.Type(schema), "Capitalize"), ...options };
+      }
+      /** `[Json]` Creates a Composite object type */
+      Composite(objects, options) {
+        const intersect = exports.Type.Intersect(objects, {});
+        const keys = KeyResolver.ResolveKeys(intersect, { includePatterns: false });
+        const properties = keys.reduce((acc, key) => ({ ...acc, [key]: exports.Type.Index(intersect, [key]) }), {});
+        return exports.Type.Object(properties, options);
+      }
+      /** `[Json]` Creates a Enum type */
+      Enum(item, options = {}) {
+        if (ValueGuard.IsUndefined(item))
+          return this.Throw("Enum undefined or empty");
+        const values1 = Object.getOwnPropertyNames(item).filter((key) => isNaN(key)).map((key) => item[key]);
+        const values2 = [...new Set(values1)];
+        const anyOf = values2.map((value) => exports.Type.Literal(value));
+        return this.Union(anyOf, { ...options, [exports.Hint]: "Enum" });
+      }
+      /** `[Json]` Creates a Conditional type */
+      Extends(left, right, trueType, falseType, options = {}) {
+        switch (TypeExtends.Extends(left, right)) {
+          case TypeExtendsResult.Union:
+            return this.Union([TypeClone.Type(trueType, options), TypeClone.Type(falseType, options)]);
+          case TypeExtendsResult.True:
+            return TypeClone.Type(trueType, options);
+          case TypeExtendsResult.False:
+            return TypeClone.Type(falseType, options);
+        }
+      }
+      /** `[Json]` Constructs a type by excluding from unionType all union members that are assignable to excludedMembers */
+      Exclude(unionType, excludedMembers, options = {}) {
+        return TypeGuard.TTemplateLiteral(unionType) ? this.Exclude(TemplateLiteralResolver.Resolve(unionType), excludedMembers, options) : TypeGuard.TTemplateLiteral(excludedMembers) ? this.Exclude(unionType, TemplateLiteralResolver.Resolve(excludedMembers), options) : TypeGuard.TUnion(unionType) ? (() => {
+          const narrowed = unionType.anyOf.filter((inner) => TypeExtends.Extends(inner, excludedMembers) === TypeExtendsResult.False);
+          return narrowed.length === 1 ? TypeClone.Type(narrowed[0], options) : this.Union(narrowed, options);
+        })() : TypeExtends.Extends(unionType, excludedMembers) !== TypeExtendsResult.False ? this.Never(options) : TypeClone.Type(unionType, options);
+      }
+      /** `[Json]` Constructs a type by extracting from type all union members that are assignable to union */
+      Extract(type, union, options = {}) {
+        return TypeGuard.TTemplateLiteral(type) ? this.Extract(TemplateLiteralResolver.Resolve(type), union, options) : TypeGuard.TTemplateLiteral(union) ? this.Extract(type, TemplateLiteralResolver.Resolve(union), options) : TypeGuard.TUnion(type) ? (() => {
+          const narrowed = type.anyOf.filter((inner) => TypeExtends.Extends(inner, union) !== TypeExtendsResult.False);
+          return narrowed.length === 1 ? TypeClone.Type(narrowed[0], options) : this.Union(narrowed, options);
+        })() : TypeExtends.Extends(type, union) !== TypeExtendsResult.False ? TypeClone.Type(type, options) : this.Never(options);
+      }
+      /** `[Json]` Returns an Indexed property type for the given keys */
+      Index(schema, unresolved, options = {}) {
+        return TypeGuard.TArray(schema) && TypeGuard.TNumber(unresolved) ? (() => {
+          return TypeClone.Type(schema.items, options);
+        })() : TypeGuard.TTuple(schema) && TypeGuard.TNumber(unresolved) ? (() => {
+          const items = ValueGuard.IsUndefined(schema.items) ? [] : schema.items;
+          const cloned = items.map((schema2) => TypeClone.Type(schema2));
+          return this.Union(cloned, options);
+        })() : (() => {
+          const keys = KeyArrayResolver.Resolve(unresolved);
+          const clone = TypeClone.Type(schema);
+          return IndexedAccessor.Resolve(clone, keys, options);
+        })();
+      }
+      /** `[Json]` Creates an Integer type */
+      Integer(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Integer", type: "integer" });
+      }
+      /** `[Json]` Creates an Intersect type */
+      Intersect(allOf, options = {}) {
+        if (allOf.length === 0)
+          return exports.Type.Never();
+        if (allOf.length === 1)
+          return TypeClone.Type(allOf[0], options);
+        if (allOf.some((schema) => TypeGuard.TTransform(schema)))
+          this.Throw("Cannot intersect transform types");
+        const objects = allOf.every((schema) => TypeGuard.TObject(schema));
+        const cloned = TypeClone.Rest(allOf);
+        const clonedUnevaluatedProperties = TypeGuard.TSchema(options.unevaluatedProperties) ? { unevaluatedProperties: TypeClone.Type(options.unevaluatedProperties) } : {};
+        return options.unevaluatedProperties === false || TypeGuard.TSchema(options.unevaluatedProperties) || objects ? this.Create({ ...options, ...clonedUnevaluatedProperties, [exports.Kin

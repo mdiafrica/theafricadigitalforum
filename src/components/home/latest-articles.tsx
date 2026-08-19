@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, Mail, Newspaper } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { publishedPostsQueryOptions } from "@/domains/posts"
 import type { PublicPostListItem } from "@/domains/posts"
 import { Button } from "@/components/ui/button"
@@ -12,9 +13,7 @@ import { CoverImage } from "@/components/post-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function LatestArticles() {
-  const { t, lang } = useI18n()
-  const latest = t.home.latest
-  const postsQuery = useQuery(publishedPostsQueryOptions(lang))
+  const postsQuery = useQuery(publishedPostsQueryOptions(getLocale()))
   const posts = (postsQuery.data ?? []).slice(0, 3)
 
   return (
@@ -23,16 +22,16 @@ export function LatestArticles() {
         <div className="mb-10 flex flex-wrap items-start justify-between gap-10">
           <div className="min-w-[min(280px,100%)] flex-1">
             <h2 className="mb-2 text-[clamp(24px,3vw,32px)] font-extrabold tracking-[-0.02em] text-[#1a1a1a] after:mt-3 after:block after:h-[3px] after:w-11 after:rounded-sm after:bg-primary">
-              {latest.title}
+              {m.home_latest_title()}
             </h2>
             <p className="max-w-[560px] text-sm leading-[1.6] text-black/60">
-              {latest.subtitle}
+              {m.home_latest_subtitle()}
             </p>
           </div>
           <div className="flex w-full flex-col gap-1.5 sm:w-auto sm:min-w-[260px] sm:items-end sm:pt-7">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.06em] text-primary uppercase">
               <Mail className="size-3.5" />
-              {latest.newsletter.label}
+              {m.home_latest_newsletter_label()}
             </div>
             <NewsletterForm
               className="w-full"
@@ -49,14 +48,14 @@ export function LatestArticles() {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <EmptyCard icon={Newspaper}>{t.blog.empty}</EmptyCard>
+          <EmptyCard icon={Newspaper}>{m.blog_empty()}</EmptyCard>
         ) : (
           <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <HomeArticleCard
                 key={post.id}
                 post={post}
-                readMoreLabel={latest.readMore}
+                readMoreLabel={m.home_latest_read_more()}
               />
             ))}
           </div>
@@ -69,7 +68,7 @@ export function LatestArticles() {
               render={<Link to="/blog" />}
               className="h-auto rounded-full border-[1.5px] border-primary bg-transparent px-6 py-2.5 text-[13px] font-bold tracking-[0.06em] text-primary hover:bg-primary hover:text-white dark:border-primary dark:bg-transparent dark:hover:bg-primary"
             >
-              {latest.viewAll}
+              {m.home_latest_view_all()}
               <ArrowRight data-icon="inline-end" className="size-4" />
             </Button>
           </div>

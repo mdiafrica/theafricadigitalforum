@@ -1,0 +1,257 @@
+    })(Intrinsic || (exports.Intrinsic = Intrinsic = {}));
+    var ObjectMap;
+    (function(ObjectMap2) {
+      function TIntersect(schema, callback) {
+        return exports.Type.Intersect(schema.allOf.map((inner) => Visit(inner, callback)), { ...schema });
+      }
+      function TUnion(schema, callback) {
+        return exports.Type.Union(schema.anyOf.map((inner) => Visit(inner, callback)), { ...schema });
+      }
+      function TObject(schema, callback) {
+        return callback(schema);
+      }
+      function Visit(schema, callback) {
+        return schema[exports.Kind] === "Intersect" ? TIntersect(schema, callback) : schema[exports.Kind] === "Union" ? TUnion(schema, callback) : schema[exports.Kind] === "Object" ? TObject(schema, callback) : schema;
+      }
+      function Map2(schema, callback, options) {
+        return { ...Visit(TypeClone.Type(schema), callback), ...options };
+      }
+      ObjectMap2.Map = Map2;
+    })(ObjectMap || (exports.ObjectMap = ObjectMap = {}));
+    var KeyResolver;
+    (function(KeyResolver2) {
+      function UnwrapPattern(key) {
+        return key[0] === "^" && key[key.length - 1] === "$" ? key.slice(1, key.length - 1) : key;
+      }
+      function TIntersect(schema, options) {
+        return schema.allOf.reduce((acc, schema2) => [...acc, ...Visit(schema2, options)], []);
+      }
+      function TUnion(schema, options) {
+        const sets = schema.anyOf.map((inner) => Visit(inner, options));
+        return [...sets.reduce((set, outer) => outer.map((key) => sets.every((inner) => inner.includes(key)) ? set.add(key) : set)[0], /* @__PURE__ */ new Set())];
+      }
+      function TObject(schema, options) {
+        return Object.getOwnPropertyNames(schema.properties);
+      }
+      function TRecord(schema, options) {
+        return options.includePatterns ? Object.getOwnPropertyNames(schema.patternProperties) : [];
+      }
+      function Visit(schema, options) {
+        return TypeGuard.TIntersect(schema) ? TIntersect(schema, options) : TypeGuard.TUnion(schema) ? TUnion(schema, options) : TypeGuard.TObject(schema) ? TObject(schema, options) : TypeGuard.TRecord(schema) ? TRecord(schema, options) : [];
+      }
+      function ResolveKeys(schema, options) {
+        return [...new Set(Visit(schema, options))];
+      }
+      KeyResolver2.ResolveKeys = ResolveKeys;
+      function ResolvePattern(schema) {
+        const keys = ResolveKeys(schema, { includePatterns: true });
+        const pattern = keys.map((key) => `(${UnwrapPattern(key)})`);
+        return `^(${pattern.join("|")})$`;
+      }
+      KeyResolver2.ResolvePattern = ResolvePattern;
+    })(KeyResolver || (exports.KeyResolver = KeyResolver = {}));
+    var KeyArrayResolverError = class extends TypeBoxError {
+    };
+    exports.KeyArrayResolverError = KeyArrayResolverError;
+    var KeyArrayResolver;
+    (function(KeyArrayResolver2) {
+      function Resolve(schema) {
+        return Array.isArray(schema) ? schema : TypeGuard.TUnionLiteral(schema) ? schema.anyOf.map((schema2) => schema2.const.toString()) : TypeGuard.TLiteral(schema) ? [schema.const] : TypeGuard.TTemplateLiteral(schema) ? (() => {
+          const expression = TemplateLiteralParser.ParseExact(schema.pattern);
+          if (!TemplateLiteralFinite.Check(expression))
+            throw new KeyArrayResolverError("Cannot resolve keys from infinite template expression");
+          return [...TemplateLiteralGenerator.Generate(expression)];
+        })() : [];
+      }
+      KeyArrayResolver2.Resolve = Resolve;
+    })(KeyArrayResolver || (exports.KeyArrayResolver = KeyArrayResolver = {}));
+    var UnionResolver;
+    (function(UnionResolver2) {
+      function* TUnion(union) {
+        for (const schema of union.anyOf) {
+          if (schema[exports.Kind] === "Union") {
+            yield* TUnion(schema);
+          } else {
+            yield schema;
+          }
+        }
+      }
+      function Resolve(union) {
+        return exports.Type.Union([...TUnion(union)], { ...union });
+      }
+      UnionResolver2.Resolve = Resolve;
+    })(UnionResolver || (exports.UnionResolver = UnionResolver = {}));
+    var TemplateLiteralPatternError = class extends TypeBoxError {
+    };
+    exports.TemplateLiteralPatternError = TemplateLiteralPatternError;
+    var TemplateLiteralPattern;
+    (function(TemplateLiteralPattern2) {
+      function Throw(message) {
+        throw new TemplateLiteralPatternError(message);
+      }
+      function Escape(value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+      function Visit(schema, acc) {
+        return TypeGuard.TTemplateLiteral(schema) ? schema.pattern.slice(1, schema.pattern.length - 1) : TypeGuard.TUnion(schema) ? `(${schema.anyOf.map((schema2) => Visit(schema2, acc)).join("|")})` : TypeGuard.TNumber(schema) ? `${acc}${exports.PatternNumber}` : TypeGuard.TInteger(schema) ? `${acc}${exports.PatternNumber}` : TypeGuard.TBigInt(schema) ? `${acc}${exports.PatternNumber}` : TypeGuard.TString(schema) ? `${acc}${exports.PatternString}` : TypeGuard.TLiteral(schema) ? `${acc}${Escape(schema.const.toString())}` : TypeGuard.TBoolean(schema) ? `${acc}${exports.PatternBoolean}` : Throw(`Unexpected Kind '${schema[exports.Kind]}'`);
+      }
+      function Create(kinds) {
+        return `^${kinds.map((schema) => Visit(schema, "")).join("")}$`;
+      }
+      TemplateLiteralPattern2.Create = Create;
+    })(TemplateLiteralPattern || (exports.TemplateLiteralPattern = TemplateLiteralPattern = {}));
+    var TemplateLiteralResolver;
+    (function(TemplateLiteralResolver2) {
+      function Resolve(template) {
+        const expression = TemplateLiteralParser.ParseExact(template.pattern);
+        if (!TemplateLiteralFinite.Check(expression))
+          return exports.Type.String();
+        const literals = [...TemplateLiteralGenerator.Generate(expression)].map((value) => exports.Type.Literal(value));
+        return exports.Type.Union(literals);
+      }
+      TemplateLiteralResolver2.Resolve = Resolve;
+    })(TemplateLiteralResolver || (exports.TemplateLiteralResolver = TemplateLiteralResolver = {}));
+    var TemplateLiteralParserError = class extends TypeBoxError {
+    };
+    exports.TemplateLiteralParserError = TemplateLiteralParserError;
+    var TemplateLiteralParser;
+    (function(TemplateLiteralParser2) {
+      function IsNonEscaped(pattern, index, char) {
+        return pattern[index] === char && pattern.charCodeAt(index - 1) !== 92;
+      }
+      function IsOpenParen(pattern, index) {
+        return IsNonEscaped(pattern, index, "(");
+      }
+      function IsCloseParen(pattern, index) {
+        return IsNonEscaped(pattern, index, ")");
+      }
+      function IsSeparator(pattern, index) {
+        return IsNonEscaped(pattern, index, "|");
+      }
+      function IsGroup(pattern) {
+        if (!(IsOpenParen(pattern, 0) && IsCloseParen(pattern, pattern.length - 1)))
+          return false;
+        let count = 0;
+        for (let index = 0; index < pattern.length; index++) {
+          if (IsOpenParen(pattern, index))
+            count += 1;
+          if (IsCloseParen(pattern, index))
+            count -= 1;
+          if (count === 0 && index !== pattern.length - 1)
+            return false;
+        }
+        return true;
+      }
+      function InGroup(pattern) {
+        return pattern.slice(1, pattern.length - 1);
+      }
+      function IsPrecedenceOr(pattern) {
+        let count = 0;
+        for (let index = 0; index < pattern.length; index++) {
+          if (IsOpenParen(pattern, index))
+            count += 1;
+          if (IsCloseParen(pattern, index))
+            count -= 1;
+          if (IsSeparator(pattern, index) && count === 0)
+            return true;
+        }
+        return false;
+      }
+      function IsPrecedenceAnd(pattern) {
+        for (let index = 0; index < pattern.length; index++) {
+          if (IsOpenParen(pattern, index))
+            return true;
+        }
+        return false;
+      }
+      function Or(pattern) {
+        let [count, start] = [0, 0];
+        const expressions = [];
+        for (let index = 0; index < pattern.length; index++) {
+          if (IsOpenParen(pattern, index))
+            count += 1;
+          if (IsCloseParen(pattern, index))
+            count -= 1;
+          if (IsSeparator(pattern, index) && count === 0) {
+            const range2 = pattern.slice(start, index);
+            if (range2.length > 0)
+              expressions.push(Parse(range2));
+            start = index + 1;
+          }
+        }
+        const range = pattern.slice(start);
+        if (range.length > 0)
+          expressions.push(Parse(range));
+        if (expressions.length === 0)
+          return { type: "const", const: "" };
+        if (expressions.length === 1)
+          return expressions[0];
+        return { type: "or", expr: expressions };
+      }
+      function And(pattern) {
+        function Group(value, index) {
+          if (!IsOpenParen(value, index))
+            throw new TemplateLiteralParserError(`TemplateLiteralParser: Index must point to open parens`);
+          let count = 0;
+          for (let scan = index; scan < value.length; scan++) {
+            if (IsOpenParen(value, scan))
+              count += 1;
+            if (IsCloseParen(value, scan))
+              count -= 1;
+            if (count === 0)
+              return [index, scan];
+          }
+          throw new TemplateLiteralParserError(`TemplateLiteralParser: Unclosed group parens in expression`);
+        }
+        function Range(pattern2, index) {
+          for (let scan = index; scan < pattern2.length; scan++) {
+            if (IsOpenParen(pattern2, scan))
+              return [index, scan];
+          }
+          return [index, pattern2.length];
+        }
+        const expressions = [];
+        for (let index = 0; index < pattern.length; index++) {
+          if (IsOpenParen(pattern, index)) {
+            const [start, end] = Group(pattern, index);
+            const range = pattern.slice(start, end + 1);
+            expressions.push(Parse(range));
+            index = end;
+          } else {
+            const [start, end] = Range(pattern, index);
+            const range = pattern.slice(start, end);
+            if (range.length > 0)
+              expressions.push(Parse(range));
+            index = end - 1;
+          }
+        }
+        return expressions.length === 0 ? { type: "const", const: "" } : expressions.length === 1 ? expressions[0] : { type: "and", expr: expressions };
+      }
+      function Parse(pattern) {
+        return IsGroup(pattern) ? Parse(InGroup(pattern)) : IsPrecedenceOr(pattern) ? Or(pattern) : IsPrecedenceAnd(pattern) ? And(pattern) : { type: "const", const: pattern };
+      }
+      TemplateLiteralParser2.Parse = Parse;
+      function ParseExact(pattern) {
+        return Parse(pattern.slice(1, pattern.length - 1));
+      }
+      TemplateLiteralParser2.ParseExact = ParseExact;
+    })(TemplateLiteralParser || (exports.TemplateLiteralParser = TemplateLiteralParser = {}));
+    var TemplateLiteralFiniteError = class extends TypeBoxError {
+    };
+    exports.TemplateLiteralFiniteError = TemplateLiteralFiniteError;
+    var TemplateLiteralFinite;
+    (function(TemplateLiteralFinite2) {
+      function Throw(message) {
+        throw new TemplateLiteralFiniteError(message);
+      }
+      function IsNumber(expression) {
+        return expression.type === "or" && expression.expr.length === 2 && expression.expr[0].type === "const" && expression.expr[0].const === "0" && expression.expr[1].type === "const" && expression.expr[1].const === "[1-9][0-9]*";
+      }
+      function IsBoolean(expression) {
+        return expression.type === "or" && expression.expr.length === 2 && expression.expr[0].type === "const" && expression.expr[0].const === "true" && expression.expr[1].type === "const" && expression.expr[1].const === "false";
+      }
+      function IsString(expression) {
+        return expression.type === "const" && expression.const === ".*";
+      }
+      function Check(expression) {
+        return IsBoolean(expression) ? true 

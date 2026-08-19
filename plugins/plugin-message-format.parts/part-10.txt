@@ -1,0 +1,371 @@
+ce(index, cursor);
+  if (parsed.length === 0) return void 0;
+  return { value: parsed, nextIndex: cursor };
+}
+function parseMarkupValue(value, index) {
+  if (index >= value.length) return void 0;
+  if (value[index] === "|") {
+    let cursor = index + 1;
+    let literal2 = "";
+    while (cursor < value.length) {
+      const char = value[cursor];
+      if (char === "\\") {
+        const next = value[cursor + 1];
+        if (next === "|" || next === "\\" || next === "}") {
+          literal2 += next;
+          cursor += 2;
+          continue;
+        }
+        literal2 += char;
+        cursor += 1;
+        continue;
+      }
+      if (char === "|") {
+        return {
+          value: { type: "literal", value: literal2 },
+          nextIndex: cursor + 1
+        };
+      }
+      literal2 += char;
+      cursor += 1;
+    }
+    return void 0;
+  }
+  if (value[index] === "$") {
+    const variable = readIdentifier(value, index + 1);
+    if (!variable) return void 0;
+    return {
+      value: { type: "variable-reference", name: variable.value },
+      nextIndex: variable.nextIndex
+    };
+  }
+  const literal = readIdentifier(value, index);
+  if (!literal) return void 0;
+  return {
+    value: { type: "literal", value: literal.value },
+    nextIndex: literal.nextIndex
+  };
+}
+function parseMatches(value) {
+  const stripped = value.replace(" ", "");
+  const matches = [];
+  const selectors = [];
+  const parts = stripped.split(",");
+  for (const part of parts) {
+    const [key, value2] = part.split("=");
+    if (!key || !value2) {
+      continue;
+    }
+    if (value2 === "*") {
+      matches.push({
+        type: "catchall-match",
+        key
+      });
+    } else {
+      matches.push({
+        type: "literal-match",
+        key,
+        value: value2
+      });
+    }
+    selectors.push({
+      type: "variable-reference",
+      name: key
+    });
+  }
+  return { matches, selectors };
+}
+var unique = (arr) => [...new Set(arr.map((item) => JSON.stringify(item)))].map(
+  (item) => JSON.parse(item)
+);
+function parseDeclaration(value) {
+  if (value.startsWith("input")) {
+    return {
+      type: "input-variable",
+      name: value.slice(6).trim()
+    };
+  } else if (value.startsWith("local")) {
+    const match = value.match(/local (\w+) = (\w+): (\w+)(.*)/);
+    const [, name, ref, fn, optionsString] = match;
+    const options = [];
+    for (const optionMatch of (optionsString ?? "").matchAll(
+      /(\w+)\s*=\s*([^\s]+)/g
+    )) {
+      const optionName = optionMatch[1];
+      const optionValue = optionMatch[2];
+      if (!optionName || !optionValue) {
+        continue;
+      }
+      options.push({
+        name: optionName,
+        value: optionValue.startsWith("$") && optionValue.length > 1 ? {
+          type: "variable-reference",
+          name: optionValue.slice(1)
+        } : {
+          type: "literal",
+          value: optionValue
+        }
+      });
+    }
+    return {
+      type: "local-variable",
+      name: name.trim(),
+      value: {
+        type: "expression",
+        arg: {
+          type: "variable-reference",
+          name: ref.trim()
+        },
+        annotation: fn ? {
+          type: "function-reference",
+          name: fn.trim(),
+          options: options ?? []
+        } : void 0
+      }
+    };
+  }
+  throw new Error("Unsupported declaration type");
+}
+
+// src/utils/sortKeys.ts
+var compare = (direction) => (a, b) => direction === "desc" ? b.localeCompare(a) : a.localeCompare(b);
+var sortObjectKeys = (value, direction) => {
+  if (Array.isArray(value)) {
+    return value.map((entry) => sortObjectKeys(entry, direction));
+  }
+  if (value === null || typeof value !== "object") {
+    return value;
+  }
+  const sorted = {};
+  for (const [key, entry] of Object.entries(value).sort(
+    (a, b) => compare(direction)(a[0], b[0])
+  )) {
+    sorted[key] = sortObjectKeys(entry, direction);
+  }
+  return sorted;
+};
+var sortMessageKeys = (value, direction) => {
+  const sorted = {};
+  for (const [key, entry] of Object.entries(value).sort(
+    (a, b) => compare(direction)(a[0], b[0])
+  )) {
+    sorted[key] = sortObjectKeys(entry, direction);
+  }
+  return sorted;
+};
+
+// src/import-export/exportFiles.ts
+var exportFiles = async ({
+  bundles,
+  messages,
+  variants,
+  settings
+}) => {
+  const files = {};
+  for (const message of messages) {
+    const bundle = bundles.find((b) => b.id === message.bundleId);
+    const variantsOfMessage = [
+      ...variants.reduce((r, v) => {
+        if (v.messageId === message.id) r.set(JSON.stringify(v.matches), v);
+        return r;
+      }, /* @__PURE__ */ new Map()).values()
+    ];
+    files[message.locale] = {
+      ...files[message.locale],
+      ...serializeMessage2(bundle, message, variantsOfMessage)
+    };
+  }
+  const result = [];
+  for (const locale in files) {
+    const sortDirection = settings?.["plugin.inlang.messageFormat"]?.sort ?? void 0;
+    const unflattened = unflatten(files[locale]);
+    const sortedMessages = sortDirection ? sortMessageKeys(unflattened, sortDirection) : unflattened;
+    result.push({
+      locale,
+      // beautify the json
+      content: new TextEncoder().encode(
+        JSON.stringify(
+          {
+            // increase DX by providing auto complete in IDEs
+            $schema: "https://inlang.com/schema/inlang-message-format",
+            ...sortedMessages
+          },
+          void 0,
+          "	"
+        )
+      ),
+      name: locale + ".json"
+    });
+  }
+  return result;
+};
+function serializeMessage2(bundle, message, variants) {
+  const key = message.bundleId;
+  const value = serializeVariants(bundle, message, variants);
+  return { [key]: value };
+}
+function serializeVariants(bundle, message, variants) {
+  if (variants.length === 1) {
+    if (message.selectors.length === 0 && bundle.declarations.some((d) => d.type !== "input-variable") === false) {
+      return serializePattern(variants[0].pattern);
+    }
+  }
+  const entries = [];
+  for (const variant of variants) {
+    if (variant.matches.length === 0) {
+      for (const part of variant.pattern) {
+        if (part.type === "expression" && part.arg.type === "variable-reference") {
+          variant.matches.push({ key: part.arg.name, type: "catchall-match" });
+        }
+      }
+    }
+    const pattern = serializePattern(variant.pattern);
+    const match = serializeMatcher(variant.matches);
+    entries.push([match, pattern]);
+  }
+  return [
+    {
+      // naively adding all declarations, even if unused in the variants
+      // can be optimized later.
+      declarations: bundle.declarations.sort((a, b) => a.name.localeCompare(b.name)).map(serializeDeclaration).sort(),
+      selectors: message.selectors.map((s) => s.name).sort(),
+      match: Object.fromEntries(entries)
+    }
+  ];
+}
+function serializePattern(pattern) {
+  let result = "";
+  for (const part of pattern) {
+    switch (part.type) {
+      case "text":
+        result += escapePatternText(part.value);
+        break;
+      case "expression":
+        if (part.arg.type === "variable-reference") {
+          result += `{${part.arg.name}}`;
+          break;
+        }
+        throw new Error("Unsupported expression type");
+      case "markup-start":
+        result += serializeMarkup(
+          "#",
+          part.name,
+          part.options,
+          part.attributes,
+          false
+        );
+        break;
+      case "markup-end":
+        result += serializeMarkup(
+          "/",
+          part.name,
+          part.options,
+          part.attributes,
+          false
+        );
+        break;
+      case "markup-standalone":
+        result += serializeMarkup(
+          "#",
+          part.name,
+          part.options,
+          part.attributes,
+          true
+        );
+        break;
+      default:
+        throw new Error("Unsupported pattern element type");
+    }
+  }
+  return result;
+}
+function escapePatternText(value) {
+  return value.replace(/\\/g, "\\\\").replace(/{/g, "\\{").replace(/}/g, "\\}");
+}
+function serializeMarkup(prefix, name, options, attributes, standalone) {
+  const serializedOptions = (options ?? []).map((option) => {
+    if (option.value.type === "variable-reference") {
+      return `${option.name}=$${option.value.name}`;
+    }
+    return `${option.name}=|${escapeMarkupLiteral(option.value.value)}|`;
+  });
+  const serializedAttributes = (attributes ?? []).map((attribute) => {
+    if (attribute.value === true) {
+      return `@${attribute.name}`;
+    }
+    return `@${attribute.name}=|${escapeMarkupLiteral(attribute.value.value)}|`;
+  });
+  const metadata = [...serializedOptions, ...serializedAttributes].join(" ");
+  if (metadata.length === 0) {
+    return standalone ? `{${prefix}${name}/}` : `{${prefix}${name}}`;
+  }
+  if (standalone) {
+    return `{${prefix}${name} ${metadata}/}`;
+  }
+  return `{${prefix}${name} ${metadata}}`;
+}
+function escapeMarkupLiteral(value) {
+  return value.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/}/g, "\\}");
+}
+function serializeMatcher(matches) {
+  const parts = matches.sort((a, b) => a.key.localeCompare(b.key)).map(
+    (match) => match.type === "literal-match" ? `${match.key}=${match.value}` : `${match.key}=*`
+  );
+  return parts.join(", ");
+}
+function serializeDeclaration(declaration) {
+  if (declaration.type === "input-variable") {
+    return `input ${declaration.name}`;
+  } else if (declaration.type === "local-variable") {
+    let result = "";
+    if (declaration.value.arg.type === "variable-reference") {
+      result = `local ${declaration.name} = ${declaration.value.arg.name}`;
+    } else if (declaration.value.arg.type === "literal") {
+      result = `local ${declaration.name} = "${declaration.value.arg.value}"`;
+    }
+    if (declaration.value.annotation) {
+      result += `: ${declaration.value.annotation.name}`;
+    }
+    if (declaration.value.annotation?.options) {
+      for (const option of declaration.value?.annotation?.options ?? []) {
+        if (option.value.type === "literal") {
+          result += ` ${option.name}=${option.value.value}`;
+          continue;
+        }
+        if (option.value.type === "variable-reference") {
+          result += ` ${option.name}=$${option.value.name}`;
+          continue;
+        }
+        throw new Error("Unsupported option type");
+      }
+    }
+    return result;
+  }
+  throw new Error("Unsupported declaration type");
+}
+
+// src/plugin.ts
+var PLUGIN_KEY = "plugin.inlang.messageFormat";
+var plugin2 = {
+  key: PLUGIN_KEY,
+  // legacy v2 stuff for backwards compatibility
+  // given that most people don't have a major version
+  // pinning in their settings
+  id: plugin.id,
+  // @ts-expect-error - displayName is not in the v2 plugin
+  displayName: plugin.displayName,
+  // @ts-expect-error - description is not in the v2 plugin
+  description: plugin.description,
+  loadMessages: plugin.loadMessages,
+  saveMessages: plugin.saveMessages,
+  settingsSchema: PluginSettings,
+  toBeImportedFiles,
+  importFiles,
+  exportFiles
+};
+
+// src/index.ts
+var index_default = plugin2;
+export {
+  index_default as default
+};

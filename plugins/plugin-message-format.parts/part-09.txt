@@ -1,0 +1,393 @@
+currentDepth || 1;
+    Object.keys(object).forEach(function(key) {
+      const value = object[key];
+      const isarray = opts.safe && Array.isArray(value);
+      const type = Object.prototype.toString.call(value);
+      const isbuffer = isBuffer(value);
+      const isobject = type === "[object Object]" || type === "[object Array]";
+      const newKey = prev ? prev + delimiter + transformKey(key) : transformKey(key);
+      if (!isarray && !isbuffer && isobject && Object.keys(value).length && (!opts.maxDepth || currentDepth < maxDepth)) {
+        return step(value, newKey, currentDepth + 1);
+      }
+      output[newKey] = value;
+    });
+  }
+  step(target);
+  return output;
+}
+function unflatten(target, opts) {
+  opts = opts || {};
+  const delimiter = opts.delimiter || ".";
+  const overwrite = opts.overwrite || false;
+  const transformKey = opts.transformKey || keyIdentity;
+  const result = {};
+  const isbuffer = isBuffer(target);
+  if (isbuffer || Object.prototype.toString.call(target) !== "[object Object]") {
+    return target;
+  }
+  function getkey(key) {
+    const parsedKey = Number(key);
+    return isNaN(parsedKey) || key.indexOf(".") !== -1 || opts.object ? key : parsedKey;
+  }
+  function addKeys(keyPrefix, recipient, target2) {
+    return Object.keys(target2).reduce(function(result2, key) {
+      result2[keyPrefix + delimiter + key] = target2[key];
+      return result2;
+    }, recipient);
+  }
+  function isEmpty(val) {
+    const type = Object.prototype.toString.call(val);
+    const isArray = type === "[object Array]";
+    const isObject = type === "[object Object]";
+    if (!val) {
+      return true;
+    } else if (isArray) {
+      return !val.length;
+    } else if (isObject) {
+      return !Object.keys(val).length;
+    }
+  }
+  target = Object.keys(target).reduce(function(result2, key) {
+    const type = Object.prototype.toString.call(target[key]);
+    const isObject = type === "[object Object]" || type === "[object Array]";
+    if (!isObject || isEmpty(target[key])) {
+      result2[key] = target[key];
+      return result2;
+    } else {
+      return addKeys(
+        key,
+        result2,
+        flatten(target[key], opts)
+      );
+    }
+  }, {});
+  Object.keys(target).forEach(function(key) {
+    const split = key.split(delimiter).map(transformKey);
+    let key1 = getkey(split.shift());
+    let key2 = getkey(split[0]);
+    let recipient = result;
+    while (key2 !== void 0) {
+      if (key1 === "__proto__") {
+        return;
+      }
+      const type = Object.prototype.toString.call(recipient[key1]);
+      const isobject = type === "[object Object]" || type === "[object Array]";
+      if (!overwrite && !isobject && typeof recipient[key1] !== "undefined") {
+        return;
+      }
+      if (overwrite && !isobject || !overwrite && recipient[key1] == null) {
+        recipient[key1] = typeof key2 === "number" && !opts.object ? [] : {};
+      }
+      recipient = recipient[key1];
+      if (split.length > 0) {
+        key1 = getkey(split.shift());
+        key2 = getkey(split[0]);
+      }
+    }
+    recipient[key1] = unflatten(target[key], opts);
+  });
+  return result;
+}
+
+// src/import-export/importFiles.ts
+var importFiles = async ({
+  files
+}) => {
+  const bundles = [];
+  const messages = [];
+  const variants = [];
+  for (const file of files) {
+    const json = JSON.parse(new TextDecoder().decode(file.content));
+    const flattened = flatten(json, { safe: true });
+    for (const key in flattened) {
+      if (key === "$schema") {
+        continue;
+      }
+      const result = parseBundle(key, file.locale, flattened[key]);
+      messages.push(result.message);
+      variants.push(...result.variants);
+      const existingBundle = bundles.find((b) => b.id === result.bundle.id);
+      if (existingBundle === void 0) {
+        bundles.push(result.bundle);
+      } else {
+        existingBundle.declarations = unique([
+          ...existingBundle.declarations,
+          ...result.bundle.declarations
+        ]);
+      }
+    }
+  }
+  return { bundles, messages, variants };
+};
+function parseBundle(key, locale, value) {
+  const parsed = parseVariants(key, locale, value);
+  const declarations = unique(parsed.declarations);
+  const selectors = unique(parsed.selectors);
+  const undeclaredSelectors = selectors.filter(
+    (selector) => declarations.find((d) => d.name === selector.name) === void 0
+  );
+  for (const undeclaredSelector of undeclaredSelectors) {
+    declarations.push({
+      type: "input-variable",
+      name: undeclaredSelector.name
+    });
+  }
+  return {
+    bundle: {
+      id: key,
+      declarations
+    },
+    message: {
+      bundleId: key,
+      selectors,
+      locale
+    },
+    variants: parsed.variants
+  };
+}
+function parseVariants(bundleId, locale, value) {
+  if (typeof value === "string") {
+    const parsed = parsePattern2(value);
+    return {
+      variants: [
+        {
+          messageBundleId: bundleId,
+          messageLocale: locale,
+          matches: [],
+          pattern: parsed.pattern
+        }
+      ],
+      // legacy reasons that input variables are derived from the pattern
+      declarations: parsed.declarations,
+      selectors: []
+    };
+  }
+  const complexMessage = value[0];
+  const variants = [];
+  const selectors = (complexMessage["selectors"] ?? []).map((name) => ({
+    type: "variable-reference",
+    name
+  }));
+  const declarations = /* @__PURE__ */ new Set();
+  for (const declaration of complexMessage["declarations"] ?? []) {
+    declarations.add(parseDeclaration(declaration));
+  }
+  const detectedSelectors = /* @__PURE__ */ new Set();
+  for (const [match, pattern] of Object.entries(complexMessage["match"])) {
+    const parsed = parsePattern2(pattern);
+    const parsedMatches = parseMatches(match);
+    for (const declaration of parsed.declarations) {
+      let isDuplicate = false;
+      for (const existingDeclaration of declarations) {
+        if (existingDeclaration.name === declaration.name) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (isDuplicate) {
+        break;
+      }
+      declarations.add(declaration);
+    }
+    for (const selector of parsedMatches.selectors) {
+      detectedSelectors.add(selector);
+    }
+    variants.push({
+      messageBundleId: bundleId,
+      messageLocale: locale,
+      matches: parsedMatches.matches,
+      pattern: parsed.pattern
+    });
+  }
+  return {
+    variants,
+    declarations: Array.from(declarations),
+    selectors: unique([...selectors, ...Array.from(detectedSelectors)])
+  };
+}
+function parsePattern2(value) {
+  const pattern = [];
+  const declarations = [];
+  let buffer = "";
+  const flushBuffer = () => {
+    if (buffer.length > 0) {
+      pattern.push({ type: "text", value: buffer });
+      buffer = "";
+    }
+  };
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index];
+    if (char === "\\") {
+      const next = value[index + 1];
+      if (next === "{" || next === "}" || next === "\\") {
+        buffer += next;
+        index += 1;
+        continue;
+      }
+      buffer += char;
+      continue;
+    }
+    if (char === "{") {
+      const closingIndex = findPlaceholderClosingIndex(value, index);
+      if (closingIndex === -1) {
+        buffer += char;
+        continue;
+      }
+      const placeholder = value.slice(index + 1, closingIndex);
+      const markupNode = parseMarkupPlaceholder(placeholder);
+      flushBuffer();
+      if (markupNode) {
+        for (const option of markupNode.options ?? []) {
+          if (option.value.type === "variable-reference") {
+            declarations.push({
+              type: "input-variable",
+              name: option.value.name
+            });
+          }
+        }
+        pattern.push(markupNode);
+        index = closingIndex;
+        continue;
+      }
+      declarations.push({
+        type: "input-variable",
+        name: placeholder
+      });
+      pattern.push({
+        type: "expression",
+        arg: { type: "variable-reference", name: placeholder }
+      });
+      index = closingIndex;
+      continue;
+    }
+    buffer += char;
+  }
+  flushBuffer();
+  return {
+    declarations,
+    pattern
+  };
+}
+function findPlaceholderClosingIndex(value, openingIndex) {
+  let inQuotedLiteral = false;
+  for (let cursor = openingIndex + 1; cursor < value.length; cursor += 1) {
+    const current = value[cursor];
+    if (inQuotedLiteral && current === "\\") {
+      cursor += 1;
+      continue;
+    }
+    if (current === "|") {
+      inQuotedLiteral = !inQuotedLiteral;
+      continue;
+    }
+    if (current === "}" && inQuotedLiteral === false) {
+      return cursor;
+    }
+  }
+  return -1;
+}
+function parseMarkupPlaceholder(placeholder) {
+  if (placeholder.startsWith("#")) {
+    const parsed = parseMarkupBody(placeholder.slice(1), true);
+    if (!parsed) {
+      throw new Error(`Invalid markup placeholder: {${placeholder}}`);
+    }
+    const { name, options, attributes, standalone } = parsed;
+    return {
+      type: standalone ? "markup-standalone" : "markup-start",
+      name,
+      ...options.length > 0 ? { options } : {},
+      ...attributes.length > 0 ? { attributes } : {}
+    };
+  }
+  if (placeholder.startsWith("/")) {
+    const parsed = parseMarkupBody(placeholder.slice(1), false);
+    if (!parsed) {
+      throw new Error(`Invalid markup placeholder: {${placeholder}}`);
+    }
+    const { name, options, attributes } = parsed;
+    return {
+      type: "markup-end",
+      name,
+      ...options.length > 0 ? { options } : {},
+      ...attributes.length > 0 ? { attributes } : {}
+    };
+  }
+  return void 0;
+}
+function parseMarkupBody(body, allowStandalone) {
+  let index = 0;
+  const options = [];
+  const attributes = [];
+  let standalone = false;
+  index = skipWhitespace(body, index);
+  const nameToken = readNameToken(body, index);
+  if (!nameToken) return void 0;
+  const name = nameToken.value;
+  index = nameToken.nextIndex;
+  while (index < body.length) {
+    index = skipWhitespace(body, index);
+    if (index >= body.length) break;
+    if (allowStandalone && body[index] === "/") {
+      const trailing = body.slice(index + 1).trim();
+      if (trailing.length > 0) return void 0;
+      standalone = true;
+      index = body.length;
+      break;
+    }
+    if (body[index] === "@") {
+      index += 1;
+      const attributeName = readIdentifier(body, index);
+      if (!attributeName) return void 0;
+      index = attributeName.nextIndex;
+      index = skipWhitespace(body, index);
+      if (body[index] === "=") {
+        index += 1;
+        index = skipWhitespace(body, index);
+        const attributeValue = parseMarkupValue(body, index);
+        if (!attributeValue) return void 0;
+        if (attributeValue.value.type === "variable-reference") {
+          return void 0;
+        }
+        attributes.push({
+          name: attributeName.value,
+          value: attributeValue.value
+        });
+        index = attributeValue.nextIndex;
+      } else {
+        attributes.push({ name: attributeName.value, value: true });
+      }
+      continue;
+    }
+    const optionName = readIdentifier(body, index);
+    if (!optionName) return void 0;
+    index = optionName.nextIndex;
+    index = skipWhitespace(body, index);
+    if (body[index] !== "=") return void 0;
+    index += 1;
+    index = skipWhitespace(body, index);
+    const optionValue = parseMarkupValue(body, index);
+    if (!optionValue) return void 0;
+    options.push({
+      name: optionName.value,
+      value: optionValue.value
+    });
+    index = optionValue.nextIndex;
+  }
+  return { name, options, attributes, standalone };
+}
+function skipWhitespace(value, index) {
+  while (index < value.length && /\s/.test(value[index])) {
+    index += 1;
+  }
+  return index;
+}
+function readNameToken(value, index) {
+  return readIdentifier(value, index);
+}
+function readIdentifier(value, index) {
+  let cursor = index;
+  while (cursor < value.length && /\s/.test(value[cursor]) === false && value[cursor] !== "=" && value[cursor] !== "/" && value[cursor] !== "@") {
+    cursor += 1;
+  }
+  const parsed = value.sli

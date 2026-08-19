@@ -1,18 +1,27 @@
 import { BellRing, Mic } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
-import { usePublicSpeakersQuery, type PublicSpeaker } from "@/domains/speakers"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
+import { usePublicSpeakersQuery } from "@/domains/speakers"
+import type { PublicSpeaker } from "@/domains/speakers"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LinkedinIcon, XIcon } from "@/components/brand-icons"
 import bgImage from "@/assets/images/Image6.jpg"
 
 export function Speakers() {
-  const { t, lang } = useI18n()
-  const section = t.home.speakersSection
-  const teaser = t.home.speakersTeaser
+  const section = {
+    label: m.home_speakers_section_label(),
+    title: m.home_speakers_section_title(),
+    subtitle: m.home_speakers_section_subtitle(),
+  }
+  const teaser = {
+    name: m.home_speakers_teaser_name(),
+    role: m.home_speakers_teaser_role(),
+    cta: m.home_speakers_teaser_cta(),
+  }
 
-  const speakersQuery = usePublicSpeakersQuery(lang)
+  const speakersQuery = usePublicSpeakersQuery(getLocale())
   const speakers = speakersQuery.data ?? []
 
   return (

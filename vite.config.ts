@@ -1,11 +1,14 @@
 import { defineConfig } from "vite"
+import { paraglideVitePlugin } from "@inlang/paraglide-js"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import { nitro } from "nitro/vite"
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react"
 import babel from "@rolldown/plugin-babel"
 import tailwindcss from "@tailwindcss/vite"
 
-const config = defineConfig({
+import { paraglideOptions } from "./paraglide.config"
+
+const config = defineConfig(({ mode }) => ({
   resolve: {
     tsconfigPaths: true,
     // Ensure a single React instance across app + base-ui during SSR.
@@ -27,6 +30,12 @@ const config = defineConfig({
     external: ["sharp", "react", "react-dom"],
   },
   plugins: [
+    paraglideVitePlugin({
+      ...paraglideOptions,
+      // Per-message modules flood dev with module requests (paraglide #486).
+      outputStructure:
+        mode === "development" ? "locale-modules" : "message-modules",
+    }),
     tailwindcss(),
     tanstackStart(),
     nitro(),
@@ -34,6 +43,6 @@ const config = defineConfig({
     // React Compiler (auto-memoization) — the vite 8/rolldown wiring.
     babel({ presets: [reactCompilerPreset()] }),
   ],
-})
+}))
 
 export default config

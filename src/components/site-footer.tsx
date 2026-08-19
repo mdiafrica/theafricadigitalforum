@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
 import { Button } from "@/components/ui/button"
 import { NewsletterForm } from "@/components/newsletter-form"
 import {
@@ -15,7 +15,7 @@ import Logo from "@/assets/images/Logo.png"
 type SocialIcon = (props: React.SVGProps<SVGSVGElement>) => React.ReactElement
 
 /**
- * Link destinations paralleling the i18n `footer.cols` order (columns × links),
+ * Link destinations paralleling the footer column order (columns × links),
  * so localized labels keep their targets across languages. `null` = plain text.
  */
 const LINK_TARGETS: (string | null)[][] = [
@@ -84,10 +84,40 @@ const FOOTER_LINK_CLASS =
   "block py-1.5 text-left text-[13.5px] font-medium tracking-[0.04em] text-[#cccccc] transition-all hover:translate-x-1 hover:text-white"
 
 export function SiteFooter() {
-  const { t } = useI18n()
-  const footer = t.footer
-  const copy = t.home.latest.newsletter
   const year = new Date().getFullYear()
+
+  const cols = [
+    {
+      title: m.footer_col_forum_title(),
+      links: [
+        m.footer_col_forum_link_home(),
+        m.footer_col_forum_link_about(),
+        m.footer_col_forum_link_vision(),
+        m.footer_col_forum_link_mission(),
+        m.footer_col_forum_link_why_adf(),
+      ],
+    },
+    {
+      title: m.footer_col_engage_title(),
+      links: [
+        m.footer_col_engage_link_blog(),
+        m.footer_col_engage_link_host_city(),
+        m.footer_col_engage_link_speakers(),
+        m.footer_col_engage_link_mdi(),
+        m.footer_col_engage_link_contact(),
+      ],
+    },
+    {
+      title: m.footer_col_social_title(),
+      links: [
+        m.footer_col_social_link_facebook(),
+        m.footer_col_social_link_linkedin(),
+        m.footer_col_social_link_x(),
+        m.footer_col_social_link_instagram(),
+        m.footer_col_social_link_youtube(),
+      ],
+    },
+  ]
 
   return (
     <footer className="relative z-[1] border-t border-white/[0.12] bg-black font-nav tracking-[0.02em]">
@@ -108,24 +138,24 @@ export function SiteFooter() {
             </Link>
 
             <p className="mt-0 mb-4 max-w-[300px] text-[13.5px] leading-[1.8] tracking-[0.03em] text-[#cccccc]">
-              {footer.desc}
+              {m.footer_desc()}
             </p>
 
             <p className="text-xs tracking-[0.04em] text-[#888888]">
-              {footer.organizer}:{" "}
+              {m.footer_organizer()}:{" "}
               <a
                 href="https://mdiafrica.org/en/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-[#aaaaaa] transition-colors hover:text-white"
               >
-                {footer.orgName}
+                {m.footer_org_name()}
               </a>
             </p>
 
             <div className="mt-6">
               <div className="mb-2.5 text-[11px] font-bold tracking-[0.12em] text-primary uppercase">
-                {copy.label}
+                {m.home_latest_newsletter_label()}
               </div>
               <NewsletterForm
                 inputClassName="h-auto rounded-lg border-white/20 bg-white/[0.06] py-2.5 text-xs tracking-[0.03em] text-white placeholder:text-[#888888] focus-visible:border-primary focus-visible:ring-primary/20"
@@ -135,7 +165,7 @@ export function SiteFooter() {
           </div>
 
           {/* Link columns */}
-          {footer.cols.map((col, colIndex) => (
+          {cols.map((col, colIndex) => (
             <div key={col.title}>
               <h3 className="mb-4 text-xs font-bold tracking-[0.12em] text-white uppercase lg:mt-7">
                 {col.title}
@@ -184,8 +214,7 @@ export function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-2 flex flex-wrap items-center justify-between gap-5 pt-2 text-xs text-[#888888]">
           <span className="font-medium tracking-[0.04em]">
-            {footer.copy?.replace("2025", String(year)) ??
-              `© ${year} Africa Digital Forum. All rights reserved.`}
+            {m.footer_copy().replace("2025", String(year))}
           </span>
 
           <div className="flex flex-wrap gap-5">

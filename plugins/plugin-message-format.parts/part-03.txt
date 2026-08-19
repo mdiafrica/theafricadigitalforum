@@ -1,0 +1,150 @@
+ft.parameters.every((schema, index) => IntoBooleanResult(Visit(right.parameters[index], schema)) === TypeExtendsResult.True) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.returns, right.returns));
+      }
+      function TDate(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TDate(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TFunction(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : !TypeGuard.TFunction(right) ? TypeExtendsResult.False : left.parameters.length > right.parameters.length ? TypeExtendsResult.False : !left.parameters.every((schema, index) => IntoBooleanResult(Visit(right.parameters[index], schema)) === TypeExtendsResult.True) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.returns, right.returns));
+      }
+      function TIntegerRight(left, right) {
+        return TypeGuard.TLiteral(left) && ValueGuard.IsNumber(left.const) ? TypeExtendsResult.True : TypeGuard.TNumber(left) || TypeGuard.TInteger(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TInteger(left, right) {
+        return TypeGuard.TInteger(right) || TypeGuard.TNumber(right) ? TypeExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeExtendsResult.False;
+      }
+      function TIntersectRight(left, right) {
+        return right.allOf.every((schema) => Visit(left, schema) === TypeExtendsResult.True) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TIntersect(left, right) {
+        return left.allOf.some((schema) => Visit(schema, right) === TypeExtendsResult.True) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TIterator(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : !TypeGuard.TIterator(right) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.items, right.items));
+      }
+      function TLiteral(left, right) {
+        return TypeGuard.TLiteral(right) && right.const === left.const ? TypeExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TString(right) ? TStringRight(left, right) : TypeGuard.TNumber(right) ? TNumberRight(left, right) : TypeGuard.TInteger(right) ? TIntegerRight(left, right) : TypeGuard.TBoolean(right) ? TBooleanRight(left, right) : TypeExtendsResult.False;
+      }
+      function TNeverRight(left, right) {
+        return TypeExtendsResult.False;
+      }
+      function TNever(left, right) {
+        return TypeExtendsResult.True;
+      }
+      function UnwrapTNot(schema) {
+        let [current, depth] = [schema, 0];
+        while (true) {
+          if (!TypeGuard.TNot(current))
+            break;
+          current = current.not;
+          depth += 1;
+        }
+        return depth % 2 === 0 ? current : exports.Type.Unknown();
+      }
+      function TNot(left, right) {
+        return TypeGuard.TNot(left) ? Visit(UnwrapTNot(left), right) : TypeGuard.TNot(right) ? Visit(left, UnwrapTNot(right)) : Throw("Invalid fallthrough for Not");
+      }
+      function TNull(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TNull(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TNumberRight(left, right) {
+        return TypeGuard.TLiteralNumber(left) ? TypeExtendsResult.True : TypeGuard.TNumber(left) || TypeGuard.TInteger(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TNumber(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TInteger(right) || TypeGuard.TNumber(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function IsObjectPropertyCount(schema, count) {
+        return Object.getOwnPropertyNames(schema.properties).length === count;
+      }
+      function IsObjectStringLike(schema) {
+        return IsObjectArrayLike(schema);
+      }
+      function IsObjectSymbolLike(schema) {
+        return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "description" in schema.properties && TypeGuard.TUnion(schema.properties.description) && schema.properties.description.anyOf.length === 2 && (TypeGuard.TString(schema.properties.description.anyOf[0]) && TypeGuard.TUndefined(schema.properties.description.anyOf[1]) || TypeGuard.TString(schema.properties.description.anyOf[1]) && TypeGuard.TUndefined(schema.properties.description.anyOf[0]));
+      }
+      function IsObjectNumberLike(schema) {
+        return IsObjectPropertyCount(schema, 0);
+      }
+      function IsObjectBooleanLike(schema) {
+        return IsObjectPropertyCount(schema, 0);
+      }
+      function IsObjectBigIntLike(schema) {
+        return IsObjectPropertyCount(schema, 0);
+      }
+      function IsObjectDateLike(schema) {
+        return IsObjectPropertyCount(schema, 0);
+      }
+      function IsObjectUint8ArrayLike(schema) {
+        return IsObjectArrayLike(schema);
+      }
+      function IsObjectFunctionLike(schema) {
+        const length = exports.Type.Number();
+        return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "length" in schema.properties && IntoBooleanResult(Visit(schema.properties["length"], length)) === TypeExtendsResult.True;
+      }
+      function IsObjectConstructorLike(schema) {
+        return IsObjectPropertyCount(schema, 0);
+      }
+      function IsObjectArrayLike(schema) {
+        const length = exports.Type.Number();
+        return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "length" in schema.properties && IntoBooleanResult(Visit(schema.properties["length"], length)) === TypeExtendsResult.True;
+      }
+      function IsObjectPromiseLike(schema) {
+        const then = exports.Type.Function([exports.Type.Any()], exports.Type.Any());
+        return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "then" in schema.properties && IntoBooleanResult(Visit(schema.properties["then"], then)) === TypeExtendsResult.True;
+      }
+      function Property(left, right) {
+        return Visit(left, right) === TypeExtendsResult.False ? TypeExtendsResult.False : TypeGuard.TOptional(left) && !TypeGuard.TOptional(right) ? TypeExtendsResult.False : TypeExtendsResult.True;
+      }
+      function TObjectRight(left, right) {
+        return TypeGuard.TUnknown(left) ? TypeExtendsResult.False : TypeGuard.TAny(left) ? TypeExtendsResult.Union : TypeGuard.TNever(left) || TypeGuard.TLiteralString(left) && IsObjectStringLike(right) || TypeGuard.TLiteralNumber(left) && IsObjectNumberLike(right) || TypeGuard.TLiteralBoolean(left) && IsObjectBooleanLike(right) || TypeGuard.TSymbol(left) && IsObjectSymbolLike(right) || TypeGuard.TBigInt(left) && IsObjectBigIntLike(right) || TypeGuard.TString(left) && IsObjectStringLike(right) || TypeGuard.TSymbol(left) && IsObjectSymbolLike(right) || TypeGuard.TNumber(left) && IsObjectNumberLike(right) || TypeGuard.TInteger(left) && IsObjectNumberLike(right) || TypeGuard.TBoolean(left) && IsObjectBooleanLike(right) || TypeGuard.TUint8Array(left) && IsObjectUint8ArrayLike(right) || TypeGuard.TDate(left) && IsObjectDateLike(right) || TypeGuard.TConstructor(left) && IsObjectConstructorLike(right) || TypeGuard.TFunction(left) && IsObjectFunctionLike(right) ? TypeExtendsResult.True : TypeGuard.TRecord(left) && TypeGuard.TString(RecordKey(left)) ? (() => {
+          return right[exports.Hint] === "Record" ? TypeExtendsResult.True : TypeExtendsResult.False;
+        })() : TypeGuard.TRecord(left) && TypeGuard.TNumber(RecordKey(left)) ? (() => {
+          return IsObjectPropertyCount(right, 0) ? TypeExtendsResult.True : TypeExtendsResult.False;
+        })() : TypeExtendsResult.False;
+      }
+      function TObject(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : !TypeGuard.TObject(right) ? TypeExtendsResult.False : (() => {
+          for (const key of Object.getOwnPropertyNames(right.properties)) {
+            if (!(key in left.properties) && !TypeGuard.TOptional(right.properties[key])) {
+              return TypeExtendsResult.False;
+            }
+            if (TypeGuard.TOptional(right.properties[key])) {
+              return TypeExtendsResult.True;
+            }
+            if (Property(left.properties[key], right.properties[key]) === TypeExtendsResult.False) {
+              return TypeExtendsResult.False;
+            }
+          }
+          return TypeExtendsResult.True;
+        })();
+      }
+      function TPromise(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) && IsObjectPromiseLike(right) ? TypeExtendsResult.True : !TypeGuard.TPromise(right) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.item, right.item));
+      }
+      function RecordKey(schema) {
+        return exports.PatternNumberExact in schema.patternProperties ? exports.Type.Number() : exports.PatternStringExact in schema.patternProperties ? exports.Type.String() : Throw("Unknown record key pattern");
+      }
+      function RecordValue(schema) {
+        return exports.PatternNumberExact in schema.patternProperties ? schema.patternProperties[exports.PatternNumberExact] : exports.PatternStringExact in schema.patternProperties ? schema.patternProperties[exports.PatternStringExact] : Throw("Unable to get record value schema");
+      }
+      function TRecordRight(left, right) {
+        const [Key, Value] = [RecordKey(right), RecordValue(right)];
+        return TypeGuard.TLiteralString(left) && TypeGuard.TNumber(Key) && IntoBooleanResult(Visit(left, Value)) === TypeExtendsResult.True ? TypeExtendsResult.True : TypeGuard.TUint8Array(left) && TypeGuard.TNumber(Key) ? Visit(left, Value) : TypeGuard.TString(left) && TypeGuard.TNumber(Key) ? Visit(left, Value) : TypeGuard.TArray(left) && TypeGuard.TNumber(Key) ? Visit(left, Value) : TypeGuard.TObject(left) ? (() => {
+          for (const key of Object.getOwnPropertyNames(left.properties)) {
+            if (Property(Value, left.properties[key]) === TypeExtendsResult.False) {
+              return TypeExtendsResult.False;
+            }
+          }
+          return TypeExtendsResult.True;
+        })() : TypeExtendsResult.False;
+      }
+      function TRecord(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : !TypeGuard.TRecord(right) ? TypeExtendsResult.False : Visit(RecordValue(left), RecordValue(right));
+      }
+      function TStringRight(left, right) {
+        return TypeGuard.TLiteral(left) && ValueGuard.IsString(left.const) ? TypeExtendsResult.True : TypeGuard.TString(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TString(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TString(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TSymbol(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TSymbo

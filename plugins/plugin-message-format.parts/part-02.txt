@@ -1,0 +1,182 @@
+Of = TKindOf;
+      function TKind(schema) {
+        return ValueGuard.IsObject(schema) && exports.Kind in schema && ValueGuard.IsString(schema[exports.Kind]);
+      }
+      TypeGuard2.TKind = TKind;
+      function TLiteralString(schema) {
+        return TLiteral(schema) && ValueGuard.IsString(schema.const);
+      }
+      TypeGuard2.TLiteralString = TLiteralString;
+      function TLiteralNumber(schema) {
+        return TLiteral(schema) && ValueGuard.IsNumber(schema.const);
+      }
+      TypeGuard2.TLiteralNumber = TLiteralNumber;
+      function TLiteralBoolean(schema) {
+        return TLiteral(schema) && ValueGuard.IsBoolean(schema.const);
+      }
+      TypeGuard2.TLiteralBoolean = TLiteralBoolean;
+      function TLiteral(schema) {
+        return TKindOf(schema, "Literal") && IsOptionalString(schema.$id) && (ValueGuard.IsBoolean(schema.const) || ValueGuard.IsNumber(schema.const) || ValueGuard.IsString(schema.const));
+      }
+      TypeGuard2.TLiteral = TLiteral;
+      function TNever(schema) {
+        return TKindOf(schema, "Never") && ValueGuard.IsObject(schema.not) && Object.getOwnPropertyNames(schema.not).length === 0;
+      }
+      TypeGuard2.TNever = TNever;
+      function TNot(schema) {
+        return TKindOf(schema, "Not") && TSchema(schema.not);
+      }
+      TypeGuard2.TNot = TNot;
+      function TNull(schema) {
+        return TKindOf(schema, "Null") && schema.type === "null" && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TNull = TNull;
+      function TNumber(schema) {
+        return TKindOf(schema, "Number") && schema.type === "number" && IsOptionalString(schema.$id) && IsOptionalNumber(schema.exclusiveMaximum) && IsOptionalNumber(schema.exclusiveMinimum) && IsOptionalNumber(schema.maximum) && IsOptionalNumber(schema.minimum) && IsOptionalNumber(schema.multipleOf);
+      }
+      TypeGuard2.TNumber = TNumber;
+      function TObject(schema) {
+        return TKindOf(schema, "Object") && schema.type === "object" && IsOptionalString(schema.$id) && ValueGuard.IsObject(schema.properties) && IsAdditionalProperties(schema.additionalProperties) && IsOptionalNumber(schema.minProperties) && IsOptionalNumber(schema.maxProperties) && Object.entries(schema.properties).every(([key, schema2]) => IsControlCharacterFree(key) && TSchema(schema2));
+      }
+      TypeGuard2.TObject = TObject;
+      function TPromise(schema) {
+        return TKindOf(schema, "Promise") && schema.type === "Promise" && IsOptionalString(schema.$id) && TSchema(schema.item);
+      }
+      TypeGuard2.TPromise = TPromise;
+      function TRecord(schema) {
+        return TKindOf(schema, "Record") && schema.type === "object" && IsOptionalString(schema.$id) && IsAdditionalProperties(schema.additionalProperties) && ValueGuard.IsObject(schema.patternProperties) && ((schema2) => {
+          const keys = Object.getOwnPropertyNames(schema2.patternProperties);
+          return keys.length === 1 && IsPattern(keys[0]) && ValueGuard.IsObject(schema2.patternProperties) && TSchema(schema2.patternProperties[keys[0]]);
+        })(schema);
+      }
+      TypeGuard2.TRecord = TRecord;
+      function TRecursive(schema) {
+        return ValueGuard.IsObject(schema) && exports.Hint in schema && schema[exports.Hint] === "Recursive";
+      }
+      TypeGuard2.TRecursive = TRecursive;
+      function TRef(schema) {
+        return TKindOf(schema, "Ref") && IsOptionalString(schema.$id) && ValueGuard.IsString(schema.$ref);
+      }
+      TypeGuard2.TRef = TRef;
+      function TString(schema) {
+        return TKindOf(schema, "String") && schema.type === "string" && IsOptionalString(schema.$id) && IsOptionalNumber(schema.minLength) && IsOptionalNumber(schema.maxLength) && IsOptionalPattern(schema.pattern) && IsOptionalFormat(schema.format);
+      }
+      TypeGuard2.TString = TString;
+      function TSymbol(schema) {
+        return TKindOf(schema, "Symbol") && schema.type === "symbol" && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TSymbol = TSymbol;
+      function TTemplateLiteral(schema) {
+        return TKindOf(schema, "TemplateLiteral") && schema.type === "string" && ValueGuard.IsString(schema.pattern) && schema.pattern[0] === "^" && schema.pattern[schema.pattern.length - 1] === "$";
+      }
+      TypeGuard2.TTemplateLiteral = TTemplateLiteral;
+      function TThis(schema) {
+        return TKindOf(schema, "This") && IsOptionalString(schema.$id) && ValueGuard.IsString(schema.$ref);
+      }
+      TypeGuard2.TThis = TThis;
+      function TTransform(schema) {
+        return ValueGuard.IsObject(schema) && exports.Transform in schema;
+      }
+      TypeGuard2.TTransform = TTransform;
+      function TTuple(schema) {
+        return TKindOf(schema, "Tuple") && schema.type === "array" && IsOptionalString(schema.$id) && ValueGuard.IsNumber(schema.minItems) && ValueGuard.IsNumber(schema.maxItems) && schema.minItems === schema.maxItems && // empty
+        (ValueGuard.IsUndefined(schema.items) && ValueGuard.IsUndefined(schema.additionalItems) && schema.minItems === 0 || ValueGuard.IsArray(schema.items) && schema.items.every((schema2) => TSchema(schema2)));
+      }
+      TypeGuard2.TTuple = TTuple;
+      function TUndefined(schema) {
+        return TKindOf(schema, "Undefined") && schema.type === "undefined" && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TUndefined = TUndefined;
+      function TUnionLiteral(schema) {
+        return TUnion(schema) && schema.anyOf.every((schema2) => TLiteralString(schema2) || TLiteralNumber(schema2));
+      }
+      TypeGuard2.TUnionLiteral = TUnionLiteral;
+      function TUnion(schema) {
+        return TKindOf(schema, "Union") && IsOptionalString(schema.$id) && ValueGuard.IsObject(schema) && ValueGuard.IsArray(schema.anyOf) && schema.anyOf.every((schema2) => TSchema(schema2));
+      }
+      TypeGuard2.TUnion = TUnion;
+      function TUint8Array(schema) {
+        return TKindOf(schema, "Uint8Array") && schema.type === "Uint8Array" && IsOptionalString(schema.$id) && IsOptionalNumber(schema.minByteLength) && IsOptionalNumber(schema.maxByteLength);
+      }
+      TypeGuard2.TUint8Array = TUint8Array;
+      function TUnknown(schema) {
+        return TKindOf(schema, "Unknown") && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TUnknown = TUnknown;
+      function TUnsafe(schema) {
+        return TKindOf(schema, "Unsafe");
+      }
+      TypeGuard2.TUnsafe = TUnsafe;
+      function TVoid(schema) {
+        return TKindOf(schema, "Void") && schema.type === "void" && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TVoid = TVoid;
+      function TReadonly(schema) {
+        return ValueGuard.IsObject(schema) && schema[exports.Readonly] === "Readonly";
+      }
+      TypeGuard2.TReadonly = TReadonly;
+      function TOptional(schema) {
+        return ValueGuard.IsObject(schema) && schema[exports.Optional] === "Optional";
+      }
+      TypeGuard2.TOptional = TOptional;
+      function TSchema(schema) {
+        return ValueGuard.IsObject(schema) && (TAny(schema) || TArray(schema) || TBoolean(schema) || TBigInt(schema) || TAsyncIterator(schema) || TConstructor(schema) || TDate(schema) || TFunction(schema) || TInteger(schema) || TIntersect(schema) || TIterator(schema) || TLiteral(schema) || TNever(schema) || TNot(schema) || TNull(schema) || TNumber(schema) || TObject(schema) || TPromise(schema) || TRecord(schema) || TRef(schema) || TString(schema) || TSymbol(schema) || TTemplateLiteral(schema) || TThis(schema) || TTuple(schema) || TUndefined(schema) || TUnion(schema) || TUint8Array(schema) || TUnknown(schema) || TUnsafe(schema) || TVoid(schema) || TKind(schema) && TypeRegistry.Has(schema[exports.Kind]));
+      }
+      TypeGuard2.TSchema = TSchema;
+    })(TypeGuard || (exports.TypeGuard = TypeGuard = {}));
+    var ExtendsUndefined;
+    (function(ExtendsUndefined2) {
+      function Check(schema) {
+        return schema[exports.Kind] === "Intersect" ? schema.allOf.every((schema2) => Check(schema2)) : schema[exports.Kind] === "Union" ? schema.anyOf.some((schema2) => Check(schema2)) : schema[exports.Kind] === "Undefined" ? true : schema[exports.Kind] === "Not" ? !Check(schema.not) : false;
+      }
+      ExtendsUndefined2.Check = Check;
+    })(ExtendsUndefined || (exports.ExtendsUndefined = ExtendsUndefined = {}));
+    var TypeExtendsError = class extends TypeBoxError {
+    };
+    exports.TypeExtendsError = TypeExtendsError;
+    var TypeExtendsResult;
+    (function(TypeExtendsResult2) {
+      TypeExtendsResult2[TypeExtendsResult2["Union"] = 0] = "Union";
+      TypeExtendsResult2[TypeExtendsResult2["True"] = 1] = "True";
+      TypeExtendsResult2[TypeExtendsResult2["False"] = 2] = "False";
+    })(TypeExtendsResult || (exports.TypeExtendsResult = TypeExtendsResult = {}));
+    var TypeExtends;
+    (function(TypeExtends2) {
+      function IntoBooleanResult(result) {
+        return result === TypeExtendsResult.False ? result : TypeExtendsResult.True;
+      }
+      function Throw(message) {
+        throw new TypeExtendsError(message);
+      }
+      function IsStructuralRight(right) {
+        return TypeGuard.TNever(right) || TypeGuard.TIntersect(right) || TypeGuard.TUnion(right) || TypeGuard.TUnknown(right) || TypeGuard.TAny(right);
+      }
+      function StructuralRight(left, right) {
+        return TypeGuard.TNever(right) ? TNeverRight(left, right) : TypeGuard.TIntersect(right) ? TIntersectRight(left, right) : TypeGuard.TUnion(right) ? TUnionRight(left, right) : TypeGuard.TUnknown(right) ? TUnknownRight(left, right) : TypeGuard.TAny(right) ? TAnyRight(left, right) : Throw("StructuralRight");
+      }
+      function TAnyRight(left, right) {
+        return TypeExtendsResult.True;
+      }
+      function TAny(left, right) {
+        return TypeGuard.TIntersect(right) ? TIntersectRight(left, right) : TypeGuard.TUnion(right) && right.anyOf.some((schema) => TypeGuard.TAny(schema) || TypeGuard.TUnknown(schema)) ? TypeExtendsResult.True : TypeGuard.TUnion(right) ? TypeExtendsResult.Union : TypeGuard.TUnknown(right) ? TypeExtendsResult.True : TypeGuard.TAny(right) ? TypeExtendsResult.True : TypeExtendsResult.Union;
+      }
+      function TArrayRight(left, right) {
+        return TypeGuard.TUnknown(left) ? TypeExtendsResult.False : TypeGuard.TAny(left) ? TypeExtendsResult.Union : TypeGuard.TNever(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TArray(left, right) {
+        return TypeGuard.TObject(right) && IsObjectArrayLike(right) ? TypeExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : !TypeGuard.TArray(right) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.items, right.items));
+      }
+      function TAsyncIterator(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : !TypeGuard.TAsyncIterator(right) ? TypeExtendsResult.False : IntoBooleanResult(Visit(left.items, right.items));
+      }
+      function TBigInt(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TBigInt(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TBooleanRight(left, right) {
+        return TypeGuard.TLiteral(left) && ValueGuard.IsBoolean(left.const) ? TypeExtendsResult.True : TypeGuard.TBoolean(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TBoolean(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TBoolean(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TConstructor(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : !TypeGuard.TConstructor(right) ? TypeExtendsResult.False : left.parameters.length > right.parameters.length ? TypeExtendsResult.False : !le

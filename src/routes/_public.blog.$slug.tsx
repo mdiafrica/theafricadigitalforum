@@ -3,14 +3,15 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router"
 import { ArrowLeft, CalendarDays, Clock } from "lucide-react"
 import type { Value } from "platejs"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import {
   publishedPostCategoriesQueryOptions,
   publishedPostQueryOptions,
   relatedPostsQueryOptions,
 } from "@/domains/posts"
 import type { Locale } from "@/lib/schemas"
-import { absoluteUrl, pageHead } from "@/lib/seo"
+import { absoluteUrl, localePath, pageHead } from "@/lib/seo"
 import { RichTextView } from "@/components/editor/rich-text-view"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { PostCard, formatPostDate } from "@/components/post-card"
@@ -20,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export const Route = createFileRoute("/_public/blog/$slug")({
   loader: async ({ context, params }) => {
     const post = await context.queryClient.ensureQueryData(
-      publishedPostQueryOptions(params.slug, "en")
+      publishedPostQueryOptions(params.slug, getLocale())
     )
     if (!post) throw notFound()
     return {
@@ -30,17 +31,27 @@ export const Route = createFileRoute("/_public/blog/$slug")({
       authorName: post.byline.name,
       isBoard: post.byline.isBoard,
       publishedAt: post.publishedAt,
+      servedLocale: post.servedLocale,
+      hasPublishedFr: post.hasPublishedFr,
     }
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) return {}
+    const locale = getLocale()
+    const path = `/blog/${params.slug}`
+    // The FR URL serving the EN fallback body is a duplicate of the EN page:
+    // canonicalize it to the bare URL and claim no FR alternate (ADR-0003).
+    const isFallback = locale === "fr" && loaderData.servedLocale === "en"
     return {
       ...pageHead({
         title: `${loaderData.title} | Africa Digital Forum`,
         description: loaderData.excerpt,
-        path: `/blog/${params.slug}`,
+        path,
         image: loaderData.coverUrl,
         type: "article",
+        locale,
+        alternates: loaderData.hasPublishedFr,
+        ...(isFallback ? { canonicalPath: path } : {}),
       }),
       scripts: [
         {
@@ -66,7 +77,9 @@ export const Route = createFileRoute("/_public/blog/$slug")({
                   datePublished: new Date(loaderData.publishedAt).toISOString(),
                 }
               : {}),
-            mainEntityOfPage: absoluteUrl(`/blog/${params.slug}`),
+            mainEntityOfPage: absoluteUrl(
+              localePath(path, isFallback ? "en" : locale)
+            ),
           }),
         },
       ],
@@ -84,8 +97,7 @@ function formatDate(value: Date | string | null, locale: Locale) {
 
 function ArticleRoute() {
   const { slug } = Route.useParams()
-  const { t, lang } = useI18n()
-  const single = t.blog.singleArticle
+  const lang = getLocale()
 
   const postQuery = useQuery(publishedPostQueryOptions(slug, lang))
   const relatedQuery = useQuery(relatedPostsQueryOptions(slug, lang))
@@ -138,7 +150,7 @@ function ArticleRoute() {
                 className="absolute top-[30px] left-6 h-auto gap-2 rounded-full border-white/[0.16] bg-white/[0.07] px-[18px] py-2.5 text-[13px] font-semibold text-white/90 backdrop-blur-md hover:-translate-x-1 hover:border-white/30 hover:bg-white/[0.16] hover:text-white dark:border-white/[0.16] dark:bg-white/[0.07] dark:hover:bg-white/[0.16]"
               >
                 <ArrowLeft className="size-4" />
-                {single.backToBlog}
+                {m.blog_single_article_back_to_blog()}
               </Button>
 
               <div className="mt-[84px] max-w-[800px]">
@@ -224,7 +236,7 @@ function ArticleRoute() {
             {post.categories.length > 0 && (
               <div className="mt-8 flex flex-wrap items-center gap-2.5 border-t border-black/[0.06] pt-6">
                 <span className="text-sm font-bold text-[#1a1a1a]">
-                  {single.topicsLabel}
+                  {m.blog_single_article_topics_label()}
                 </span>
                 {post.categories.map((category) => (
                   <Link
@@ -247,10 +259,10 @@ function ArticleRoute() {
           <aside className="flex flex-col gap-6">
             <div className="rounded-2xl border border-primary/15 bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
               <h4 className="text-lg font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
-                {single.subscribeTitle}
+                {m.blog_single_article_subscribe_title()}
               </h4>
               <p className="mt-2 mb-4 text-sm leading-[1.6] text-[#666666]">
-                {single.subscribeText}
+                {m.blog_single_article_subscribe_text()}
               </p>
               <NewsletterForm
                 className="flex-col"
@@ -262,7 +274,7 @@ function ArticleRoute() {
             {allCategories.length > 0 && (
               <div className="rounded-2xl border border-black/[0.06] bg-white p-6">
                 <h4 className="mb-4 text-lg font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
-                  {single.categoriesTitle}
+                  {m.blog_single_article_categories_title()}
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {allCategories.map((category) => (
@@ -285,7 +297,7 @@ function ArticleRoute() {
             {related.length > 0 && (
               <div className="rounded-2xl border border-black/[0.06] bg-white p-6">
                 <h4 className="mb-4 text-lg font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
-                  {single.relatedTitle}
+                  {m.blog_single_article_related_title()}
                 </h4>
                 <div className="flex flex-col gap-4">
                   {related.map((rel) => (
@@ -323,7 +335,7 @@ function ArticleRoute() {
                   to="/blog"
                   className="mt-5 inline-flex items-center gap-1.5 border-t border-black/[0.06] pt-4 text-[13px] font-bold text-primary hover:underline"
                 >
-                  {single.viewAll} →
+                  {m.blog_single_article_view_all()} →
                 </Link>
               </div>
             )}
@@ -338,14 +350,14 @@ function ArticleRoute() {
             <div className="flex items-center gap-3">
               <span className="h-[22px] w-1 shrink-0 rounded-sm bg-primary" />
               <h2 className="text-[clamp(20px,2.5vw,26px)] font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
-                {single.moreTitle}
+                {m.blog_single_article_more_title()}
               </h2>
             </div>
             <Link
               to="/blog"
               className="text-[13px] font-bold text-primary hover:underline"
             >
-              {single.viewAll} →
+              {m.blog_single_article_view_all()} →
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -354,7 +366,7 @@ function ArticleRoute() {
                 key={item.id}
                 post={item}
                 locale={lang}
-                readMoreLabel={single.readMore}
+                readMoreLabel={m.blog_single_article_read_more()}
               />
             ))}
           </div>

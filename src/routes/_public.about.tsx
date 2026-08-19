@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { BookOpen, Clock, Mail, MapPin, User } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import { publicAdvisorsQueryOptions } from "@/domains/advisors"
 import { Reveal } from "@/components/motion"
@@ -33,29 +34,46 @@ const TEAM_SOCIALS = [
 ]
 
 export const Route = createFileRoute("/_public/about")({
-  // SSR primes the default locale; the page must never 500 over this fetch.
+  // The page must never 500 over this fetch.
   loader: ({ context }) =>
     context.queryClient
-      .ensureQueryData(publicAdvisorsQueryOptions("en"))
+      .ensureQueryData(publicAdvisorsQueryOptions(getLocale()))
       .catch(() => null),
   head: () => ({
     ...pageHead({
-      title: "About | Africa Digital Forum",
-      description:
-        "Who we are: the team and mission behind the Africa Digital Forum.",
+      title: m.meta_about_title(),
+      description: m.meta_about_description(),
       path: "/about",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: AboutRoute,
 })
 
 function AboutRoute() {
-  const { t, lang } = useI18n()
-  const about = t.about
+  const lang = getLocale()
   const advisorsQuery = useQuery(publicAdvisorsQueryOptions(lang))
   const advisors = advisorsQuery.data ?? []
 
-  const team = about.team.map((member, i) => ({
+  const members = [
+    {
+      name: m.about_team_marc_aboflan_name(),
+      title: m.about_team_marc_aboflan_title(),
+      location: m.about_team_marc_aboflan_location(),
+      bio: m.about_team_marc_aboflan_bio(),
+      longBio: m.about_team_marc_aboflan_long_bio(),
+    },
+    {
+      name: m.about_team_emmanuel_gyetuah_name(),
+      title: m.about_team_emmanuel_gyetuah_title(),
+      location: m.about_team_emmanuel_gyetuah_location(),
+      bio: m.about_team_emmanuel_gyetuah_bio(),
+      longBio: m.about_team_emmanuel_gyetuah_long_bio(),
+    },
+  ]
+
+  const team = members.map((member, i) => ({
     ...member,
     photo: TEAM_PHOTOS[i],
     location: TEAM_LOCATIONS[i] ?? member.location,
@@ -73,12 +91,12 @@ function AboutRoute() {
         <div className="relative mx-auto max-w-[760px]">
           <Reveal>
             <h1 className="mb-5 text-[clamp(32px,4vw,56px)] leading-[1.1] font-extrabold tracking-[0.05em] text-white">
-              {about.heroTitle}
+              {m.about_hero_title()}
             </h1>
           </Reveal>
           <Reveal delay={0.12}>
             <p className="mx-auto max-w-[600px] text-base leading-[1.7] text-white/70">
-              {about.heroSubtitle}
+              {m.about_hero_subtitle()}
             </p>
           </Reveal>
         </div>
@@ -88,10 +106,10 @@ function AboutRoute() {
       <Reveal>
         <div className="grid items-start gap-10 bg-[#111111] px-[8%] py-[72px] md:grid-cols-[280px_1fr] md:gap-[160px]">
           <h2 className="text-[13px] font-bold tracking-[0.12em] text-white uppercase">
-            {about.visionLabel}
+            {m.about_vision_label()}
           </h2>
           <p className="max-w-[520px] text-[15px] leading-[1.75] text-white/[0.88] md:mr-[80px] md:ml-[40px] md:text-justify">
-            {about.visionText}
+            {m.about_vision_text()}
           </p>
         </div>
       </Reveal>
@@ -104,10 +122,10 @@ function AboutRoute() {
         >
           <div className="absolute inset-0 bg-black/[0.52]" />
           <h2 className="relative text-[13px] font-bold tracking-[0.12em] text-white uppercase">
-            {about.missionLabel}
+            {m.about_mission_label()}
           </h2>
           <p className="relative max-w-[520px] text-[15px] leading-[1.75] text-white/[0.88] md:mr-[80px] md:ml-[40px] md:text-justify">
-            {about.missionText}
+            {m.about_mission_text()}
           </p>
         </div>
       </Reveal>
@@ -123,10 +141,10 @@ function AboutRoute() {
         <div className="relative">
           <Reveal>
             <p className="mb-2 text-[12px] font-bold tracking-[0.14em] text-primary uppercase">
-              {about.teamLabel}
+              {m.about_team_label()}
             </p>
             <h2 className="mb-2.5 text-[clamp(24px,3vw,36px)] font-extrabold tracking-[0.03em] text-[#1a1a1a]">
-              {about.teamHeading}
+              {m.about_team_heading()}
             </h2>
             <div className="mb-12 h-0.5 w-12 rounded-sm bg-primary" />
           </Reveal>
@@ -151,11 +169,11 @@ function AboutRoute() {
           <Reveal>
             <h2
               className="mb-2 text-[clamp(24px,3vw,36px)] font-extrabold tracking-[0.05em] text-white [&_span]:text-primary"
-              dangerouslySetInnerHTML={{ __html: about.advisoryHeading }}
+              dangerouslySetInnerHTML={{ __html: m.about_advisory_heading() }}
             />
             <div className="mx-auto mb-5 h-[3px] w-16 rounded-sm bg-primary" />
             <p className="mx-auto mb-14 max-w-[500px] text-[15px] leading-[1.65] text-white/60">
-              {about.advisorySubtext}
+              {m.about_advisory_subtext()}
             </p>
           </Reveal>
 
@@ -213,7 +231,7 @@ function AboutRoute() {
               <Reveal delay={0.2}>
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-6 py-2.5 text-[13px] font-semibold tracking-[0.06em] text-[#a78bfa] uppercase">
                   <Clock className="size-4" />
-                  {about.advisoryBadge}
+                  {m.about_advisory_badge()}
                 </div>
               </Reveal>
             </>
@@ -236,7 +254,7 @@ type Member = {
 
 function DirectorCard({ member }: { member: Member }) {
   return (
-    <Card className="group grid grid-cols-1 items-stretch overflow-hidden rounded-[20px] sm:grid-cols-[minmax(150px,200px)_minmax(0,1fr)] border-black/[0.06] bg-white p-0 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_16px_40px_rgba(124,58,237,0.13)]">
+    <Card className="group grid grid-cols-1 items-stretch overflow-hidden rounded-[20px] border-black/[0.06] bg-white p-0 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_16px_40px_rgba(124,58,237,0.13)] sm:grid-cols-[minmax(150px,200px)_minmax(0,1fr)]">
       <div className="relative flex max-h-[320px] min-h-[240px] overflow-hidden bg-gradient-to-b from-[#3b0764] to-[#6d28d9] sm:max-h-none sm:min-h-[280px]">
         <img
           src={member.photo}

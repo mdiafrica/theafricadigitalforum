@@ -12,7 +12,8 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Button } from "@/components/ui/button"
@@ -40,21 +41,72 @@ const CARD_ICONS: LucideIcon[] = [
 export const Route = createFileRoute("/_public/host-city")({
   head: () => ({
     ...pageHead({
-      title: "Host City | Africa Digital Forum",
-      description: "Lomé, Togo — the host city of the Africa Digital Forum.",
+      title: m.meta_host_city_title(),
+      description: m.meta_host_city_description(),
       path: "/host-city",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: HostCityRoute,
 })
 
 function HostCityRoute() {
-  const { t } = useI18n()
-  const city = t.city
   const infoRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
 
-  const cards = city.cards.items.map((item, i) => ({
+  const badges = [
+    m.city_info_badge_visa_free(),
+    m.city_info_badge_digital_hub(),
+    m.city_info_badge_five_star(),
+  ]
+
+  const cardItems = [
+    {
+      title: m.city_card_location_title(),
+      subtitle: m.city_card_location_subtitle(),
+      price: m.city_card_location_price(),
+      description: m.city_card_location_description(),
+    },
+    {
+      title: m.city_card_visa_free_title(),
+      subtitle: m.city_card_visa_free_subtitle(),
+      price: m.city_card_visa_free_price(),
+      description: m.city_card_visa_free_description(),
+    },
+    {
+      title: m.city_card_aviation_title(),
+      subtitle: m.city_card_aviation_subtitle(),
+      price: m.city_card_aviation_price(),
+      description: m.city_card_aviation_description(),
+    },
+    {
+      title: m.city_card_digital_ambition_title(),
+      subtitle: m.city_card_digital_ambition_subtitle(),
+      price: m.city_card_digital_ambition_price(),
+      description: m.city_card_digital_ambition_description(),
+    },
+    {
+      title: m.city_card_cybersecurity_title(),
+      subtitle: m.city_card_cybersecurity_subtitle(),
+      price: m.city_card_cybersecurity_price(),
+      description: m.city_card_cybersecurity_description(),
+    },
+    {
+      title: m.city_card_hospitality_title(),
+      subtitle: m.city_card_hospitality_subtitle(),
+      price: m.city_card_hospitality_price(),
+      description: m.city_card_hospitality_description(),
+    },
+    {
+      title: m.city_card_human_scale_title(),
+      subtitle: m.city_card_human_scale_subtitle(),
+      price: m.city_card_human_scale_price(),
+      description: m.city_card_human_scale_description(),
+    },
+  ]
+
+  const cards = cardItems.map((item, i) => ({
     ...item,
     img: CARD_IMAGES[i % CARD_IMAGES.length],
     Icon: CARD_ICONS[i % CARD_ICONS.length],
@@ -77,12 +129,12 @@ function HostCityRoute() {
         <div className="relative px-5">
           <Reveal>
             <h1 className="mb-3 text-[clamp(36px,5vw,64px)] leading-[1.1] font-extrabold tracking-[-0.02em] text-white">
-              {city.hero.title}
+              {m.city_hero_title()}
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mb-7 text-[17px] text-white/[0.82]">
-              {city.hero.subtitle}
+              {m.city_hero_subtitle()}
             </p>
           </Reveal>
           <Reveal delay={0.2}>
@@ -93,7 +145,7 @@ function HostCityRoute() {
               }
               className="h-auto rounded border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold tracking-[0.04em] text-white hover:bg-white hover:text-background dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:text-background"
             >
-              {city.hero.cta}
+              {m.city_hero_cta()}
             </Button>
           </Reveal>
         </div>
@@ -105,11 +157,11 @@ function HostCityRoute() {
           <div className="grid items-stretch border-b border-ink/10 bg-white md:grid-cols-[1fr_1.6fr]">
             <div className="flex flex-col justify-center px-6 py-10 sm:px-12 sm:py-14">
               <h2 className="mb-2.5 text-[clamp(22px,2.5vw,32px)] font-extrabold tracking-[-0.02em] text-ink">
-                {city.info.heading}
+                {m.city_info_heading()}
               </h2>
               <div className="mb-5 h-[3px] w-10 rounded-sm bg-ink" />
               <p className="text-sm leading-[1.8] text-ink-muted">
-                {city.info.body}
+                {m.city_info_body()}
               </p>
             </div>
 
@@ -125,7 +177,7 @@ function HostCityRoute() {
                     className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <span className="absolute bottom-2.5 left-2.5 max-w-[calc(100%-1.25rem)] truncate rounded-[3px] bg-background/72 px-2.5 py-1 text-[11px] font-semibold text-white">
-                    {city.info.badges[i]}
+                    {badges[i]}
                   </span>
                 </div>
               ))}
@@ -143,15 +195,15 @@ function HostCityRoute() {
           <div className="absolute inset-0 bg-background/60" />
           <div className="relative text-center md:text-left">
             <h3 className="mb-1.5 text-[clamp(22px,3vw,36px)] font-extrabold tracking-[-0.01em] text-white">
-              {city.promo.heading}
+              {m.city_promo_heading()}
             </h3>
-            <p className="text-sm text-white/65">{city.promo.subtitle}</p>
+            <p className="text-sm text-white/65">{m.city_promo_subtitle()}</p>
           </div>
           <Button
             render={<Link to="/why-adf" />}
             className="relative h-auto shrink-0 rounded bg-white px-8 py-3 text-sm font-bold whitespace-nowrap text-background hover:bg-ink/10"
           >
-            {city.promo.button}
+            {m.city_promo_button()}
           </Button>
         </div>
       </Reveal>
@@ -161,7 +213,7 @@ function HostCityRoute() {
         <div className="bg-white px-[8%] py-16">
           <div className="mb-8">
             <h2 className="mb-2.5 text-[clamp(20px,2.5vw,28px)] font-extrabold tracking-[-0.01em] text-ink">
-              {city.cards.title}
+              {m.city_cards_title()}
             </h2>
             <div className="h-[3px] w-12 rounded-sm bg-primary" />
           </div>
@@ -172,7 +224,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll left"
               onClick={() => scrollBy(-400)}
-              className="absolute -left-6 z-10 hidden size-12 rounded-full md:inline-flex border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
+              className="absolute -left-6 z-10 hidden size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white md:inline-flex dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronLeft className="size-7" />
             </Button>
@@ -193,7 +245,7 @@ function HostCityRoute() {
               size="icon"
               aria-label="Scroll right"
               onClick={() => scrollBy(400)}
-              className="absolute -right-6 z-10 hidden size-12 rounded-full md:inline-flex border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
+              className="absolute -right-6 z-10 hidden size-12 rounded-full border-ink/10 bg-white text-primary shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:scale-110 hover:border-primary hover:bg-primary hover:text-white md:inline-flex dark:border-ink/10 dark:bg-white dark:hover:bg-primary"
             >
               <ChevronRight className="size-7" />
             </Button>
@@ -210,16 +262,16 @@ function HostCityRoute() {
           <div className="absolute inset-0 bg-background/55" />
           <div className="relative">
             <h2 className="mb-3 text-[clamp(28px,4vw,52px)] font-extrabold tracking-[-0.02em] text-white">
-              {city.cta.title}
+              {m.city_cta_title()}
             </h2>
             <p className="mb-8 text-base text-white/[0.72]">
-              {city.cta.subtitle}
+              {m.city_cta_subtitle()}
             </p>
             <Button
               render={<Link to="/contact" />}
               className="h-auto rounded bg-white px-10 py-3.5 text-[15px] font-bold text-background hover:bg-ink/10"
             >
-              {city.cta.button}
+              {m.city_cta_button()}
             </Button>
           </div>
         </div>
@@ -239,7 +291,7 @@ type PillarCardData = {
 
 function PillarCard({ card }: { card: PillarCardData }) {
   return (
-    <Card className="group w-[260px] shrink-0 overflow-hidden rounded-2xl sm:w-[360px] border-ink/10 bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+    <Card className="group w-[260px] shrink-0 overflow-hidden rounded-2xl border-ink/10 bg-white p-0 shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] sm:w-[360px]">
       <div className="relative h-[220px] overflow-hidden">
         <img
           src={card.img}

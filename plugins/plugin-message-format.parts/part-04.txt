@@ -1,0 +1,179 @@
+l(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TTemplateLiteral(left, right) {
+        return TypeGuard.TTemplateLiteral(left) ? Visit(TemplateLiteralResolver.Resolve(left), right) : TypeGuard.TTemplateLiteral(right) ? Visit(left, TemplateLiteralResolver.Resolve(right)) : Throw("Invalid fallthrough for TemplateLiteral");
+      }
+      function IsArrayOfTuple(left, right) {
+        return TypeGuard.TArray(right) && left.items !== void 0 && left.items.every((schema) => Visit(schema, right.items) === TypeExtendsResult.True);
+      }
+      function TTupleRight(left, right) {
+        return TypeGuard.TNever(left) ? TypeExtendsResult.True : TypeGuard.TUnknown(left) ? TypeExtendsResult.False : TypeGuard.TAny(left) ? TypeExtendsResult.Union : TypeExtendsResult.False;
+      }
+      function TTuple(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) && IsObjectArrayLike(right) ? TypeExtendsResult.True : TypeGuard.TArray(right) && IsArrayOfTuple(left, right) ? TypeExtendsResult.True : !TypeGuard.TTuple(right) ? TypeExtendsResult.False : ValueGuard.IsUndefined(left.items) && !ValueGuard.IsUndefined(right.items) || !ValueGuard.IsUndefined(left.items) && ValueGuard.IsUndefined(right.items) ? TypeExtendsResult.False : ValueGuard.IsUndefined(left.items) && !ValueGuard.IsUndefined(right.items) ? TypeExtendsResult.True : left.items.every((schema, index) => Visit(schema, right.items[index]) === TypeExtendsResult.True) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TUint8Array(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TUint8Array(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TUndefined(left, right) {
+        return IsStructuralRight(right) ? StructuralRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TRecord(right) ? TRecordRight(left, right) : TypeGuard.TVoid(right) ? VoidRight(left, right) : TypeGuard.TUndefined(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TUnionRight(left, right) {
+        return right.anyOf.some((schema) => Visit(left, schema) === TypeExtendsResult.True) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TUnion(left, right) {
+        return left.anyOf.every((schema) => Visit(schema, right) === TypeExtendsResult.True) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TUnknownRight(left, right) {
+        return TypeExtendsResult.True;
+      }
+      function TUnknown(left, right) {
+        return TypeGuard.TNever(right) ? TNeverRight(left, right) : TypeGuard.TIntersect(right) ? TIntersectRight(left, right) : TypeGuard.TUnion(right) ? TUnionRight(left, right) : TypeGuard.TAny(right) ? TAnyRight(left, right) : TypeGuard.TString(right) ? TStringRight(left, right) : TypeGuard.TNumber(right) ? TNumberRight(left, right) : TypeGuard.TInteger(right) ? TIntegerRight(left, right) : TypeGuard.TBoolean(right) ? TBooleanRight(left, right) : TypeGuard.TArray(right) ? TArrayRight(left, right) : TypeGuard.TTuple(right) ? TTupleRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TUnknown(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function VoidRight(left, right) {
+        return TypeGuard.TUndefined(left) ? TypeExtendsResult.True : TypeGuard.TUndefined(left) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function TVoid(left, right) {
+        return TypeGuard.TIntersect(right) ? TIntersectRight(left, right) : TypeGuard.TUnion(right) ? TUnionRight(left, right) : TypeGuard.TUnknown(right) ? TUnknownRight(left, right) : TypeGuard.TAny(right) ? TAnyRight(left, right) : TypeGuard.TObject(right) ? TObjectRight(left, right) : TypeGuard.TVoid(right) ? TypeExtendsResult.True : TypeExtendsResult.False;
+      }
+      function Visit(left, right) {
+        return (
+          // resolvable
+          TypeGuard.TTemplateLiteral(left) || TypeGuard.TTemplateLiteral(right) ? TTemplateLiteral(left, right) : TypeGuard.TNot(left) || TypeGuard.TNot(right) ? TNot(left, right) : (
+            // standard
+            TypeGuard.TAny(left) ? TAny(left, right) : TypeGuard.TArray(left) ? TArray(left, right) : TypeGuard.TBigInt(left) ? TBigInt(left, right) : TypeGuard.TBoolean(left) ? TBoolean(left, right) : TypeGuard.TAsyncIterator(left) ? TAsyncIterator(left, right) : TypeGuard.TConstructor(left) ? TConstructor(left, right) : TypeGuard.TDate(left) ? TDate(left, right) : TypeGuard.TFunction(left) ? TFunction(left, right) : TypeGuard.TInteger(left) ? TInteger(left, right) : TypeGuard.TIntersect(left) ? TIntersect(left, right) : TypeGuard.TIterator(left) ? TIterator(left, right) : TypeGuard.TLiteral(left) ? TLiteral(left, right) : TypeGuard.TNever(left) ? TNever(left, right) : TypeGuard.TNull(left) ? TNull(left, right) : TypeGuard.TNumber(left) ? TNumber(left, right) : TypeGuard.TObject(left) ? TObject(left, right) : TypeGuard.TRecord(left) ? TRecord(left, right) : TypeGuard.TString(left) ? TString(left, right) : TypeGuard.TSymbol(left) ? TSymbol(left, right) : TypeGuard.TTuple(left) ? TTuple(left, right) : TypeGuard.TPromise(left) ? TPromise(left, right) : TypeGuard.TUint8Array(left) ? TUint8Array(left, right) : TypeGuard.TUndefined(left) ? TUndefined(left, right) : TypeGuard.TUnion(left) ? TUnion(left, right) : TypeGuard.TUnknown(left) ? TUnknown(left, right) : TypeGuard.TVoid(left) ? TVoid(left, right) : Throw(`Unknown left type operand '${left[exports.Kind]}'`)
+          )
+        );
+      }
+      function Extends(left, right) {
+        return Visit(left, right);
+      }
+      TypeExtends2.Extends = Extends;
+    })(TypeExtends || (exports.TypeExtends = TypeExtends = {}));
+    var TypeClone;
+    (function(TypeClone2) {
+      function ArrayType(value) {
+        return value.map((value2) => Visit(value2));
+      }
+      function DateType(value) {
+        return new Date(value.getTime());
+      }
+      function Uint8ArrayType(value) {
+        return new Uint8Array(value);
+      }
+      function ObjectType(value) {
+        const clonedProperties = Object.getOwnPropertyNames(value).reduce((acc, key) => ({ ...acc, [key]: Visit(value[key]) }), {});
+        const clonedSymbols = Object.getOwnPropertySymbols(value).reduce((acc, key) => ({ ...acc, [key]: Visit(value[key]) }), {});
+        return { ...clonedProperties, ...clonedSymbols };
+      }
+      function Visit(value) {
+        return ValueGuard.IsArray(value) ? ArrayType(value) : ValueGuard.IsDate(value) ? DateType(value) : ValueGuard.IsUint8Array(value) ? Uint8ArrayType(value) : ValueGuard.IsObject(value) ? ObjectType(value) : value;
+      }
+      function Rest(schemas) {
+        return schemas.map((schema) => Type2(schema));
+      }
+      TypeClone2.Rest = Rest;
+      function Type2(schema, options = {}) {
+        return { ...Visit(schema), ...options };
+      }
+      TypeClone2.Type = Type2;
+    })(TypeClone || (exports.TypeClone = TypeClone = {}));
+    var IndexedAccessor;
+    (function(IndexedAccessor2) {
+      function OptionalUnwrap(schema) {
+        return schema.map((schema2) => {
+          const { [exports.Optional]: _, ...clone } = TypeClone.Type(schema2);
+          return clone;
+        });
+      }
+      function IsIntersectOptional(schema) {
+        return schema.every((schema2) => TypeGuard.TOptional(schema2));
+      }
+      function IsUnionOptional(schema) {
+        return schema.some((schema2) => TypeGuard.TOptional(schema2));
+      }
+      function ResolveIntersect(schema) {
+        return IsIntersectOptional(schema.allOf) ? exports.Type.Optional(exports.Type.Intersect(OptionalUnwrap(schema.allOf))) : schema;
+      }
+      function ResolveUnion(schema) {
+        return IsUnionOptional(schema.anyOf) ? exports.Type.Optional(exports.Type.Union(OptionalUnwrap(schema.anyOf))) : schema;
+      }
+      function ResolveOptional(schema) {
+        return schema[exports.Kind] === "Intersect" ? ResolveIntersect(schema) : schema[exports.Kind] === "Union" ? ResolveUnion(schema) : schema;
+      }
+      function TIntersect(schema, key) {
+        const resolved = schema.allOf.reduce((acc, schema2) => {
+          const indexed = Visit(schema2, key);
+          return indexed[exports.Kind] === "Never" ? acc : [...acc, indexed];
+        }, []);
+        return ResolveOptional(exports.Type.Intersect(resolved));
+      }
+      function TUnion(schema, key) {
+        const resolved = schema.anyOf.map((schema2) => Visit(schema2, key));
+        return ResolveOptional(exports.Type.Union(resolved));
+      }
+      function TObject(schema, key) {
+        const property = schema.properties[key];
+        return ValueGuard.IsUndefined(property) ? exports.Type.Never() : exports.Type.Union([property]);
+      }
+      function TTuple(schema, key) {
+        const items = schema.items;
+        if (ValueGuard.IsUndefined(items))
+          return exports.Type.Never();
+        const element = items[key];
+        if (ValueGuard.IsUndefined(element))
+          return exports.Type.Never();
+        return element;
+      }
+      function Visit(schema, key) {
+        return schema[exports.Kind] === "Intersect" ? TIntersect(schema, key) : schema[exports.Kind] === "Union" ? TUnion(schema, key) : schema[exports.Kind] === "Object" ? TObject(schema, key) : schema[exports.Kind] === "Tuple" ? TTuple(schema, key) : exports.Type.Never();
+      }
+      function Resolve(schema, keys, options = {}) {
+        const resolved = keys.map((key) => Visit(schema, key.toString()));
+        return ResolveOptional(exports.Type.Union(resolved, options));
+      }
+      IndexedAccessor2.Resolve = Resolve;
+    })(IndexedAccessor || (exports.IndexedAccessor = IndexedAccessor = {}));
+    var Intrinsic;
+    (function(Intrinsic2) {
+      function Uncapitalize(value) {
+        const [first, rest] = [value.slice(0, 1), value.slice(1)];
+        return `${first.toLowerCase()}${rest}`;
+      }
+      function Capitalize(value) {
+        const [first, rest] = [value.slice(0, 1), value.slice(1)];
+        return `${first.toUpperCase()}${rest}`;
+      }
+      function Uppercase(value) {
+        return value.toUpperCase();
+      }
+      function Lowercase(value) {
+        return value.toLowerCase();
+      }
+      function IntrinsicTemplateLiteral(schema, mode) {
+        const expression = TemplateLiteralParser.ParseExact(schema.pattern);
+        const finite = TemplateLiteralFinite.Check(expression);
+        if (!finite)
+          return { ...schema, pattern: IntrinsicLiteral(schema.pattern, mode) };
+        const strings = [...TemplateLiteralGenerator.Generate(expression)];
+        const literals = strings.map((value) => exports.Type.Literal(value));
+        const mapped = IntrinsicRest(literals, mode);
+        const union = exports.Type.Union(mapped);
+        return exports.Type.TemplateLiteral([union]);
+      }
+      function IntrinsicLiteral(value, mode) {
+        return typeof value === "string" ? mode === "Uncapitalize" ? Uncapitalize(value) : mode === "Capitalize" ? Capitalize(value) : mode === "Uppercase" ? Uppercase(value) : mode === "Lowercase" ? Lowercase(value) : value : value.toString();
+      }
+      function IntrinsicRest(schema, mode) {
+        if (schema.length === 0)
+          return [];
+        const [L, ...R] = schema;
+        return [Map2(L, mode), ...IntrinsicRest(R, mode)];
+      }
+      function Visit(schema, mode) {
+        return TypeGuard.TTemplateLiteral(schema) ? IntrinsicTemplateLiteral(schema, mode) : TypeGuard.TUnion(schema) ? exports.Type.Union(IntrinsicRest(schema.anyOf, mode)) : TypeGuard.TLiteral(schema) ? exports.Type.Literal(IntrinsicLiteral(schema.const, mode)) : schema;
+      }
+      function Map2(schema, mode) {
+        return Visit(schema, mode);
+      }
+      Intrinsic2.Map = Map2;

@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query"
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 import { routeTree } from "./routeTree.gen"
+import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime"
 
 export function getRouter() {
   const queryClient = new QueryClient({
@@ -22,6 +23,13 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
+
+    // Route tree stays unprefixed: /fr/* is stripped on the way in and
+    // re-applied to every href on the way out (paraglide `url` strategy).
+    rewrite: {
+      input: ({ url }) => deLocalizeUrl(url),
+      output: ({ url }) => localizeUrl(url),
+    },
   })
 
   // Streams loader-primed query data across SSR and dehydrates/rehydrates

@@ -10,7 +10,8 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\"",
     "check": "prettier --check \"**/*.{ts,tsx,js,jsx}\"",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "pnpm i18n:compile && tsc --noEmit",
+    "i18n:compile": "tsx scripts/compile-paraglide.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
@@ -86,6 +87,7 @@
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
+    "@inlang/paraglide-js": "^2.24.1",
     "@rolldown/plugin-babel": "^0.2.3",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/eslint-config": "latest",

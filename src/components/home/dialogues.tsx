@@ -5,21 +5,53 @@ import {
   Rocket,
   Trophy,
   UsersRound,
-  type LucideIcon,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { usePageSection } from "@/domains/page-content"
 
-const ICONS: LucideIcon[] = [Crown, Building2, UsersRound, Rocket, Brain, Trophy]
+const ICONS: LucideIcon[] = [
+  Crown,
+  Building2,
+  UsersRound,
+  Rocket,
+  Brain,
+  Trophy,
+]
 
 export function Dialogues() {
-  const { t, lang } = useI18n()
-  const section = usePageSection("home", "dialogues", lang, {
-    label: t.home.dialoguesLabel,
-    title: t.home.dialoguesTitle,
-    subtitle: t.home.dialoguesSubtitle,
-    items: t.home.dialogues,
+  const section = usePageSection("home", "dialogues", getLocale(), {
+    label: m.home_dialogues_label(),
+    title: m.home_dialogues_title(),
+    subtitle: m.home_dialogues_subtitle(),
+    items: [
+      {
+        title: m.home_dialogues_presidential_title(),
+        text: m.home_dialogues_presidential_text(),
+      },
+      {
+        title: m.home_dialogues_ministerial_title(),
+        text: m.home_dialogues_ministerial_text(),
+      },
+      {
+        title: m.home_dialogues_practitioners_title(),
+        text: m.home_dialogues_practitioners_text(),
+      },
+      {
+        title: m.home_dialogues_startup_investor_title(),
+        text: m.home_dialogues_startup_investor_text(),
+      },
+      {
+        title: m.home_dialogues_ai_summit_title(),
+        text: m.home_dialogues_ai_summit_text(),
+      },
+      {
+        title: m.home_dialogues_awards_gala_title(),
+        text: m.home_dialogues_awards_gala_text(),
+      },
+    ],
   })
 
   return (

@@ -1,0 +1,244 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+
+// ../../../node_modules/.pnpm/@sinclair+typebox@0.31.28/node_modules/@sinclair/typebox/typebox.js
+var require_typebox = __commonJS({
+  "../../../node_modules/.pnpm/@sinclair+typebox@0.31.28/node_modules/@sinclair/typebox/typebox.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Type = exports.JsonType = exports.JavaScriptTypeBuilder = exports.JsonTypeBuilder = exports.TypeBuilder = exports.TypeBuilderError = exports.TransformEncodeBuilder = exports.TransformDecodeBuilder = exports.TemplateLiteralDslParser = exports.TemplateLiteralGenerator = exports.TemplateLiteralGeneratorError = exports.TemplateLiteralFinite = exports.TemplateLiteralFiniteError = exports.TemplateLiteralParser = exports.TemplateLiteralParserError = exports.TemplateLiteralResolver = exports.TemplateLiteralPattern = exports.TemplateLiteralPatternError = exports.UnionResolver = exports.KeyArrayResolver = exports.KeyArrayResolverError = exports.KeyResolver = exports.ObjectMap = exports.Intrinsic = exports.IndexedAccessor = exports.TypeClone = exports.TypeExtends = exports.TypeExtendsResult = exports.TypeExtendsError = exports.ExtendsUndefined = exports.TypeGuard = exports.TypeGuardUnknownTypeError = exports.ValueGuard = exports.FormatRegistry = exports.TypeBoxError = exports.TypeRegistry = exports.PatternStringExact = exports.PatternNumberExact = exports.PatternBooleanExact = exports.PatternString = exports.PatternNumber = exports.PatternBoolean = exports.Kind = exports.Hint = exports.Optional = exports.Readonly = exports.Transform = void 0;
+    exports.Transform = Symbol.for("TypeBox.Transform");
+    exports.Readonly = Symbol.for("TypeBox.Readonly");
+    exports.Optional = Symbol.for("TypeBox.Optional");
+    exports.Hint = Symbol.for("TypeBox.Hint");
+    exports.Kind = Symbol.for("TypeBox.Kind");
+    exports.PatternBoolean = "(true|false)";
+    exports.PatternNumber = "(0|[1-9][0-9]*)";
+    exports.PatternString = "(.*)";
+    exports.PatternBooleanExact = `^${exports.PatternBoolean}$`;
+    exports.PatternNumberExact = `^${exports.PatternNumber}$`;
+    exports.PatternStringExact = `^${exports.PatternString}$`;
+    var TypeRegistry;
+    (function(TypeRegistry2) {
+      const map = /* @__PURE__ */ new Map();
+      function Entries() {
+        return new Map(map);
+      }
+      TypeRegistry2.Entries = Entries;
+      function Clear() {
+        return map.clear();
+      }
+      TypeRegistry2.Clear = Clear;
+      function Delete(kind) {
+        return map.delete(kind);
+      }
+      TypeRegistry2.Delete = Delete;
+      function Has(kind) {
+        return map.has(kind);
+      }
+      TypeRegistry2.Has = Has;
+      function Set2(kind, func) {
+        map.set(kind, func);
+      }
+      TypeRegistry2.Set = Set2;
+      function Get(kind) {
+        return map.get(kind);
+      }
+      TypeRegistry2.Get = Get;
+    })(TypeRegistry || (exports.TypeRegistry = TypeRegistry = {}));
+    var TypeBoxError = class extends Error {
+      constructor(message) {
+        super(message);
+      }
+    };
+    exports.TypeBoxError = TypeBoxError;
+    var FormatRegistry;
+    (function(FormatRegistry2) {
+      const map = /* @__PURE__ */ new Map();
+      function Entries() {
+        return new Map(map);
+      }
+      FormatRegistry2.Entries = Entries;
+      function Clear() {
+        return map.clear();
+      }
+      FormatRegistry2.Clear = Clear;
+      function Delete(format) {
+        return map.delete(format);
+      }
+      FormatRegistry2.Delete = Delete;
+      function Has(format) {
+        return map.has(format);
+      }
+      FormatRegistry2.Has = Has;
+      function Set2(format, func) {
+        map.set(format, func);
+      }
+      FormatRegistry2.Set = Set2;
+      function Get(format) {
+        return map.get(format);
+      }
+      FormatRegistry2.Get = Get;
+    })(FormatRegistry || (exports.FormatRegistry = FormatRegistry = {}));
+    var ValueGuard;
+    (function(ValueGuard2) {
+      function IsArray(value) {
+        return Array.isArray(value);
+      }
+      ValueGuard2.IsArray = IsArray;
+      function IsBigInt(value) {
+        return typeof value === "bigint";
+      }
+      ValueGuard2.IsBigInt = IsBigInt;
+      function IsBoolean(value) {
+        return typeof value === "boolean";
+      }
+      ValueGuard2.IsBoolean = IsBoolean;
+      function IsDate(value) {
+        return value instanceof globalThis.Date;
+      }
+      ValueGuard2.IsDate = IsDate;
+      function IsNull(value) {
+        return value === null;
+      }
+      ValueGuard2.IsNull = IsNull;
+      function IsNumber(value) {
+        return typeof value === "number";
+      }
+      ValueGuard2.IsNumber = IsNumber;
+      function IsObject(value) {
+        return typeof value === "object" && value !== null;
+      }
+      ValueGuard2.IsObject = IsObject;
+      function IsString(value) {
+        return typeof value === "string";
+      }
+      ValueGuard2.IsString = IsString;
+      function IsUint8Array(value) {
+        return value instanceof globalThis.Uint8Array;
+      }
+      ValueGuard2.IsUint8Array = IsUint8Array;
+      function IsUndefined(value) {
+        return value === void 0;
+      }
+      ValueGuard2.IsUndefined = IsUndefined;
+    })(ValueGuard || (exports.ValueGuard = ValueGuard = {}));
+    var TypeGuardUnknownTypeError = class extends TypeBoxError {
+    };
+    exports.TypeGuardUnknownTypeError = TypeGuardUnknownTypeError;
+    var TypeGuard;
+    (function(TypeGuard2) {
+      function IsPattern(value) {
+        try {
+          new RegExp(value);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      function IsControlCharacterFree(value) {
+        if (!ValueGuard.IsString(value))
+          return false;
+        for (let i = 0; i < value.length; i++) {
+          const code = value.charCodeAt(i);
+          if (code >= 7 && code <= 13 || code === 27 || code === 127) {
+            return false;
+          }
+        }
+        return true;
+      }
+      function IsAdditionalProperties(value) {
+        return IsOptionalBoolean(value) || TSchema(value);
+      }
+      function IsOptionalBigInt(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsBigInt(value);
+      }
+      function IsOptionalNumber(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsNumber(value);
+      }
+      function IsOptionalBoolean(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsBoolean(value);
+      }
+      function IsOptionalString(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsString(value);
+      }
+      function IsOptionalPattern(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsString(value) && IsControlCharacterFree(value) && IsPattern(value);
+      }
+      function IsOptionalFormat(value) {
+        return ValueGuard.IsUndefined(value) || ValueGuard.IsString(value) && IsControlCharacterFree(value);
+      }
+      function IsOptionalSchema(value) {
+        return ValueGuard.IsUndefined(value) || TSchema(value);
+      }
+      function TAny(schema) {
+        return TKindOf(schema, "Any") && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TAny = TAny;
+      function TArray(schema) {
+        return TKindOf(schema, "Array") && schema.type === "array" && IsOptionalString(schema.$id) && TSchema(schema.items) && IsOptionalNumber(schema.minItems) && IsOptionalNumber(schema.maxItems) && IsOptionalBoolean(schema.uniqueItems) && IsOptionalSchema(schema.contains) && IsOptionalNumber(schema.minContains) && IsOptionalNumber(schema.maxContains);
+      }
+      TypeGuard2.TArray = TArray;
+      function TAsyncIterator(schema) {
+        return TKindOf(schema, "AsyncIterator") && schema.type === "AsyncIterator" && IsOptionalString(schema.$id) && TSchema(schema.items);
+      }
+      TypeGuard2.TAsyncIterator = TAsyncIterator;
+      function TBigInt(schema) {
+        return TKindOf(schema, "BigInt") && schema.type === "bigint" && IsOptionalString(schema.$id) && IsOptionalBigInt(schema.exclusiveMaximum) && IsOptionalBigInt(schema.exclusiveMinimum) && IsOptionalBigInt(schema.maximum) && IsOptionalBigInt(schema.minimum) && IsOptionalBigInt(schema.multipleOf);
+      }
+      TypeGuard2.TBigInt = TBigInt;
+      function TBoolean(schema) {
+        return TKindOf(schema, "Boolean") && schema.type === "boolean" && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TBoolean = TBoolean;
+      function TConstructor(schema) {
+        return TKindOf(schema, "Constructor") && schema.type === "Constructor" && IsOptionalString(schema.$id) && ValueGuard.IsArray(schema.parameters) && schema.parameters.every((schema2) => TSchema(schema2)) && TSchema(schema.returns);
+      }
+      TypeGuard2.TConstructor = TConstructor;
+      function TDate(schema) {
+        return TKindOf(schema, "Date") && schema.type === "Date" && IsOptionalString(schema.$id) && IsOptionalNumber(schema.exclusiveMaximumTimestamp) && IsOptionalNumber(schema.exclusiveMinimumTimestamp) && IsOptionalNumber(schema.maximumTimestamp) && IsOptionalNumber(schema.minimumTimestamp) && IsOptionalNumber(schema.multipleOfTimestamp);
+      }
+      TypeGuard2.TDate = TDate;
+      function TFunction(schema) {
+        return TKindOf(schema, "Function") && schema.type === "Function" && IsOptionalString(schema.$id) && ValueGuard.IsArray(schema.parameters) && schema.parameters.every((schema2) => TSchema(schema2)) && TSchema(schema.returns);
+      }
+      TypeGuard2.TFunction = TFunction;
+      function TInteger(schema) {
+        return TKindOf(schema, "Integer") && schema.type === "integer" && IsOptionalString(schema.$id) && IsOptionalNumber(schema.exclusiveMaximum) && IsOptionalNumber(schema.exclusiveMinimum) && IsOptionalNumber(schema.maximum) && IsOptionalNumber(schema.minimum) && IsOptionalNumber(schema.multipleOf);
+      }
+      TypeGuard2.TInteger = TInteger;
+      function TIntersect(schema) {
+        return TKindOf(schema, "Intersect") && (ValueGuard.IsString(schema.type) && schema.type !== "object" ? false : true) && ValueGuard.IsArray(schema.allOf) && schema.allOf.every((schema2) => TSchema(schema2) && !TTransform(schema2)) && IsOptionalString(schema.type) && (IsOptionalBoolean(schema.unevaluatedProperties) || IsOptionalSchema(schema.unevaluatedProperties)) && IsOptionalString(schema.$id);
+      }
+      TypeGuard2.TIntersect = TIntersect;
+      function TIterator(schema) {
+        return TKindOf(schema, "Iterator") && schema.type === "Iterator" && IsOptionalString(schema.$id) && TSchema(schema.items);
+      }
+      TypeGuard2.TIterator = TIterator;
+      function TKindOf(schema, kind) {
+        return TKind(schema) && schema[exports.Kind] === kind;
+      }
+      TypeGuard2.TKind

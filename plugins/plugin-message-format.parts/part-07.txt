@@ -1,0 +1,207 @@
+d]: "Intersect", type: "object", allOf: cloned }) : this.Create({ ...options, ...clonedUnevaluatedProperties, [exports.Kind]: "Intersect", allOf: cloned });
+      }
+      /** `[Json]` Creates a KeyOf type */
+      KeyOf(schema, options = {}) {
+        return TypeGuard.TRecord(schema) ? (() => {
+          const pattern = Object.getOwnPropertyNames(schema.patternProperties)[0];
+          return pattern === exports.PatternNumberExact ? this.Number(options) : pattern === exports.PatternStringExact ? this.String(options) : this.Throw("Unable to resolve key type from Record key pattern");
+        })() : TypeGuard.TTuple(schema) ? (() => {
+          const items = ValueGuard.IsUndefined(schema.items) ? [] : schema.items;
+          const literals = items.map((_, index) => exports.Type.Literal(index.toString()));
+          return this.Union(literals, options);
+        })() : TypeGuard.TArray(schema) ? (() => {
+          return this.Number(options);
+        })() : (() => {
+          const keys = KeyResolver.ResolveKeys(schema, { includePatterns: false });
+          if (keys.length === 0)
+            return this.Never(options);
+          const literals = keys.map((key) => this.Literal(key));
+          return this.Union(literals, options);
+        })();
+      }
+      /** `[Json]` Creates a Literal type */
+      Literal(value, options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Literal", const: value, type: typeof value });
+      }
+      /** `[Json]` Intrinsic function to Lowercase LiteralString types */
+      Lowercase(schema, options = {}) {
+        return { ...Intrinsic.Map(TypeClone.Type(schema), "Lowercase"), ...options };
+      }
+      /** `[Json]` Creates a Never type */
+      Never(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Never", not: {} });
+      }
+      /** `[Json]` Creates a Not type */
+      Not(schema, options) {
+        return this.Create({ ...options, [exports.Kind]: "Not", not: TypeClone.Type(schema) });
+      }
+      /** `[Json]` Creates a Null type */
+      Null(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Null", type: "null" });
+      }
+      /** `[Json]` Creates a Number type */
+      Number(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Number", type: "number" });
+      }
+      /** `[Json]` Creates an Object type */
+      Object(properties, options = {}) {
+        const propertyKeys = Object.getOwnPropertyNames(properties);
+        const optionalKeys = propertyKeys.filter((key) => TypeGuard.TOptional(properties[key]));
+        const requiredKeys = propertyKeys.filter((name) => !optionalKeys.includes(name));
+        const clonedAdditionalProperties = TypeGuard.TSchema(options.additionalProperties) ? { additionalProperties: TypeClone.Type(options.additionalProperties) } : {};
+        const clonedProperties = propertyKeys.reduce((acc, key) => ({ ...acc, [key]: TypeClone.Type(properties[key]) }), {});
+        return requiredKeys.length > 0 ? this.Create({ ...options, ...clonedAdditionalProperties, [exports.Kind]: "Object", type: "object", properties: clonedProperties, required: requiredKeys }) : this.Create({ ...options, ...clonedAdditionalProperties, [exports.Kind]: "Object", type: "object", properties: clonedProperties });
+      }
+      /** `[Json]` Constructs a type whose keys are omitted from the given type */
+      Omit(schema, unresolved, options = {}) {
+        const keys = KeyArrayResolver.Resolve(unresolved);
+        return ObjectMap.Map(this.Discard(TypeClone.Type(schema), ["$id", exports.Transform]), (object) => {
+          if (ValueGuard.IsArray(object.required)) {
+            object.required = object.required.filter((key) => !keys.includes(key));
+            if (object.required.length === 0)
+              delete object.required;
+          }
+          for (const key of Object.getOwnPropertyNames(object.properties)) {
+            if (keys.includes(key))
+              delete object.properties[key];
+          }
+          return this.Create(object);
+        }, options);
+      }
+      /** `[Json]` Constructs a type where all properties are optional */
+      Partial(schema, options = {}) {
+        return ObjectMap.Map(this.Discard(TypeClone.Type(schema), ["$id", exports.Transform]), (object) => {
+          const properties = Object.getOwnPropertyNames(object.properties).reduce((acc, key) => {
+            return { ...acc, [key]: this.Optional(object.properties[key]) };
+          }, {});
+          return this.Object(
+            properties,
+            this.Discard(object, ["required"])
+            /* object used as options to retain other constraints */
+          );
+        }, options);
+      }
+      /** `[Json]` Constructs a type whose keys are picked from the given type */
+      Pick(schema, unresolved, options = {}) {
+        const keys = KeyArrayResolver.Resolve(unresolved);
+        return ObjectMap.Map(this.Discard(TypeClone.Type(schema), ["$id", exports.Transform]), (object) => {
+          if (ValueGuard.IsArray(object.required)) {
+            object.required = object.required.filter((key) => keys.includes(key));
+            if (object.required.length === 0)
+              delete object.required;
+          }
+          for (const key of Object.getOwnPropertyNames(object.properties)) {
+            if (!keys.includes(key))
+              delete object.properties[key];
+          }
+          return this.Create(object);
+        }, options);
+      }
+      /** `[Json]` Creates a Record type */
+      Record(key, schema, options = {}) {
+        return TypeGuard.TTemplateLiteral(key) ? (() => {
+          const expression = TemplateLiteralParser.ParseExact(key.pattern);
+          return TemplateLiteralFinite.Check(expression) ? this.Object([...TemplateLiteralGenerator.Generate(expression)].reduce((acc, key2) => ({ ...acc, [key2]: TypeClone.Type(schema) }), {}), options) : this.Create({ ...options, [exports.Kind]: "Record", type: "object", patternProperties: { [key.pattern]: TypeClone.Type(schema) } });
+        })() : TypeGuard.TUnion(key) ? (() => {
+          const union = UnionResolver.Resolve(key);
+          if (TypeGuard.TUnionLiteral(union)) {
+            const properties = union.anyOf.reduce((acc, literal) => ({ ...acc, [literal.const]: TypeClone.Type(schema) }), {});
+            return this.Object(properties, { ...options, [exports.Hint]: "Record" });
+          } else
+            this.Throw("Record key of type union contains non-literal types");
+        })() : TypeGuard.TLiteral(key) ? (() => {
+          return ValueGuard.IsString(key.const) || ValueGuard.IsNumber(key.const) ? this.Object({ [key.const]: TypeClone.Type(schema) }, options) : this.Throw("Record key of type literal is not of type string or number");
+        })() : TypeGuard.TInteger(key) || TypeGuard.TNumber(key) ? (() => {
+          return this.Create({ ...options, [exports.Kind]: "Record", type: "object", patternProperties: { [exports.PatternNumberExact]: TypeClone.Type(schema) } });
+        })() : TypeGuard.TString(key) ? (() => {
+          const pattern = ValueGuard.IsUndefined(key.pattern) ? exports.PatternStringExact : key.pattern;
+          return this.Create({ ...options, [exports.Kind]: "Record", type: "object", patternProperties: { [pattern]: TypeClone.Type(schema) } });
+        })() : this.Never();
+      }
+      /** `[Json]` Creates a Recursive type */
+      Recursive(callback, options = {}) {
+        if (ValueGuard.IsUndefined(options.$id))
+          options.$id = `T${TypeOrdinal++}`;
+        const thisType = callback({ [exports.Kind]: "This", $ref: `${options.$id}` });
+        thisType.$id = options.$id;
+        return this.Create({ ...options, [exports.Hint]: "Recursive", ...thisType });
+      }
+      /** `[Json]` Creates a Ref type. */
+      Ref(unresolved, options = {}) {
+        if (ValueGuard.IsString(unresolved))
+          return this.Create({ ...options, [exports.Kind]: "Ref", $ref: unresolved });
+        if (ValueGuard.IsUndefined(unresolved.$id))
+          this.Throw("Reference target type must specify an $id");
+        return this.Create({ ...options, [exports.Kind]: "Ref", $ref: unresolved.$id });
+      }
+      /** `[Json]` Constructs a type where all properties are required */
+      Required(schema, options = {}) {
+        return ObjectMap.Map(this.Discard(TypeClone.Type(schema), ["$id", exports.Transform]), (object) => {
+          const properties = Object.getOwnPropertyNames(object.properties).reduce((acc, key) => {
+            return { ...acc, [key]: this.Discard(object.properties[key], [exports.Optional]) };
+          }, {});
+          return this.Object(
+            properties,
+            object
+            /* object used as options to retain other constraints  */
+          );
+        }, options);
+      }
+      /** `[Json]` Extracts interior Rest elements from Tuple, Intersect and Union types */
+      Rest(schema) {
+        return TypeGuard.TTuple(schema) && !ValueGuard.IsUndefined(schema.items) ? TypeClone.Rest(schema.items) : TypeGuard.TIntersect(schema) ? TypeClone.Rest(schema.allOf) : TypeGuard.TUnion(schema) ? TypeClone.Rest(schema.anyOf) : [];
+      }
+      /** `[Json]` Creates a String type */
+      String(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "String", type: "string" });
+      }
+      /** `[Json]` Creates a TemplateLiteral type */
+      TemplateLiteral(unresolved, options = {}) {
+        const pattern = ValueGuard.IsString(unresolved) ? TemplateLiteralPattern.Create(TemplateLiteralDslParser.Parse(unresolved)) : TemplateLiteralPattern.Create(unresolved);
+        return this.Create({ ...options, [exports.Kind]: "TemplateLiteral", type: "string", pattern });
+      }
+      /** `[Json]` Creates a Transform type */
+      Transform(schema) {
+        return new TransformDecodeBuilder(schema);
+      }
+      /** `[Json]` Creates a Tuple type */
+      Tuple(items, options = {}) {
+        const [additionalItems, minItems, maxItems] = [false, items.length, items.length];
+        const clonedItems = TypeClone.Rest(items);
+        const schema = items.length > 0 ? { ...options, [exports.Kind]: "Tuple", type: "array", items: clonedItems, additionalItems, minItems, maxItems } : { ...options, [exports.Kind]: "Tuple", type: "array", minItems, maxItems };
+        return this.Create(schema);
+      }
+      /** `[Json]` Intrinsic function to Uncapitalize LiteralString types */
+      Uncapitalize(schema, options = {}) {
+        return { ...Intrinsic.Map(TypeClone.Type(schema), "Uncapitalize"), ...options };
+      }
+      /** `[Json]` Creates a Union type */
+      Union(union, options = {}) {
+        return TypeGuard.TTemplateLiteral(union) ? TemplateLiteralResolver.Resolve(union) : (() => {
+          const anyOf = union;
+          if (anyOf.length === 0)
+            return this.Never(options);
+          if (anyOf.length === 1)
+            return this.Create(TypeClone.Type(anyOf[0], options));
+          const clonedAnyOf = TypeClone.Rest(anyOf);
+          return this.Create({ ...options, [exports.Kind]: "Union", anyOf: clonedAnyOf });
+        })();
+      }
+      /** `[Json]` Creates an Unknown type */
+      Unknown(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Unknown" });
+      }
+      /** `[Json]` Creates a Unsafe type that will infers as the generic argument T */
+      Unsafe(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: options[exports.Kind] || "Unsafe" });
+      }
+      /** `[Json]` Intrinsic function to Uppercase LiteralString types */
+      Uppercase(schema, options = {}) {
+        return { ...Intrinsic.Map(TypeClone.Type(schema), "Uppercase"), ...options };
+      }
+    };
+    exports.JsonTypeBuilder = JsonTypeBuilder;
+    var JavaScriptTypeBuilder = class extends JsonTypeBuilder {
+      /** `[JavaScript]` Creates a AsyncIterator type */
+      AsyncIterator(items, options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "AsyncIterator", type: "AsyncIterator", items: T

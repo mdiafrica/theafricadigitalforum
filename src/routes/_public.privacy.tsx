@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 
 import {
@@ -16,10 +18,11 @@ import {
 export const Route = createFileRoute("/_public/privacy")({
   head: () => ({
     ...pageHead({
-      title: "Privacy Policy | Africa Digital Forum",
-      description:
-        "Privacy Policy, Terms of Use and Cookie Policy for the Africa Digital Forum.",
+      title: m.meta_privacy_title(),
+      description: m.meta_privacy_description(),
       path: "/privacy",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: PrivacyRoute,

@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 
-import { useI18n } from "@/i18n/context"
-import { LANGUAGES, type Lang } from "@/i18n"
+import { m } from "@/paraglide/messages"
+import { getLocale, locales, setLocale } from "@/paraglide/runtime"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,17 +18,19 @@ import {
 } from "@/components/ui/sheet"
 import Logo from "@/assets/images/Logo.png"
 
-/** Route path paired with the index of its label in the `nav` i18n array. */
+type Locale = (typeof locales)[number]
+
+/** Route path paired with its nav label message. */
 const NAV_ITEMS = [
-  { to: "/", labelIndex: 0, exact: true },
-  { to: "/about", labelIndex: 1, exact: false },
-  { to: "/why-adf", labelIndex: 2, exact: false },
-  { to: "/host-city", labelIndex: 3, exact: false },
-  { to: "/blog", labelIndex: 4, exact: false },
-  { to: "/contact", labelIndex: 5, exact: false },
+  { to: "/", label: m.nav_home, exact: true },
+  { to: "/about", label: m.nav_about, exact: false },
+  { to: "/why-adf", label: m.nav_why_adf, exact: false },
+  { to: "/host-city", label: m.nav_host_city, exact: false },
+  { to: "/blog", label: m.nav_blog, exact: false },
+  { to: "/contact", label: m.nav_contact, exact: false },
 ] as const
 
-const LANG_LABELS: Record<Lang, string> = {
+const LANG_LABELS: Record<Locale, string> = {
   en: "English",
   fr: "Français",
 }
@@ -73,7 +75,16 @@ function CloseIcon() {
 
 function HomeIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" />
     </svg>
   )
@@ -81,7 +92,16 @@ function HomeIcon() {
 
 function AboutIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="16" x2="12" y2="12" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -91,7 +111,16 @@ function AboutIcon() {
 
 function WhyIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10" />
       <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
       <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -101,7 +130,16 @@ function WhyIcon() {
 
 function LocationIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
       <circle cx="12" cy="10" r="3" />
     </svg>
@@ -110,7 +148,16 @@ function LocationIcon() {
 
 function BlogIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="16" y1="13" x2="8" y2="13" />
@@ -122,7 +169,16 @@ function BlogIcon() {
 
 function ContactIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
     </svg>
   )
@@ -138,9 +194,8 @@ const NAV_ICONS = {
 }
 
 export function SiteHeader() {
-  const { t, lang, setLang } = useI18n()
+  const locale = getLocale()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const navLabels = t.nav
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 flex h-[85px] items-center justify-between border-b border-white/[0.12] bg-black px-[5%] font-nav tracking-[0.02em]">
@@ -165,14 +220,14 @@ export function SiteHeader() {
             activeProps={{ "data-status": "active" }}
             className="group/nav relative py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
           >
-            {navLabels[item.labelIndex]}
+            {item.label()}
             <span className="absolute inset-x-0 -bottom-[3px] h-[2.5px] rounded-full bg-gradient-to-r from-primary to-[#a066f5] opacity-0 transition-opacity group-hover/nav:opacity-40 group-data-[status=active]/nav:opacity-100" />
           </Link>
         ))}
       </nav>
 
       <div className="flex items-center gap-2">
-        <LanguageMenu lang={lang} onSelect={setLang} />
+        <LanguageMenu />
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger
@@ -187,8 +242,8 @@ export function SiteHeader() {
           >
             ☰
           </SheetTrigger>
-          <SheetContent 
-            side="right" 
+          <SheetContent
+            side="right"
             className="w-[85%] max-w-sm border-white/10 bg-black/95 backdrop-blur-xl sm:w-80"
           >
             <div className="mt-8 flex flex-col gap-2">
@@ -203,7 +258,7 @@ export function SiteHeader() {
               </div>
 
               {NAV_ITEMS.map((item) => {
-                const IconComponent = NAV_ICONS[item.to as keyof typeof NAV_ICONS]
+                const IconComponent = NAV_ICONS[item.to]
                 return (
                   <SheetClose
                     key={item.to}
@@ -212,38 +267,25 @@ export function SiteHeader() {
                         to={item.to}
                         activeOptions={{ exact: item.exact }}
                         activeProps={{ "data-status": "active" }}
-                        className={`
-                          group relative flex items-center gap-4 rounded-xl px-5 py-4 
-                          text-[15px] font-medium tracking-[0.12em] text-white/80 uppercase 
-                          transition-all duration-300 ease-out
-                          hover:bg-white/10 hover:text-white hover:pl-7
-                          data-[status=active]:bg-gradient-to-r data-[status=active]:from-primary/20 data-[status=active]:to-transparent 
-                          data-[status=active]:text-white data-[status=active]:font-bold
-                          data-[status=active]:shadow-[inset_0_1px_0_rgba(124,58,237,0.3)]
-                        `}
+                        className={`group relative flex items-center gap-4 rounded-xl px-5 py-4 text-[15px] font-medium tracking-[0.12em] text-white/80 uppercase transition-all duration-300 ease-out hover:bg-white/10 hover:pl-7 hover:text-white data-[status=active]:bg-gradient-to-r data-[status=active]:from-primary/20 data-[status=active]:to-transparent data-[status=active]:font-bold data-[status=active]:text-white data-[status=active]:shadow-[inset_0_1px_0_rgba(124,58,237,0.3)]`}
                       >
                         {/* Active indicator dot */}
-                        <span className={`
-                          absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full 
-                          bg-gradient-to-b from-primary to-[#a066f5] transition-all duration-300
-                          ${item.to === window.location.pathname ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
-                          group-hover:opacity-40 group-hover:scale-100
-                        `} />
-                        
+                        <span
+                          className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-primary to-[#a066f5] transition-all duration-300 ${item.to === window.location.pathname ? "scale-100 opacity-100" : "scale-50 opacity-0"} group-hover:scale-100 group-hover:opacity-40`}
+                        />
+
                         {/* Icon */}
                         <span className="text-primary/60 transition-colors group-hover:text-primary/80 group-data-[status=active]/nav:text-primary">
                           <IconComponent />
                         </span>
-                        
+
                         {/* Label */}
-                        <span className="flex-1">{navLabels[item.labelIndex]}</span>
-                        
+                        <span className="flex-1">{item.label()}</span>
+
                         {/* Arrow indicator */}
-                        <span className={`
-                          text-xs transition-all duration-300
-                          ${item.to === window.location.pathname ? 'text-primary translate-x-0 opacity-100' : 'opacity-0 -translate-x-2'}
-                          group-hover:opacity-100 group-hover:translate-x-0
-                        `}>
+                        <span
+                          className={`text-xs transition-all duration-300 ${item.to === window.location.pathname ? "translate-x-0 text-primary opacity-100" : "-translate-x-2 opacity-0"} group-hover:translate-x-0 group-hover:opacity-100`}
+                        >
                           →
                         </span>
                       </Link>
@@ -259,17 +301,15 @@ export function SiteHeader() {
                     Language
                   </span>
                   <div className="flex gap-1 rounded-lg bg-white/5 p-1">
-                    {LANGUAGES.map((code) => (
+                    {locales.map((code) => (
                       <button
                         key={code}
-                        onClick={() => setLang(code)}
-                        className={`
-                          rounded-md px-4 py-1.5 text-xs font-bold tracking-wider transition-all
-                          ${lang === code 
-                            ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-                            : 'text-white/60 hover:bg-white/10 hover:text-white'
-                          }
-                        `}
+                        onClick={() => setLocale(code)}
+                        className={`rounded-md px-4 py-1.5 text-xs font-bold tracking-wider transition-all ${
+                          locale === code
+                            ? "bg-primary text-white shadow-lg shadow-primary/30"
+                            : "text-white/60 hover:bg-white/10 hover:text-white"
+                        } `}
                       >
                         {code.toUpperCase()}
                       </button>
@@ -285,13 +325,9 @@ export function SiteHeader() {
   )
 }
 
-function LanguageMenu({
-  lang,
-  onSelect,
-}: {
-  lang: Lang
-  onSelect: (l: Lang) => void
-}) {
+function LanguageMenu() {
+  const locale = getLocale()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -303,15 +339,15 @@ function LanguageMenu({
         }
       >
         <WorldIcon />
-        <span className="text-[12px] font-bold">{lang.toUpperCase()}</span>
+        <span className="text-[12px] font-bold">{locale.toUpperCase()}</span>
         <span className="text-[8px]">▼</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[200px]">
-        {LANGUAGES.map((code) => (
-          <DropdownMenuItem key={code} onClick={() => onSelect(code)}>
+        {locales.map((code) => (
+          <DropdownMenuItem key={code} onClick={() => setLocale(code)}>
             <span className="w-7 font-bold">{code.toUpperCase()}</span>
             <span className="flex-1">{LANG_LABELS[code]}</span>
-            {lang === code && <span className="text-primary">✓</span>}
+            {locale === code && <span className="text-primary">✓</span>}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

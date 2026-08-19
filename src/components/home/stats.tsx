@@ -5,10 +5,11 @@ import {
   Rocket,
   TrendingUp,
   Users,
-  type LucideIcon,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { usePageSection } from "@/domains/page-content"
 import { useCountUp, useInView } from "@/components/motion"
 
@@ -31,11 +32,18 @@ const STAT_DEFAULTS = [
 ]
 
 export function Stats() {
-  const { t, lang } = useI18n()
-  const section = usePageSection("home", "stats", lang, {
+  const statLabels = [
+    m.home_stats_participants_label(),
+    m.home_stats_countries_label(),
+    m.home_stats_speakers_label(),
+    m.home_stats_startups_label(),
+    m.home_stats_partners_label(),
+    m.home_stats_investors_label(),
+  ]
+  const section = usePageSection("home", "stats", getLocale(), {
     items: STAT_DEFAULTS.map((stat, i) => ({
       ...stat,
-      label: t.home.stats[i]?.label ?? "",
+      label: statLabels[i] ?? "",
     })),
   })
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.2 })

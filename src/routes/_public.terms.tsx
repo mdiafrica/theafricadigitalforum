@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 
 import {
@@ -14,9 +16,11 @@ import {
 export const Route = createFileRoute("/_public/terms")({
   head: () => ({
     ...pageHead({
-      title: "Terms of Use | Africa Digital Forum",
-      description: "Terms of Use for the Africa Digital Forum website.",
+      title: m.meta_terms_title(),
+      description: m.meta_terms_description(),
       path: "/terms",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: TermsRoute,

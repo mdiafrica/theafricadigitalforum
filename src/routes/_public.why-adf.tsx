@@ -9,7 +9,8 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Card } from "@/components/ui/card"
@@ -28,18 +29,43 @@ const AGENDA_ICONS: LucideIcon[] = [
 export const Route = createFileRoute("/_public/why-adf")({
   head: () => ({
     ...pageHead({
-      title: "Why ADF | Africa Digital Forum",
-      description:
-        "Why the Africa Digital Forum matters: agenda, themes and what to expect.",
+      title: m.meta_why_adf_title(),
+      description: m.meta_why_adf_description(),
       path: "/why-adf",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
   component: WhyAdfRoute,
 })
 
 function WhyAdfRoute() {
-  const { t } = useI18n()
-  const why = t.whyadf
+  const agendaItems = [
+    {
+      title: m.whyadf_agenda_digital_access_title(),
+      description: m.whyadf_agenda_digital_access_description(),
+    },
+    {
+      title: m.whyadf_agenda_ai_sovereignty_title(),
+      description: m.whyadf_agenda_ai_sovereignty_description(),
+    },
+    {
+      title: m.whyadf_agenda_startup_growth_title(),
+      description: m.whyadf_agenda_startup_growth_description(),
+    },
+    {
+      title: m.whyadf_agenda_cybersecurity_title(),
+      description: m.whyadf_agenda_cybersecurity_description(),
+    },
+    {
+      title: m.whyadf_agenda_local_software_title(),
+      description: m.whyadf_agenda_local_software_description(),
+    },
+    {
+      title: m.whyadf_agenda_media_integrity_title(),
+      description: m.whyadf_agenda_media_integrity_description(),
+    },
+  ]
 
   return (
     <div className="font-nav">
@@ -53,12 +79,12 @@ function WhyAdfRoute() {
         <div className="mx-auto max-w-[800px]">
           <Reveal>
             <h1 className="mb-5 text-[clamp(32px,4.5vw,52px)] font-extrabold tracking-[0.08em] text-white max-[480px]:text-[28px] max-[480px]:tracking-[0.05em]">
-              {why.heroTitle}
+              {m.whyadf_hero_title()}
             </h1>
           </Reveal>
           <Reveal delay={0.2}>
             <p className="mx-auto max-w-[680px] text-lg leading-[1.7] text-white/75 max-md:text-[15px]">
-              {why.heroText}
+              {m.whyadf_hero_text()}
             </p>
           </Reveal>
         </div>
@@ -85,11 +111,11 @@ function WhyAdfRoute() {
               <div className="mb-4 flex items-start gap-5 max-md:justify-center">
                 <div className="mt-1 h-9 w-1 shrink-0 rounded-sm bg-primary" />
                 <h2 className="text-2xl leading-[1.2] font-extrabold tracking-[0.05em] text-ink">
-                  {why.aiSection.heading}
+                  {m.whyadf_ai_section_heading()}
                 </h2>
               </div>
               <p className="text-[13px] leading-[1.65] text-ink/90 max-md:text-center md:mr-10 md:text-justify">
-                {why.aiSection.paragraph}
+                {m.whyadf_ai_section_paragraph()}
               </p>
             </div>
           </Reveal>
@@ -108,21 +134,21 @@ function WhyAdfRoute() {
               <div className="mb-4 flex items-center gap-3">
                 <div className="h-0.5 w-[30px] bg-primary" />
                 <span className="text-[9px] font-bold tracking-[0.2em] text-accent-foreground uppercase">
-                  {why.agenda.eyebrow}
+                  {m.whyadf_agenda_eyebrow()}
                 </span>
               </div>
               <h2 className="mb-5 text-2xl leading-[1.2] font-extrabold tracking-[0.05em] text-white">
-                {why.agenda.mainTitle}
+                {m.whyadf_agenda_main_title()}
               </h2>
               <div className="mb-6 h-[3px] w-[60px] rounded-[2px] bg-primary" />
               <p className="max-w-[700px] text-[15px] leading-[1.6] text-white/70">
-                {why.agenda.description}
+                {m.whyadf_agenda_description()}
               </p>
             </div>
           </Reveal>
 
           <div className="mx-auto grid max-w-[1400px] [grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-6 sm:gap-8">
-            {why.agenda.items.map((item, i) => {
+            {agendaItems.map((item, i) => {
               const Icon = AGENDA_ICONS[i % AGENDA_ICONS.length]
               return (
                 <Reveal key={item.title} delay={i * 0.07}>

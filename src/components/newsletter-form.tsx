@@ -4,7 +4,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 
 import { subscribeNewsletter } from "@/domains/submissions"
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,17 +28,18 @@ export function NewsletterForm({
   inputClassName?: string
   buttonClassName?: string
 }) {
-  const { t } = useI18n()
-  const copy = t.home.latest.newsletter
-
   const subscribe = useMutation({
     mutationFn: (email: string) => subscribeNewsletter({ data: { email } }),
     onSuccess: () =>
-      toast.success(copy.success.replace(/^✓\s*/, ""), {
-        description: copy.message,
+      toast.success(m.home_latest_newsletter_success().replace(/^✓\s*/, ""), {
+        description: m.home_latest_newsletter_message(),
       }),
     onError: (error) =>
-      toast.error(error instanceof Error ? error.message : copy.errorGeneric),
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : m.home_latest_newsletter_error_generic()
+      ),
   })
 
   const form = useForm({
@@ -68,8 +69,8 @@ export function NewsletterForm({
             value={field.state.value}
             onChange={(event) => field.handleChange(event.target.value)}
             onBlur={field.handleBlur}
-            placeholder={copy.placeholder}
-            aria-label={copy.placeholder}
+            placeholder={m.home_latest_newsletter_placeholder()}
+            aria-label={m.home_latest_newsletter_placeholder()}
             aria-invalid={field.state.meta.errors.length > 0}
             disabled={subscribe.isPending}
             className={cn("min-w-0 flex-1 basis-[180px]", inputClassName)}
@@ -82,7 +83,9 @@ export function NewsletterForm({
         className={buttonClassName}
       >
         {subscribe.isPending && <Spinner data-icon="inline-start" />}
-        {subscribe.isPending ? copy.sending : copy.button}
+        {subscribe.isPending
+          ? m.home_latest_newsletter_sending()
+          : m.home_latest_newsletter_button()}
       </Button>
     </form>
   )

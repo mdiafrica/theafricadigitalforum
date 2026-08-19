@@ -3,7 +3,8 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowRight, Clock, Mail, Newspaper, Search, X } from "lucide-react"
 
-import { useI18n } from "@/i18n/context"
+import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import {
   publishedPostCategoriesQueryOptions,
@@ -22,25 +23,27 @@ import { Skeleton } from "@/components/ui/skeleton"
 export const Route = createFileRoute("/_public/blog/")({
   head: () => ({
     ...pageHead({
-      title: "Blog | Africa Digital Forum",
-      description: "News, insights and stories from the Africa Digital Forum.",
+      title: m.meta_blog_title(),
+      description: m.meta_blog_description(),
       path: "/blog",
+      locale: getLocale(),
+      alternates: true,
     }),
   }),
-  // SSR primes the default locale; a client-side locale switch refetches.
   loader: ({ context }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(publishedPostsQueryOptions("en")),
       context.queryClient.ensureQueryData(
-        publishedPostCategoriesQueryOptions("en")
+        publishedPostsQueryOptions(getLocale())
+      ),
+      context.queryClient.ensureQueryData(
+        publishedPostCategoriesQueryOptions(getLocale())
       ),
     ]),
   component: BlogRoute,
 })
 
 function BlogRoute() {
-  const { t, lang } = useI18n()
-  const blog = t.blog
+  const lang = getLocale()
   const newsletterRef = useRef<HTMLDivElement>(null)
 
   // null = all categories.
@@ -75,10 +78,10 @@ function BlogRoute() {
         <div className="mt-3 mb-9 flex flex-wrap justify-between gap-8">
           <div className="min-w-[260px] flex-1">
             <h1 className="mt-7 mb-2 text-[clamp(28px,4vw,44px)] leading-[1.1] font-extrabold tracking-[-0.02em] text-[#1a1a1a]">
-              {blog.pageTitle}
+              {m.blog_page_title()}
             </h1>
             <p className="max-w-[540px] text-[15px] leading-[1.6] text-[#666666]">
-              {blog.pageSub}
+              {m.blog_page_sub()}
             </p>
           </div>
           <div className="shrink-0 sm:mt-[70px]">
@@ -89,7 +92,7 @@ function BlogRoute() {
               className="h-auto gap-2 rounded-full px-[22px] py-2.5 text-[13px] font-bold shadow-[0_4px_12px_rgba(124,58,237,0.25)] hover:bg-[#6d28d9]"
             >
               <Mail className="size-4" />
-              {blog.subscribeBtn}
+              {m.blog_subscribe_btn()}
             </Button>
           </div>
         </div>
@@ -102,7 +105,7 @@ function BlogRoute() {
             <FeaturedCard
               post={featured}
               locale={lang}
-              readMore={blog.featured.readMore}
+              readMore={m.blog_featured_read_more()}
             />
             {sidebar.length > 0 && (
               <div className="flex flex-col gap-1">
@@ -119,15 +122,15 @@ function BlogRoute() {
           <div className="mb-5 flex flex-wrap items-center gap-3">
             <span className="h-[22px] w-1 shrink-0 rounded-sm bg-primary" />
             <h2 className="text-[clamp(20px,2.5vw,26px)] font-extrabold tracking-[-0.01em] text-[#1a1a1a]">
-              {blog.sectionTitle}
+              {m.blog_section_title()}
             </h2>
             <div className="relative w-full sm:ml-auto sm:w-auto sm:max-w-[260px] sm:flex-1">
               <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-[#888888]" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={blog.searchPlaceholder}
-                aria-label={blog.searchPlaceholder}
+                placeholder={m.blog_search_placeholder()}
+                aria-label={m.blog_search_placeholder()}
                 className="h-auto rounded-full border-[#e8e8e8] bg-white py-2 pr-9 pl-10 text-[13px] text-[#1a1a1a] placeholder:text-[#888888] focus-visible:border-primary dark:border-[#e8e8e8] dark:bg-white"
               />
               {query && (
@@ -170,7 +173,7 @@ function BlogRoute() {
                         style={{ backgroundColor: active ? "#fff" : cat.color }}
                       />
                     )}
-                    {cat?.name ?? blog.allLabel}
+                    {cat?.name ?? m.blog_all_label()}
                   </Button>
                 )
               })}
@@ -187,7 +190,7 @@ function BlogRoute() {
           </div>
         ) : posts.length === 0 ? (
           <EmptyCard icon={isFiltering ? Search : Newspaper} className="mb-16">
-            {isFiltering ? blog.noResults : blog.empty}
+            {isFiltering ? m.blog_no_results() : m.blog_empty()}
           </EmptyCard>
         ) : (
           <div className="grid gap-6 pb-16 md:grid-cols-2 lg:grid-cols-3">
@@ -196,7 +199,7 @@ function BlogRoute() {
                 key={post.id}
                 post={post}
                 locale={lang}
-                readMoreLabel={blog.featured.readMore}
+                readMoreLabel={m.blog_featured_read_more()}
               />
             ))}
           </div>
@@ -207,13 +210,13 @@ function BlogRoute() {
       <div ref={newsletterRef} className="bg-white px-4 py-16">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-bold tracking-[0.18em] text-primary uppercase">
-            {blog.newsletter.eyebrow}
+            {m.blog_newsletter_eyebrow()}
           </span>
           <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-extrabold tracking-[-0.02em] text-[#1a1a1a] sm:text-4xl">
-            {blog.newsletter.title}
+            {m.blog_newsletter_title()}
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[#666666]">
-            {blog.newsletter.sub}
+            {m.blog_newsletter_sub()}
           </p>
           <div className="mx-auto mt-8 max-w-md">
             <NewsletterForm

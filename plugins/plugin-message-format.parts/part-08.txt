@@ -1,0 +1,334 @@
+ypeClone.Type(items) });
+      }
+      /** `[JavaScript]` Constructs a type by recursively unwrapping Promise types */
+      Awaited(schema, options = {}) {
+        const Unwrap = (rest) => rest.length > 0 ? (() => {
+          const [L, ...R] = rest;
+          return [this.Awaited(L), ...Unwrap(R)];
+        })() : rest;
+        return TypeGuard.TIntersect(schema) ? exports.Type.Intersect(Unwrap(schema.allOf)) : TypeGuard.TUnion(schema) ? exports.Type.Union(Unwrap(schema.anyOf)) : TypeGuard.TPromise(schema) ? this.Awaited(schema.item) : TypeClone.Type(schema, options);
+      }
+      /** `[JavaScript]` Creates a BigInt type */
+      BigInt(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "BigInt", type: "bigint" });
+      }
+      /** `[JavaScript]` Extracts the ConstructorParameters from the given Constructor type */
+      ConstructorParameters(schema, options = {}) {
+        return this.Tuple([...schema.parameters], { ...options });
+      }
+      /** `[JavaScript]` Creates a Constructor type */
+      Constructor(parameters, returns, options) {
+        const [clonedParameters, clonedReturns] = [TypeClone.Rest(parameters), TypeClone.Type(returns)];
+        return this.Create({ ...options, [exports.Kind]: "Constructor", type: "Constructor", parameters: clonedParameters, returns: clonedReturns });
+      }
+      /** `[JavaScript]` Creates a Date type */
+      Date(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Date", type: "Date" });
+      }
+      /** `[JavaScript]` Creates a Function type */
+      Function(parameters, returns, options) {
+        const [clonedParameters, clonedReturns] = [TypeClone.Rest(parameters), TypeClone.Type(returns)];
+        return this.Create({ ...options, [exports.Kind]: "Function", type: "Function", parameters: clonedParameters, returns: clonedReturns });
+      }
+      /** `[JavaScript]` Extracts the InstanceType from the given Constructor type */
+      InstanceType(schema, options = {}) {
+        return TypeClone.Type(schema.returns, options);
+      }
+      /** `[JavaScript]` Creates an Iterator type */
+      Iterator(items, options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Iterator", type: "Iterator", items: TypeClone.Type(items) });
+      }
+      /** `[JavaScript]` Extracts the Parameters from the given Function type */
+      Parameters(schema, options = {}) {
+        return this.Tuple(schema.parameters, { ...options });
+      }
+      /** `[JavaScript]` Creates a Promise type */
+      Promise(item, options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Promise", type: "Promise", item: TypeClone.Type(item) });
+      }
+      /** `[Extended]` Creates a String type */
+      RegExp(unresolved, options = {}) {
+        const pattern = ValueGuard.IsString(unresolved) ? unresolved : unresolved.source;
+        return this.Create({ ...options, [exports.Kind]: "String", type: "string", pattern });
+      }
+      /**
+       * @deprecated Use `Type.RegExp`
+       */
+      RegEx(regex, options = {}) {
+        return this.RegExp(regex, options);
+      }
+      /** `[JavaScript]` Extracts the ReturnType from the given Function type */
+      ReturnType(schema, options = {}) {
+        return TypeClone.Type(schema.returns, options);
+      }
+      /** `[JavaScript]` Creates a Symbol type */
+      Symbol(options) {
+        return this.Create({ ...options, [exports.Kind]: "Symbol", type: "symbol" });
+      }
+      /** `[JavaScript]` Creates a Undefined type */
+      Undefined(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Undefined", type: "undefined" });
+      }
+      /** `[JavaScript]` Creates a Uint8Array type */
+      Uint8Array(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Uint8Array", type: "Uint8Array" });
+      }
+      /** `[JavaScript]` Creates a Void type */
+      Void(options = {}) {
+        return this.Create({ ...options, [exports.Kind]: "Void", type: "void" });
+      }
+    };
+    exports.JavaScriptTypeBuilder = JavaScriptTypeBuilder;
+    exports.JsonType = new JsonTypeBuilder();
+    exports.Type = new JavaScriptTypeBuilder();
+  }
+});
+
+// src/settings.ts
+var import_typebox = __toESM(require_typebox(), 1);
+var pathPatternString = import_typebox.Type.String({
+  // for legacy reasions locale can be specified as well
+  pattern: ".*\\{languageTag|locale\\}.*\\.json$",
+  examples: ["./messages/{locale}.json", "./i18n/{locale}.json"],
+  title: "Path to language files",
+  description: "Specify the pathPattern to locate resource files in your repository. It must include `{locale}` and end with `.json`."
+});
+var pathPatternArray = import_typebox.Type.Array(pathPatternString, {
+  title: "Paths to language files",
+  description: "Specify multiple pathPatterns to locate resource files in your repository. Each must include `{locale}` and end with `.json`."
+});
+var sort = import_typebox.Type.Optional(
+  import_typebox.Type.Union([import_typebox.Type.Literal("asc"), import_typebox.Type.Literal("desc")], {
+    title: "Sort keys",
+    description: "Sort message keys when writing files."
+  })
+);
+var PluginSettings = import_typebox.Type.Object({
+  pathPattern: import_typebox.Type.Union([pathPatternString, pathPatternArray]),
+  sort
+});
+
+// src/v2/parsing/serializePattern.ts
+var serializedPattern = (pattern) => {
+  return pattern.map((node) => {
+    switch (node.type) {
+      case "Text":
+        return node.value;
+      case "VariableReference":
+        return `{${node.name}}`;
+    }
+  }).join("");
+};
+
+// src/v2/parsing/serializeMessage.ts
+var serializeMessage = (message) => {
+  const result = {};
+  for (const variant of message.variants) {
+    if (result[variant.languageTag] !== void 0) {
+      throw new Error(
+        `The message "${message.id}" has multiple variants for the language tag "${variant.languageTag}". The inlang-message-format plugin does not support multiple variants for the same language tag at the moment.`
+      );
+    }
+    result[variant.languageTag] = serializedPattern(variant.pattern);
+  }
+  return result;
+};
+
+// src/v2/parsing/parsePattern.ts
+var parsePattern = (pattern) => {
+  const regex = /\{([^}]+)\}/g;
+  let match;
+  let lastIndex = 0;
+  const result = [];
+  while ((match = regex.exec(pattern)) !== null) {
+    const name = match[1];
+    const textBefore = pattern.slice(lastIndex, match.index);
+    if (textBefore.length > 0) {
+      result.push({ type: "Text", value: textBefore });
+    }
+    result.push({ type: "VariableReference", name });
+    lastIndex = match.index + match[0].length;
+  }
+  const textAfter = pattern.slice(Math.max(0, lastIndex));
+  if (textAfter.length > 0) {
+    result.push({ type: "Text", value: textAfter });
+  }
+  return result;
+};
+
+// src/v2/parsing/parseMessage.ts
+var parseMessage = (args) => {
+  return {
+    id: args.key,
+    alias: {},
+    selectors: [],
+    variants: [
+      {
+        languageTag: args.languageTag,
+        match: [],
+        pattern: parsePattern(args.value)
+      }
+    ]
+  };
+};
+
+// src/v2/plugin.ts
+var pluginId = "plugin.inlang.messageFormat";
+var plugin = {
+  id: pluginId,
+  displayName: "Inlang Message Format",
+  description: "A plugin for the inlang SDK that uses a JSON file per language tag to store translations.",
+  key: "inlang-message-format",
+  settingsSchema: PluginSettings,
+  loadMessages: async ({ settings, nodeishFs }) => {
+    await maybeMigrateToV2({ settings, nodeishFs });
+    const result = {};
+    for (const tag of settings.languageTags) {
+      try {
+        const file = await nodeishFs.readFile(
+          settings["plugin.inlang.messageFormat"].pathPattern.replace(
+            "{languageTag}",
+            tag
+          ),
+          {
+            encoding: "utf-8"
+          }
+        );
+        const json = JSON.parse(file);
+        for (const key in json) {
+          if (key === "$schema") {
+            continue;
+          } else if (result[key]) {
+            result[key].variants = [
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              ...result[key].variants,
+              ...parseMessage({ key, value: json[key], languageTag: tag }).variants
+            ];
+          } else {
+            result[key] = parseMessage({
+              key,
+              value: json[key],
+              languageTag: tag
+            });
+          }
+        }
+      } catch (error) {
+        if (error?.code !== "ENOENT") {
+          throw error;
+        }
+      }
+    }
+    return Object.values(result);
+  },
+  saveMessages: async ({ settings, nodeishFs, messages }) => {
+    const result = {};
+    for (const message of messages) {
+      const serialized = serializeMessage(message);
+      for (const [languageTag, value] of Object.entries(serialized)) {
+        if (result[languageTag] === void 0) {
+          result[languageTag] = {};
+        }
+        result[languageTag][message.id] = value;
+      }
+    }
+    for (const [languageTag, messages2] of Object.entries(result)) {
+      const path = settings["plugin.inlang.messageFormat"].pathPattern.replace(
+        "{languageTag}",
+        languageTag
+      );
+      await createDirectoryIfNotExits({ path, nodeishFs });
+      await nodeishFs.writeFile(
+        settings["plugin.inlang.messageFormat"].pathPattern.replace(
+          "{languageTag}",
+          languageTag
+        ),
+        // default to tab indentation
+        // PS sorry for anyone who reads this code
+        ((data) => JSON.stringify(data, void 0, "	"))({
+          $schema: "https://inlang.com/schema/inlang-message-format",
+          ...messages2
+        })
+      );
+    }
+  }
+};
+var createDirectoryIfNotExits = async (args) => {
+  try {
+    await args.nodeishFs.mkdir(dirname(args.path), { recursive: true });
+  } catch {
+  }
+};
+function dirname(path) {
+  if (path.length === 0) return ".";
+  let code = path.charCodeAt(0);
+  const hasRoot = code === 47;
+  let end = -1;
+  let matchedSlash = true;
+  for (let i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47) {
+      if (!matchedSlash) {
+        end = i;
+        break;
+      }
+    } else {
+      matchedSlash = false;
+    }
+  }
+  if (end === -1) return hasRoot ? "/" : ".";
+  if (hasRoot && end === 1) return "//";
+  return path.slice(0, end);
+}
+var maybeMigrateToV2 = async (args) => {
+  if (args.settings["plugin.inlang.messageFormat"].filePath == void 0) {
+    return;
+  }
+  try {
+    const file = await args.nodeishFs.readFile(
+      args.settings["plugin.inlang.messageFormat"].filePath,
+      {
+        encoding: "utf-8"
+      }
+    );
+    await plugin.saveMessages?.({
+      messages: JSON.parse(file)["data"],
+      nodeishFs: args.nodeishFs,
+      settings: args.settings
+    });
+    console.log(
+      "Migration to v2 of the inlang-message-format plugin was successful. Please delete the old messages.json file and the filePath property in the settings file of the project."
+    );
+  } catch {
+  }
+};
+
+// src/import-export/toBeImportedFiles.ts
+var toBeImportedFiles = async ({ settings }) => {
+  const result = [];
+  const pathPatterns = settings[PLUGIN_KEY]?.pathPattern ? Array.isArray(settings[PLUGIN_KEY].pathPattern) ? settings[PLUGIN_KEY].pathPattern : [settings[PLUGIN_KEY].pathPattern] : [];
+  for (const pathPattern of pathPatterns) {
+    for (const locale of settings.locales) {
+      result.push({
+        locale,
+        path: pathPattern.replace(/{(locale|languageTag)}/, locale)
+      });
+    }
+  }
+  return result;
+};
+
+// ../../../node_modules/.pnpm/flat@6.0.1/node_modules/flat/index.js
+function isBuffer(obj) {
+  return obj && obj.constructor && typeof obj.constructor.isBuffer === "function" && obj.constructor.isBuffer(obj);
+}
+function keyIdentity(key) {
+  return key;
+}
+function flatten(target, opts) {
+  opts = opts || {};
+  const delimiter = opts.delimiter || ".";
+  const maxDepth = opts.maxDepth;
+  const transformKey = opts.transformKey || keyIdentity;
+  const output = {};
+  function step(object, prev, currentDepth) {
+    currentDepth = 
