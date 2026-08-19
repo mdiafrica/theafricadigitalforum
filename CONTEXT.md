@@ -43,3 +43,19 @@ The up-to-4 newest other articles sharing at least one category with the current
 
 **Article Surface**:
 The public reading container: white, rounded, light-typography card an article body renders in, per the legacy site's design.
+
+### Language & visibility
+
+**Translation**:
+The per-locale text of an article (title, excerpt, body). English is the source translation and always exists; French is optional and may lag behind.
+_Avoid_: Version, localization
+
+**Published Translation**:
+A translation that has been made live for its locale. Readers of a locale only ever encounter an article through a published translation.
+
+**Preferred Language**:
+The language a visitor reads the site in — a browser-level preference (explicit choice remembered across visits, otherwise detected from the browser's language), never an account property.
+_Avoid_: User language setting, timezone-detected language
+
+**Language Visibility**:
+The rule that an article surfaces in lists, search, and feeds for a language only if it has a published translation in that language. Direct links always resolve, falling back to English. Applies to articles only — categories, events, speakers, and page content fall back to English instead of hiding.

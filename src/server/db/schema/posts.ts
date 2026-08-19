@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm"
 import {
+  boolean,
   index,
   jsonb,
   pgTable,
@@ -67,6 +68,13 @@ export const postTranslation = pgTable(
     excerpt: text("excerpt").default("").notNull(),
     /** Plate editor Value (array of element nodes). */
     body: jsonb("body").$type<PostBodyNode[]>().default([]).notNull(),
+    /**
+     * Per-locale publish gate (ADR-0003). A translation is publicly visible
+     * only when the post is published AND this flag is set. EN is forced true
+     * by the publish action (source language); FR is chosen in the publish
+     * dialog or toggled later from the editor.
+     */
+    published: boolean("published").default(false).notNull(),
   },
   (table) => [
     unique("post_translation_post_id_locale_uq").on(table.postId, table.locale),

@@ -56,6 +56,27 @@ export const postIdInput = z.object({
 })
 export type PostIdInput = z.infer<typeof postIdInput>
 
+/**
+ * Publish dialog (ADR-0003): the locales whose translations go live with the
+ * article. EN is the source language and is always included server-side;
+ * an existing FR left unchecked stays (or goes back) unpublished.
+ */
+export const publishPostInput = z.object({
+  id: z.uuid(),
+  locales: z.array(localeSchema).max(2).default([]),
+})
+export type PublishPostInput = z.infer<typeof publishPostInput>
+
+/** Late-French toggle: publish/withdraw one translation on its own. */
+export const setTranslationPublishedInput = z.object({
+  id: z.uuid(),
+  locale: localeSchema,
+  published: z.boolean(),
+})
+export type SetTranslationPublishedInput = z.infer<
+  typeof setTranslationPublishedInput
+>
+
 export const listPostsAdminInput = z.object({
   page: z.number().int().min(1).default(1),
   pageSize: z.number().int().min(1).max(100).default(20),

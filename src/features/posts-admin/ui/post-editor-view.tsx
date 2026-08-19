@@ -1,10 +1,11 @@
+import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 import { useSessionQuery } from "@/domains/auth"
 import {
   usePostAdminDetailQuery,
-  usePublishPostMutation,
+  useSetTranslationPublishedMutation,
   useUnpublishPostMutation,
   useDeletePostMutation,
 } from "@/domains/posts"
@@ -18,6 +19,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { hasOrgPermission } from "@/lib/auth/permissions"
 import { getErrorMessage } from "@/lib/error"
 import { PostForm } from "./post-form"
+import { PublishPostDialog } from "./publish-post-dialog"
 
 export function PostCreateView() {
   return (
@@ -34,10 +36,11 @@ export function PostCreateView() {
 export function PostEditView({ id }: { id: string }) {
   const sessionQuery = useSessionQuery()
   const postQuery = usePostAdminDetailQuery(id)
-  const publishMutation = usePublishPostMutation()
+  const frPublishMutation = useSetTranslationPublishedMutation()
   const unpublishMutation = useUnpublishPostMutation()
   const deleteMutation = useDeletePostMutation()
   const navigate = useNavigate()
+  const [publishOpen, setPublishOpen] = React.useState(false)
 
   const session = sessionQuery.data
   const caller = { globalRole: session?.user.role, orgRole: session?.orgRole }
@@ -67,23 +70,44 @@ export function PostEditView({ id }: { id: string }) {
 
   const post = postQuery.data
 
+  const frTranslation = post.translations.fr
+  const toggleFr = (published: boolean) =>
+    frPublishMutation.mutate(
+      { id: post.id, locale: "fr", published },
+      {
+        onSuccess: () =>
+          toast.success(
+            published ? "French version published." : "French version hidden."
+          ),
+        onError: (error) =>
+          toast.error(
+            getErrorMessage(error, "Couldn't update the French version.")
+          ),
+      }
+    )
+
   const headerActions = (
     <>
       {canPublish && post.status === "draft" && (
         <Button
           type="button"
           variant="outline"
-          disabled={publishMutation.isPending}
-          onClick={() =>
-            publishMutation.mutate(post.id, {
-              onSuccess: () => toast.success("Post published."),
-              onError: (error) =>
-                toast.error(getErrorMessage(error, "Couldn't publish.")),
-            })
-          }
+          onClick={() => setPublishOpen(true)}
         >
-          {publishMutation.isPending && <Spinner />}
           Publish
+        </Button>
+      )}
+      {/* Late-French path (ADR-0003): FR written after the article went
+          live is published here; the same control withdraws it alone. */}
+      {canPublish && post.status === "published" && frTranslation && (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={frPublishMutation.isPending}
+          onClick={() => toggleFr(!frTranslation.published)}
+        >
+          {frPublishMutation.isPending && <Spinner />}
+          {frTranslation.published ? "Hide French" : "Publish French"}
         </Button>
       )}
       {canPublish && post.status === "published" && (
@@ -146,6 +170,12 @@ export function PostEditView({ id }: { id: string }) {
       />
       {/* Remount the form when server state changes id (fresh defaults). */}
       <PostForm key={post.id} post={post} headerActions={headerActions} />
+      <PublishPostDialog
+        postId={post.id}
+        hasFr={Boolean(frTranslation)}
+        open={publishOpen}
+        onOpenChange={setPublishOpen}
+      />
     </div>
   )
 }

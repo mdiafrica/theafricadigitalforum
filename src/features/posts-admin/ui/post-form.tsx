@@ -102,8 +102,9 @@ export function PostForm({
         <CardHeader>
           <CardTitle>Content</CardTitle>
           <CardDescription>
-            English is the source language; add French when it&apos;s ready. The
-            French tab is published only once it has a title.
+            English is the source language; add French when it&apos;s ready.
+            French goes live only when you publish it — in the publish dialog,
+            or from the header once the post is live.
           </CardDescription>
         </CardHeader>
         <CardContent>

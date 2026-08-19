@@ -64,6 +64,13 @@
       "when": 1786629914685,
       "tag": "0008_flawless_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787125381860,
+      "tag": "0009_friendly_eddie_brock",
+      "breakpoints": true
     }
   ]
 }

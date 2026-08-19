@@ -16,6 +16,7 @@ import {
   listPublishedPosts,
   listRelatedPosts,
   publishPost,
+  setPostTranslationPublished,
   unpublishPost,
   updatePost,
 } from "./posts.functions"
@@ -104,7 +105,21 @@ export function useUpdatePostMutation() {
 export function usePublishPostMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => publishPost({ data: { id } }),
+    // locales = the publish dialog's checked languages; EN is implied.
+    mutationFn: (input: { id: string; locales: Locale[] }) =>
+      publishPost({ data: input }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: postKeys.all })
+    },
+  })
+}
+
+/** Late-French toggle: publish/withdraw the FR translation on its own. */
+export function useSetTranslationPublishedMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { id: string; locale: Locale; published: boolean }) =>
+      setPostTranslationPublished({ data: input }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: postKeys.all })
     },

@@ -12,6 +12,7 @@ function translation(locale: "en" | "fr", title: string): TranslationRow {
     title,
     excerpt: "",
     body: [],
+    published: true,
   }
 }
 

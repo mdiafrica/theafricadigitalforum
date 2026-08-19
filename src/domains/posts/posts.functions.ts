@@ -10,13 +10,13 @@ import { OrgRole } from "@/lib/auth/permissions"
 import {
   assertSlugAvailable,
   isBoardByline,
-  mapPublicListItem,
   pickTranslation,
-  resolveEditorialBoard,
-  selectPostCategories,
+  publishPostWithLocales,
   selectPublishedCategories,
+  selectPublishedPostBySlug,
   selectPublishedPosts,
   selectRelatedPosts,
+  setTranslationPublished,
   syncPostCategories,
   upsertTranslations,
 } from "./posts.internal"
@@ -28,6 +28,8 @@ import {
   listPublishedPostsInput,
   listRelatedPostsInput,
   postIdInput,
+  publishPostInput,
+  setTranslationPublishedInput,
   updatePostInput,
 } from "./posts.schemas"
 
@@ -87,16 +89,16 @@ export const updatePost = createServerFn({ method: "POST" })
 
 export const publishPost = createServerFn({ method: "POST" })
   .middleware([requireOrgPermission({ post: ["publish"] })])
-  .validator(postIdInput)
-  .handler(async ({ data }) => {
-    const [row] = await db
-      .update(schema.post)
-      .set({ status: "published", publishedAt: new Date() })
-      .where(eq(schema.post.id, data.id))
-      .returning()
-    if (!row) throw new Error("Post not found")
-    return { id: row.id, status: row.status }
-  })
+  .validator(publishPostInput)
+  .handler(({ data }) => publishPostWithLocales(data.id, data.locales))
+
+/** Late-French path (ADR-0003): toggle FR live/withdrawn on its own. */
+export const setPostTranslationPublished = createServerFn({ method: "POST" })
+  .middleware([requireOrgPermission({ post: ["publish"] })])
+  .validator(setTranslationPublishedInput)
+  .handler(({ data }) =>
+    setTranslationPublished(data.id, data.locale, data.published)
+  )
 
 export const unpublishPost = createServerFn({ method: "POST" })
   .middleware([requireOrgPermission({ post: ["publish"] })])
@@ -131,8 +133,10 @@ export const listPostsAdmin = createServerFn({ method: "GET" })
     const [rows, [{ total }]] = await Promise.all([
       db.query.post.findMany({
         with: {
-          // The list needs titles and locales, not the body JSONB.
-          translations: { columns: { locale: true, title: true } },
+          // The list needs titles and locale flags, not the body JSONB.
+          translations: {
+            columns: { locale: true, title: true, published: true },
+          },
           author: { columns: { name: true } },
         },
         orderBy: desc(schema.post.updatedAt),
@@ -150,7 +154,9 @@ export const listPostsAdmin = createServerFn({ method: "GET" })
           slug: row.slug,
           status: row.status,
           title: en?.title ?? "(untitled)",
-          locales: row.translations.map((t) => t.locale).sort(),
+          locales: row.translations
+            .map((t) => ({ locale: t.locale, published: t.published }))
+            .sort((a, b) => a.locale.localeCompare(b.locale)),
           authorName: row.author?.name ?? null,
           publishedAt: row.publishedAt,
           updatedAt: row.updatedAt,
@@ -256,65 +262,7 @@ export const listRelatedPosts = createServerFn({ method: "GET" })
 
 export const getPublishedPostBySlug = createServerFn({ method: "GET" })
   .validator(getPublishedPostInput)
-  .handler(async ({ data }) => {
-    const row = await db.query.post.findFirst({
-      where: and(
-        eq(schema.post.slug, data.slug),
-        eq(schema.post.status, "published")
-      ),
-      with: {
-        translations: true,
-        coverMedia: true,
-        author: { columns: { id: true, name: true, bio: true } },
-      },
-    })
-    if (!row) return null
-
-    const translation = pickTranslation(row.translations, data.locale)
-    if (!translation) return null
-
-    const [board, membership, categoriesByPost] = await Promise.all([
-      resolveEditorialBoard(data.locale),
-      row.author
-        ? db.query.member.findFirst({
-            where: eq(schema.member.userId, row.author.id),
-            columns: { role: true },
-          })
-        : null,
-      selectPostCategories([row.id], data.locale),
-    ])
-
-    // Byline rule (ADR-0001): board identity when the author is an
-    // admin/owner or missing; the member's own name + bio otherwise.
-    const usesBoardByline = isBoardByline(
-      row.author?.name ?? null,
-      membership?.role ?? null
-    )
-    const byline = usesBoardByline
-      ? { isBoard: true as const, name: board.name, bio: board.bio }
-      : {
-          isBoard: false as const,
-          name: row.author?.name as string,
-          bio: row.author?.bio ?? null,
-        }
-
-    const listItem = mapPublicListItem(
-      {
-        id: row.id,
-        slug: row.slug,
-        title: translation.title,
-        excerpt: translation.excerpt,
-        cover: row.coverMedia,
-        authorName: byline.name,
-        authorOrgRole: null,
-        publishedAt: row.publishedAt,
-        body: translation.body,
-        categories: categoriesByPost.get(row.id) ?? [],
-      },
-      board.name
-    )
-    return { ...listItem, body: translation.body, byline }
-  })
+  .handler(({ data }) => selectPublishedPostBySlug(data.slug, data.locale))
 
 export type PostAdminList = Awaited<ReturnType<typeof listPostsAdmin>>
 export type PostAdminDetail = Awaited<ReturnType<typeof getPostAdmin>>

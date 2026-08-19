@@ -8,10 +8,10 @@ import { useSessionQuery } from "@/domains/auth"
 import {
   useDeletePostMutation,
   usePostsAdminListQuery,
-  usePublishPostMutation,
   useUnpublishPostMutation,
-  type PostAdminList,
 } from "@/domains/posts"
+import type { PostAdminList } from "@/domains/posts"
+import { PublishPostDialog } from "./publish-post-dialog"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { PageHeader } from "@/components/admin/page-header"
 import { EmptyState, QueryError } from "@/components/admin/query-states"
@@ -61,9 +61,27 @@ function usePostColumns(canPublish: boolean, canDelete: boolean) {
         header: "Languages",
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {row.original.locales
-              .map((locale) => locale.toUpperCase())
-              .join(" · ")}
+            {row.original.locales.map((translation, index) => (
+              <React.Fragment key={translation.locale}>
+                {index > 0 && " · "}
+                <span
+                  className={
+                    row.original.status === "published" &&
+                    !translation.published
+                      ? "line-through opacity-50"
+                      : undefined
+                  }
+                  title={
+                    row.original.status === "published" &&
+                    !translation.published
+                      ? "Not published in this language"
+                      : undefined
+                  }
+                >
+                  {translation.locale.toUpperCase()}
+                </span>
+              </React.Fragment>
+            ))}
           </span>
         ),
       },
@@ -180,20 +198,12 @@ function PostActionsCell({
   canPublish: boolean
   canDelete: boolean
 }) {
-  const publishMutation = usePublishPostMutation()
   const unpublishMutation = useUnpublishPostMutation()
   const deleteMutation = useDeletePostMutation()
   const [confirmingDelete, setConfirmingDelete] = React.useState(false)
+  const [publishing, setPublishing] = React.useState(false)
 
   if (!canPublish && !canDelete) return null
-
-  const publish = () => {
-    publishMutation.mutate(post.id, {
-      onSuccess: () => toast.success("Post published."),
-      onError: (error) =>
-        toast.error(getErrorMessage(error, "Couldn't publish the post.")),
-    })
-  }
   const unpublish = () => {
     unpublishMutation.mutate(post.id, {
       onSuccess: () => toast.success("Post reverted to draft."),
@@ -221,7 +231,9 @@ function PostActionsCell({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {canPublish && post.status === "draft" && (
-            <DropdownMenuItem onClick={publish}>Publish</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setPublishing(true)}>
+              Publish
+            </DropdownMenuItem>
           )}
           {canPublish && post.status === "published" && (
             <DropdownMenuItem onClick={unpublish}>
@@ -247,6 +259,12 @@ function PostActionsCell({
         title="Delete this post?"
         description={`"${post.title}" and its translations will be permanently deleted.`}
         onConfirm={remove}
+      />
+      <PublishPostDialog
+        postId={post.id}
+        hasFr={post.locales.some((t) => t.locale === "fr")}
+        open={publishing}
+        onOpenChange={setPublishing}
       />
     </>
   )

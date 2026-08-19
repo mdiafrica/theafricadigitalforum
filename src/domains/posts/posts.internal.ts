@@ -174,7 +174,9 @@ export function mapPublicListItem(
   }
 }
 
-// COALESCE(requested, en) mirrors pickTranslation — EN always exists.
+// Language visibility (ADR-0003): a post is in a locale's lists only when a
+// PUBLISHED translation exists for that locale — the inner join is the rule.
+// No EN fallback here; visible rows always carry requested-locale text.
 async function queryPublishedListRows(opts: {
   locale: Locale
   categorySlug?: string
@@ -186,15 +188,10 @@ async function queryPublishedListRows(opts: {
   limit?: number
 }) {
   const req = alias(schema.postTranslation, "req_translation")
-  const en = alias(schema.postTranslation, "en_translation")
 
-  const title = sql<
-    TranslationRow["title"]
-  >`coalesce(${req.title}, ${en.title})`
-  const excerpt = sql<
-    TranslationRow["excerpt"]
-  >`coalesce(${req.excerpt}, ${en.excerpt})`
-  const body = sql<TranslationRow["body"]>`coalesce(${req.body}, ${en.body})`
+  const title = req.title
+  const excerpt = req.excerpt
+  const body = req.body
 
   const conditions = [eq(schema.post.status, "published")]
   if (opts.categorySlug) {
@@ -234,11 +231,14 @@ async function queryPublishedListRows(opts: {
       cover: schema.media,
     })
     .from(schema.post)
-    .leftJoin(
+    .innerJoin(
       req,
-      and(eq(req.postId, schema.post.id), eq(req.locale, opts.locale))
+      and(
+        eq(req.postId, schema.post.id),
+        eq(req.locale, opts.locale),
+        eq(req.published, true)
+      )
     )
-    .leftJoin(en, and(eq(en.postId, schema.post.id), eq(en.locale, "en")))
     .leftJoin(schema.media, eq(schema.media.id, schema.post.coverMediaId))
     .leftJoin(schema.user, eq(schema.user.id, schema.post.authorId))
     .leftJoin(schema.member, eq(schema.member.userId, schema.post.authorId))
@@ -314,7 +314,13 @@ export async function selectRelatedPosts(opts: {
   }
 }
 
-/** Categories that currently have published posts (for public filters). */
+/**
+ * Categories that currently have posts VISIBLE in the locale (for public
+ * filters) — a category whose only posts are EN-only is omitted from the FR
+ * filter bar, matching the list it filters. Category names themselves still
+ * fall back to EN (categories are navigation labels, never hidden per
+ * ADR-0003).
+ */
 export async function selectPublishedCategories(
   locale: Locale
 ): Promise<PostCategoryRef[]> {
@@ -338,7 +344,8 @@ export async function selectPublishedCategories(
       schema.post,
       and(
         eq(schema.post.id, schema.postCategory.postId),
-        eq(schema.post.status, "published")
+        eq(schema.post.status, "published"),
+        sql`exists (select 1 from ${schema.postTranslation} pt where pt.post_id = ${schema.post.id} and pt.locale = ${locale} and pt.published)`
       )
     )
     .leftJoin(
@@ -353,6 +360,141 @@ export async function selectPublishedCategories(
     .orderBy(asc(name))
 
   return rows
+}
+
+/**
+ * Publish a post (ADR-0003): the article status flips to published, EN goes
+ * live unconditionally (source language), and every other existing
+ * translation goes live iff its locale was chosen in the publish dialog —
+ * including flipping OFF an FR row the editor unchecked.
+ */
+export async function publishPostWithLocales(
+  postId: string,
+  locales: Locale[]
+): Promise<{ id: string; status: schema.PostStatus }> {
+  const live = new Set<Locale>(["en", ...locales])
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(schema.post)
+      .set({ status: "published", publishedAt: new Date() })
+      .where(eq(schema.post.id, postId))
+      .returning()
+    if (!row) throw new Error("Post not found")
+
+    await tx
+      .update(schema.postTranslation)
+      .set({
+        published: sql<boolean>`${inArray(schema.postTranslation.locale, [
+          ...live,
+        ])}`,
+      })
+      .where(eq(schema.postTranslation.postId, postId))
+
+    return { id: row.id, status: row.status }
+  })
+}
+
+/**
+ * Toggle the FR translation's publish flag on its own — the late-French
+ * path: FR written after the article went live, or FR withdrawn while EN
+ * stays up. EN is the source language and can never be toggled.
+ */
+export async function setTranslationPublished(
+  postId: string,
+  locale: Locale,
+  published: boolean
+): Promise<{ id: string; locale: Locale; published: boolean }> {
+  if (locale === "en") {
+    throw new Error("English is the source language and is always published")
+  }
+  const [row] = await db
+    .update(schema.postTranslation)
+    .set({ published })
+    .where(
+      and(
+        eq(schema.postTranslation.postId, postId),
+        eq(schema.postTranslation.locale, locale)
+      )
+    )
+    .returning({ id: schema.postTranslation.id })
+  if (!row) throw new Error("No French translation exists for this post")
+  return { id: postId, locale, published }
+}
+
+/**
+ * Public article page. Direct links always resolve (list-invisibility only,
+ * ADR-0003): the requested locale is served when its translation is
+ * published, otherwise the page falls back to EN — never to an unpublished
+ * draft translation.
+ */
+export async function selectPublishedPostBySlug(slug: string, locale: Locale) {
+  const row = await db.query.post.findFirst({
+    where: and(eq(schema.post.slug, slug), eq(schema.post.status, "published")),
+    with: {
+      translations: true,
+      coverMedia: true,
+      author: { columns: { id: true, name: true, bio: true } },
+    },
+  })
+  if (!row) return null
+
+  const translation = pickTranslation(
+    row.translations.filter((t) => t.published),
+    locale
+  )
+  if (!translation) return null
+
+  const [board, membership, categoriesByPost] = await Promise.all([
+    resolveEditorialBoard(locale),
+    row.author
+      ? db.query.member.findFirst({
+          where: eq(schema.member.userId, row.author.id),
+          columns: { role: true },
+        })
+      : null,
+    selectPostCategories([row.id], locale),
+  ])
+
+  // Byline rule (ADR-0001): board identity when the author is an
+  // admin/owner or missing; the member's own name + bio otherwise.
+  const usesBoardByline = isBoardByline(
+    row.author?.name ?? null,
+    membership?.role ?? null
+  )
+  const byline = usesBoardByline
+    ? { isBoard: true as const, name: board.name, bio: board.bio }
+    : {
+        isBoard: false as const,
+        name: row.author?.name as string,
+        bio: row.author?.bio ?? null,
+      }
+
+  const listItem = mapPublicListItem(
+    {
+      id: row.id,
+      slug: row.slug,
+      title: translation.title,
+      excerpt: translation.excerpt,
+      cover: row.coverMedia,
+      authorName: byline.name,
+      authorOrgRole: null,
+      publishedAt: row.publishedAt,
+      body: translation.body,
+      categories: categoriesByPost.get(row.id) ?? [],
+    },
+    board.name
+  )
+  return {
+    ...listItem,
+    body: translation.body,
+    byline,
+    /** Locale the served text is actually in (EN when falling back). */
+    servedLocale: translation.locale,
+    /** Drives hreflang: alternates only exist when FR is actually live. */
+    hasPublishedFr: row.translations.some(
+      (t) => t.locale === "fr" && t.published
+    ),
+  }
 }
 
 export async function assertSlugAvailable(slug: string, excludeId?: string) {

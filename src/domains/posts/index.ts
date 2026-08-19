@@ -9,6 +9,7 @@ export {
   listPublishedPosts,
   listRelatedPosts,
   publishPost,
+  setPostTranslationPublished,
   unpublishPost,
   updatePost,
   type AssignableAuthor,
@@ -34,6 +35,7 @@ export {
   usePostAdminDetailQuery,
   usePostsAdminListQuery,
   usePublishPostMutation,
+  useSetTranslationPublishedMutation,
   useUnpublishPostMutation,
   useUpdatePostMutation,
 } from "./posts.queries"
