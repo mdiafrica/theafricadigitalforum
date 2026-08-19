@@ -54,24 +54,6 @@ function WorldIcon() {
   )
 }
 
-function CloseIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  )
-}
-
 function HomeIcon() {
   return (
     <svg
@@ -243,19 +225,13 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent
             side="right"
-            // The Menu header row carries its own styled close button.
-            showCloseButton={false}
             className="w-[85%] max-w-sm border-white/10 bg-black/95 backdrop-blur-xl sm:w-80"
           >
             <div className="mt-8 flex flex-col gap-2 px-4">
-              {/* Header with close button */}
-              <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="mb-4 flex items-center border-b border-white/10 pb-4">
                 <span className="text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
                   Menu
                 </span>
-                <SheetClose className="rounded-full p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
-                  <CloseIcon />
-                </SheetClose>
               </div>
 
               {NAV_ITEMS.map((item) => {
