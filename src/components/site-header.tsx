@@ -269,9 +269,7 @@ export function SiteHeader() {
                         className={`group relative flex items-center gap-4 rounded-xl px-5 py-4 text-[15px] font-medium tracking-[0.12em] text-white/80 uppercase transition-all duration-300 ease-out hover:bg-white/10 hover:pl-7 hover:text-white data-[status=active]:bg-gradient-to-r data-[status=active]:from-primary/20 data-[status=active]:to-transparent data-[status=active]:font-bold data-[status=active]:text-white data-[status=active]:shadow-[inset_0_1px_0_rgba(124,58,237,0.3)]`}
                       >
                         {/* Active indicator dot */}
-                        <span
-                          className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-primary to-[#a066f5] transition-all duration-300 ${item.to === window.location.pathname ? "scale-100 opacity-100" : "scale-50 opacity-0"} group-hover:scale-100 group-hover:opacity-40`}
-                        />
+                        <span className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 scale-50 rounded-r-full bg-gradient-to-b from-primary to-[#a066f5] opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-40 group-data-[status=active]:scale-100 group-data-[status=active]:opacity-100" />
 
                         {/* Icon */}
                         <span className="text-primary/60 transition-colors group-hover:text-primary/80 group-data-[status=active]/nav:text-primary">
@@ -282,9 +280,7 @@ export function SiteHeader() {
                         <span className="flex-1">{item.label()}</span>
 
                         {/* Arrow indicator */}
-                        <span
-                          className={`text-xs transition-all duration-300 ${item.to === window.location.pathname ? "translate-x-0 text-primary opacity-100" : "-translate-x-2 opacity-0"} group-hover:translate-x-0 group-hover:opacity-100`}
-                        >
+                        <span className="-translate-x-2 text-xs opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-data-[status=active]:translate-x-0 group-data-[status=active]:text-primary group-data-[status=active]:opacity-100">
                           →
                         </span>
                       </Link>

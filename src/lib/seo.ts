@@ -36,11 +36,15 @@ export function hreflangAlternates(path: string) {
   ]
 }
 
-/** hreflang <link> objects for a page that exists in both languages. */
+/**
+ * hreflang <link> objects for a page that exists in both languages. React
+ * casing (hrefLang) — these render through HeadContent as React elements;
+ * the sitemap's XML builder uses the lowercase attribute directly.
+ */
 export function hreflangLinks(path: string) {
   return hreflangAlternates(path).map((alt) => ({
     rel: "alternate",
-    hreflang: alt.hreflang,
+    hrefLang: alt.hreflang,
     href: absoluteUrl(alt.path),
   }))
 }
