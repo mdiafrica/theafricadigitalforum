@@ -243,9 +243,11 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent
             side="right"
+            // The Menu header row carries its own styled close button.
+            showCloseButton={false}
             className="w-[85%] max-w-sm border-white/10 bg-black/95 backdrop-blur-xl sm:w-80"
           >
-            <div className="mt-8 flex flex-col gap-2">
+            <div className="mt-8 flex flex-col gap-2 px-4">
               {/* Header with close button */}
               <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
                 <span className="text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
