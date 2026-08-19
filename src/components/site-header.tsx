@@ -17,8 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import Logo from "@/assets/images/Logo.png"
-
-type Locale = (typeof locales)[number]
+import type { Locale } from "@/lib/schemas"
 
 /** Route path paired with its nav label message. */
 const NAV_ITEMS = [

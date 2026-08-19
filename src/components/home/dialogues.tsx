@@ -8,9 +8,8 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { m } from "@/paraglide/messages"
 import { getLocale } from "@/paraglide/runtime"
-import { usePageSection } from "@/domains/page-content"
+import { homeDialoguesDefaults, usePageSection } from "@/domains/page-content"
 
 const ICONS: LucideIcon[] = [
   Crown,
@@ -22,37 +21,12 @@ const ICONS: LucideIcon[] = [
 ]
 
 export function Dialogues() {
-  const section = usePageSection("home", "dialogues", getLocale(), {
-    label: m.home_dialogues_label(),
-    title: m.home_dialogues_title(),
-    subtitle: m.home_dialogues_subtitle(),
-    items: [
-      {
-        title: m.home_dialogues_presidential_title(),
-        text: m.home_dialogues_presidential_text(),
-      },
-      {
-        title: m.home_dialogues_ministerial_title(),
-        text: m.home_dialogues_ministerial_text(),
-      },
-      {
-        title: m.home_dialogues_practitioners_title(),
-        text: m.home_dialogues_practitioners_text(),
-      },
-      {
-        title: m.home_dialogues_startup_investor_title(),
-        text: m.home_dialogues_startup_investor_text(),
-      },
-      {
-        title: m.home_dialogues_ai_summit_title(),
-        text: m.home_dialogues_ai_summit_text(),
-      },
-      {
-        title: m.home_dialogues_awards_gala_title(),
-        text: m.home_dialogues_awards_gala_text(),
-      },
-    ],
-  })
+  const section = usePageSection(
+    "home",
+    "dialogues",
+    getLocale(),
+    homeDialoguesDefaults()
+  )
 
   return (
     <section className="border-y border-[#ede9fe] bg-[#f5f5f5] px-[5%] py-20 font-nav">

@@ -8,9 +8,8 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { m } from "@/paraglide/messages"
 import { getLocale } from "@/paraglide/runtime"
-import { usePageSection } from "@/domains/page-content"
+import { homeStatsDefaults, usePageSection } from "@/domains/page-content"
 import { useCountUp, useInView } from "@/components/motion"
 
 const STAT_ICONS: LucideIcon[] = [
@@ -22,30 +21,13 @@ const STAT_ICONS: LucideIcon[] = [
   TrendingUp,
 ]
 
-const STAT_DEFAULTS = [
-  { value: 3000, suffix: "+" },
-  { value: 50, suffix: "+" },
-  { value: 150, suffix: "+" },
-  { value: 200, suffix: "+" },
-  { value: 100, suffix: "+" },
-  { value: 50, suffix: "+" },
-]
-
 export function Stats() {
-  const statLabels = [
-    m.home_stats_participants_label(),
-    m.home_stats_countries_label(),
-    m.home_stats_speakers_label(),
-    m.home_stats_startups_label(),
-    m.home_stats_partners_label(),
-    m.home_stats_investors_label(),
-  ]
-  const section = usePageSection("home", "stats", getLocale(), {
-    items: STAT_DEFAULTS.map((stat, i) => ({
-      ...stat,
-      label: statLabels[i] ?? "",
-    })),
-  })
+  const section = usePageSection(
+    "home",
+    "stats",
+    getLocale(),
+    homeStatsDefaults()
+  )
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.2 })
 
   return (

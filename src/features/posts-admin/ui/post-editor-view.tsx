@@ -77,11 +77,13 @@ export function PostEditView({ id }: { id: string }) {
       {
         onSuccess: () =>
           toast.success(
-            published ? "French version published." : "French version hidden."
+            published
+              ? "French translation published."
+              : "French translation hidden."
           ),
         onError: (error) =>
           toast.error(
-            getErrorMessage(error, "Couldn't update the French version.")
+            getErrorMessage(error, "Couldn't update the French translation.")
           ),
       }
     )

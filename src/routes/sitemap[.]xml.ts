@@ -3,7 +3,7 @@ import { and, desc, eq } from "drizzle-orm"
 
 import { db } from "@/server/db"
 import * as schema from "@/server/db/schema"
-import { SITE_URL } from "@/lib/seo"
+import { SITE_URL, hreflangAlternates, localePath } from "@/lib/seo"
 
 const STATIC_PATHS = [
   "/",
@@ -15,12 +15,6 @@ const STATIC_PATHS = [
   "/privacy",
   "/terms",
 ]
-
-/**
- * English lives on bare paths, French under /fr/ (ADR-0002). "/" maps to
- * "/fr/" (with slash) — that's the URL the middleware canonicalizes to.
- */
-const frPath = (path: string) => `/fr${path}`
 
 type Alternate = { hreflang: string; path: string }
 
@@ -44,14 +38,10 @@ function urlEntry(
 
 /** Both locale URLs, each carrying the full alternate set (per Google). */
 function bilingualEntries(path: string, lastmod?: Date | null) {
-  const alternates: Alternate[] = [
-    { hreflang: "en", path },
-    { hreflang: "fr", path: frPath(path) },
-    { hreflang: "x-default", path },
-  ]
+  const alternates = hreflangAlternates(path)
   return [
     urlEntry(path, { lastmod, alternates }),
-    urlEntry(frPath(path), { lastmod, alternates }),
+    urlEntry(localePath(path, "fr"), { lastmod, alternates }),
   ]
 }
 

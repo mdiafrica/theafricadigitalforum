@@ -2,10 +2,12 @@ import * as React from "react"
 import { toast } from "sonner"
 
 import {
+  homeDialoguesDefaults,
+  homeHeroDefaults,
+  homeStatsDefaults,
   usePageContentAdminQuery,
   useSavePageContentMutation,
 } from "@/domains/page-content"
-import { m } from "@/paraglide/messages"
 import { EDITORIAL_BOARD_DEFAULTS } from "@/lib/editorial-board"
 import { PageHeader } from "@/components/admin/page-header"
 import { ListSkeleton, QueryError } from "@/components/admin/query-states"
@@ -17,80 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getErrorMessage } from "@/lib/error"
 import { JsonSectionForm } from "./json-section-form"
 import type { JsonObject } from "./json-section-form"
-
-/** The message defaults below need a pinned locale, not the ambient one. */
-type AdminLocale = "en" | "fr"
-
-const heroDefaults = (locale: AdminLocale): JsonObject => ({
-  date: m.home_hero_date({}, { locale }),
-  title: m.home_hero_title({}, { locale }),
-  tagline: m.home_hero_tagline({}, { locale }),
-  button: m.home_hero_button({}, { locale }),
-  slides: [
-    {
-      title: m.home_hero_slide_beautiful_lome_title({}, { locale }),
-      location: m.home_hero_slide_beautiful_lome_location({}, { locale }),
-    },
-    {
-      title: m.home_hero_slide_cultural_heritage_title({}, { locale }),
-      location: m.home_hero_slide_cultural_heritage_location({}, { locale }),
-    },
-    {
-      title: m.home_hero_slide_modern_lome_title({}, { locale }),
-      location: m.home_hero_slide_modern_lome_location({}, { locale }),
-    },
-  ],
-})
-
-const statsDefaults = (locale: AdminLocale): JsonObject => {
-  const labels = [
-    m.home_stats_participants_label({}, { locale }),
-    m.home_stats_countries_label({}, { locale }),
-    m.home_stats_speakers_label({}, { locale }),
-    m.home_stats_startups_label({}, { locale }),
-    m.home_stats_partners_label({}, { locale }),
-    m.home_stats_investors_label({}, { locale }),
-  ]
-  return {
-    items: [1000, 50, 150, 200, 100, 50].map((value, i) => ({
-      value,
-      suffix: "+",
-      label: labels[i] ?? "",
-    })),
-  }
-}
-
-const dialoguesDefaults = (locale: AdminLocale): JsonObject => ({
-  label: m.home_dialogues_label({}, { locale }),
-  title: m.home_dialogues_title({}, { locale }),
-  subtitle: m.home_dialogues_subtitle({}, { locale }),
-  items: [
-    {
-      title: m.home_dialogues_presidential_title({}, { locale }),
-      text: m.home_dialogues_presidential_text({}, { locale }),
-    },
-    {
-      title: m.home_dialogues_ministerial_title({}, { locale }),
-      text: m.home_dialogues_ministerial_text({}, { locale }),
-    },
-    {
-      title: m.home_dialogues_practitioners_title({}, { locale }),
-      text: m.home_dialogues_practitioners_text({}, { locale }),
-    },
-    {
-      title: m.home_dialogues_startup_investor_title({}, { locale }),
-      text: m.home_dialogues_startup_investor_text({}, { locale }),
-    },
-    {
-      title: m.home_dialogues_ai_summit_title({}, { locale }),
-      text: m.home_dialogues_ai_summit_text({}, { locale }),
-    },
-    {
-      title: m.home_dialogues_awards_gala_title({}, { locale }),
-      text: m.home_dialogues_awards_gala_text({}, { locale }),
-    },
-  ],
-})
 
 /**
  * Sections editable per page, with their built-in message defaults as the
@@ -109,17 +37,20 @@ const PAGE_SECTIONS: Record<
     {
       section: "hero",
       title: "Hero",
-      defaults: { en: heroDefaults("en"), fr: heroDefaults("fr") },
+      defaults: { en: homeHeroDefaults("en"), fr: homeHeroDefaults("fr") },
     },
     {
       section: "stats",
       title: "Stats",
-      defaults: { en: statsDefaults("en"), fr: statsDefaults("fr") },
+      defaults: { en: homeStatsDefaults("en"), fr: homeStatsDefaults("fr") },
     },
     {
       section: "dialogues",
       title: "High-level dialogues",
-      defaults: { en: dialoguesDefaults("en"), fr: dialoguesDefaults("fr") },
+      defaults: {
+        en: homeDialoguesDefaults("en"),
+        fr: homeDialoguesDefaults("fr"),
+      },
     },
   ],
   site: [

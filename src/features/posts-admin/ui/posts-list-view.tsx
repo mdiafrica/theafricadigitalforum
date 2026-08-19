@@ -61,27 +61,23 @@ function usePostColumns(canPublish: boolean, canDelete: boolean) {
         header: "Languages",
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {row.original.locales.map((translation, index) => (
-              <React.Fragment key={translation.locale}>
-                {index > 0 && " · "}
-                <span
-                  className={
-                    row.original.status === "published" &&
-                    !translation.published
-                      ? "line-through opacity-50"
-                      : undefined
-                  }
-                  title={
-                    row.original.status === "published" &&
-                    !translation.published
-                      ? "Not published in this language"
-                      : undefined
-                  }
-                >
-                  {translation.locale.toUpperCase()}
-                </span>
-              </React.Fragment>
-            ))}
+            {row.original.locales.map((translation, index) => {
+              const isHidden =
+                row.original.status === "published" && !translation.published
+              return (
+                <React.Fragment key={translation.locale}>
+                  {index > 0 && " · "}
+                  <span
+                    className={isHidden ? "line-through opacity-50" : undefined}
+                    title={
+                      isHidden ? "Not published in this language" : undefined
+                    }
+                  >
+                    {translation.locale.toUpperCase()}
+                  </span>
+                </React.Fragment>
+              )
+            })}
           </span>
         ),
       },

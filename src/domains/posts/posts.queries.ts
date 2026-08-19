@@ -24,6 +24,8 @@ import type { Locale } from "@/lib/schemas"
 import type {
   CreatePostInput,
   ListPostsAdminInput,
+  PublishPostInput,
+  SetTranslationPublishedInput,
   UpdatePostInput,
 } from "./posts.schemas"
 
@@ -106,8 +108,7 @@ export function usePublishPostMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     // locales = the publish dialog's checked languages; EN is implied.
-    mutationFn: (input: { id: string; locales: Locale[] }) =>
-      publishPost({ data: input }),
+    mutationFn: (input: PublishPostInput) => publishPost({ data: input }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: postKeys.all })
     },
@@ -118,7 +119,7 @@ export function usePublishPostMutation() {
 export function useSetTranslationPublishedMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: { id: string; locale: Locale; published: boolean }) =>
+    mutationFn: (input: SetTranslationPublishedInput) =>
       setPostTranslationPublished({ data: input }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: postKeys.all })

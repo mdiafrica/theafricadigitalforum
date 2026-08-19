@@ -1,4 +1,5 @@
 import { env } from "@/env"
+import type { Locale } from "@/lib/schemas"
 
 export const SITE_NAME = "Africa Digital Forum"
 export const SITE_URL = env.VITE_PUBLIC_SITE_URL.replace(/\/$/, "")
@@ -8,33 +9,40 @@ export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`
 }
 
-type SiteLocale = "en" | "fr"
-
 /**
  * English lives on bare paths, French under /fr/ (ADR-0002). The FR home is
  * "/fr/" (with slash) — the paraglide middleware 307s "/fr" to it.
  */
-export function localePath(path: string, locale: SiteLocale): string {
+export function localePath(path: string, locale: Locale): string {
   if (locale === "en") return path
   return `/fr${path}`
 }
 
-const OG_LOCALES: Record<SiteLocale, string> = {
+const OG_LOCALES: Record<Locale, string> = {
   en: "en_US",
   fr: "fr_FR",
 }
 
-/** hreflang alternates for a page that exists in both languages. */
-export function hreflangLinks(path: string) {
+/**
+ * The alternate-language URL set for a page that exists in both languages —
+ * shared by <head> hreflang links and the sitemap's xhtml:link entries so
+ * they can't drift.
+ */
+export function hreflangAlternates(path: string) {
   return [
-    { rel: "alternate", hreflang: "en", href: absoluteUrl(path) },
-    {
-      rel: "alternate",
-      hreflang: "fr",
-      href: absoluteUrl(localePath(path, "fr")),
-    },
-    { rel: "alternate", hreflang: "x-default", href: absoluteUrl(path) },
+    { hreflang: "en", path },
+    { hreflang: "fr", path: localePath(path, "fr") },
+    { hreflang: "x-default", path },
   ]
+}
+
+/** hreflang <link> objects for a page that exists in both languages. */
+export function hreflangLinks(path: string) {
+  return hreflangAlternates(path).map((alt) => ({
+    rel: "alternate",
+    hreflang: alt.hreflang,
+    href: absoluteUrl(alt.path),
+  }))
 }
 
 /**
@@ -49,7 +57,6 @@ export function pageHead({
   type = "website",
   locale,
   alternates,
-  canonicalPath,
 }: {
   title: string
   description: string
@@ -58,21 +65,18 @@ export function pageHead({
   /** Absolute or site-relative image URL for og/twitter cards. */
   image?: string | null
   type?: "website" | "article"
-  /** Locale the page is served in — localizes canonical/og:url + og:locale. */
-  locale?: SiteLocale
+  /**
+   * Locale of the CONTENT being served — localizes canonical/og:url and sets
+   * og:locale. The FR article page serving the EN fallback body passes "en",
+   * which canonicalizes it to the EN URL (ADR-0003).
+   */
+  locale?: Locale
   /** Emit hreflang links — pass true only when both language pages exist. */
   alternates?: boolean
-  /**
-   * Canonical override (unlocalized). Used by the FR article page serving the
-   * EN fallback body: its canonical is the EN URL, not /fr/….
-   */
-  canonicalPath?: string
 }) {
   const servedPath =
     path !== undefined ? localePath(path, locale ?? "en") : undefined
   const url = servedPath !== undefined ? absoluteUrl(servedPath) : undefined
-  const canonicalUrl =
-    canonicalPath !== undefined ? absoluteUrl(canonicalPath) : url
   const imageUrl = image ? absoluteUrl(image) : undefined
 
   return {
@@ -93,7 +97,7 @@ export function pageHead({
       ...(imageUrl ? [{ name: "twitter:image", content: imageUrl }] : []),
     ],
     links: [
-      ...(canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : []),
+      ...(url ? [{ rel: "canonical", href: url }] : []),
       ...(alternates && path !== undefined ? hreflangLinks(path) : []),
     ],
   }

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link } from "@tanstack/react-router"
 
-import { m } from "@/paraglide/messages"
 import { getLocale } from "@/paraglide/runtime"
-import { usePageSection } from "@/domains/page-content"
+import { homeHeroDefaults, usePageSection } from "@/domains/page-content"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import slide1 from "@/assets/images/Image2.jpg"
@@ -13,26 +12,7 @@ import slide3 from "@/assets/images/Image6.jpg"
 const SLIDE_IMAGES = [slide1, slide2, slide3]
 
 export function Hero() {
-  const hero = usePageSection("home", "hero", getLocale(), {
-    date: m.home_hero_date(),
-    title: m.home_hero_title(),
-    tagline: m.home_hero_tagline(),
-    button: m.home_hero_button(),
-    slides: [
-      {
-        title: m.home_hero_slide_beautiful_lome_title(),
-        location: m.home_hero_slide_beautiful_lome_location(),
-      },
-      {
-        title: m.home_hero_slide_cultural_heritage_title(),
-        location: m.home_hero_slide_cultural_heritage_location(),
-      },
-      {
-        title: m.home_hero_slide_modern_lome_title(),
-        location: m.home_hero_slide_modern_lome_location(),
-      },
-    ],
-  })
+  const hero = usePageSection("home", "hero", getLocale(), homeHeroDefaults())
   const [index, setIndex] = useState(0)
   const [loaded, setLoaded] = useState(false)
 

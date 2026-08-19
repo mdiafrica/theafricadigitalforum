@@ -37,11 +37,14 @@ export const Route = createFileRoute("/_public/blog/$slug")({
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) return {}
-    const locale = getLocale()
     const path = `/blog/${params.slug}`
     // The FR URL serving the EN fallback body is a duplicate of the EN page:
-    // canonicalize it to the bare URL and claim no FR alternate (ADR-0003).
-    const isFallback = locale === "fr" && loaderData.servedLocale === "en"
+    // describe the CONTENT locale, which canonicalizes it to the bare URL,
+    // sets og:locale en_US, and claims no FR alternate (ADR-0003).
+    const contentLocale =
+      getLocale() === "fr" && loaderData.servedLocale === "en"
+        ? "en"
+        : getLocale()
     return {
       ...pageHead({
         title: `${loaderData.title} | Africa Digital Forum`,
@@ -49,9 +52,8 @@ export const Route = createFileRoute("/_public/blog/$slug")({
         path,
         image: loaderData.coverUrl,
         type: "article",
-        locale,
+        locale: contentLocale,
         alternates: loaderData.hasPublishedFr,
-        ...(isFallback ? { canonicalPath: path } : {}),
       }),
       scripts: [
         {
@@ -77,9 +79,7 @@ export const Route = createFileRoute("/_public/blog/$slug")({
                   datePublished: new Date(loaderData.publishedAt).toISOString(),
                 }
               : {}),
-            mainEntityOfPage: absoluteUrl(
-              localePath(path, isFallback ? "en" : locale)
-            ),
+            mainEntityOfPage: absoluteUrl(localePath(path, contentLocale)),
           }),
         },
       ],
@@ -206,6 +206,9 @@ function ArticleRoute() {
             )}
 
             <div
+              // The body can be the EN fallback on a French page (ADR-0003);
+              // mark the mixed-language region for assistive tech + search.
+              lang={post.servedLocale}
               style={
                 {
                   "--foreground": "#1a1a1a",

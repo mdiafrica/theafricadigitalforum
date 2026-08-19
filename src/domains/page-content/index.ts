@@ -14,6 +14,11 @@ export {
   useSavePageContentMutation,
 } from "./page-content.queries"
 export {
+  homeDialoguesDefaults,
+  homeHeroDefaults,
+  homeStatsDefaults,
+} from "./section-defaults"
+export {
   getPageContentInput,
   listPageContentAdminInput,
   savePageContentInput,
