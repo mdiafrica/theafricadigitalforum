@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
-import { Link } from "@tanstack/react-router"
 
+import { m } from "@/paraglide/messages"
 import { getLocale } from "@/paraglide/runtime"
 import { homeHeroDefaults, usePageSection } from "@/domains/page-content"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { PreregisterFormDialog } from "@/components/preregister-form-dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import slide1 from "@/assets/images/Image2.jpg"
 import slide2 from "@/assets/images/Image5.jpg"
 import slide3 from "@/assets/images/Image6.jpg"
@@ -115,12 +117,16 @@ export function Hero() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3.5">
-          <Button
-            render={<Link to="/why-adf" />}
-            className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]"
-          >
-            {hero.button}
-          </Button>
+          <Dialog>
+            <DialogTrigger
+              render={
+                <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
+              }
+            >
+              {m.preregister_button()}
+            </DialogTrigger>
+            <PreregisterFormDialog />
+          </Dialog>
         </div>
       </div>
 

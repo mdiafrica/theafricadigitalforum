@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,6 +18,8 @@ import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { PreregisterFormDialog } from "@/components/preregister-form-dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import heroBg from "@/assets/images/Image6.jpg"
 import promoBg from "@/assets/images/image9.jpg"
 import ctaBg from "@/assets/images/Image5.jpg"
@@ -199,12 +201,16 @@ function HostCityRoute() {
             </h3>
             <p className="text-sm text-white/65">{m.city_promo_subtitle()}</p>
           </div>
-          <Button
-            render={<Link to="/why-adf" />}
-            className="relative h-auto shrink-0 rounded bg-white px-8 py-3 text-sm font-bold whitespace-nowrap text-background hover:bg-ink/10"
-          >
-            {m.city_promo_button()}
-          </Button>
+          <Dialog>
+            <DialogTrigger
+              render={
+                <Button className="relative h-auto shrink-0 rounded bg-primary px-8 py-3 text-sm font-bold whitespace-nowrap text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-background hover:shadow-[0_8px_24px_rgba(124,58,237,0.4)] dark:hover:bg-white dark:hover:text-background" />
+              }
+            >
+              {m.preregister_button()}
+            </DialogTrigger>
+              <PreregisterFormDialog />
+          </Dialog>
         </div>
       </Reveal>
 
@@ -267,12 +273,16 @@ function HostCityRoute() {
             <p className="mb-8 text-base text-white/[0.72]">
               {m.city_cta_subtitle()}
             </p>
-            <Button
-              render={<Link to="/contact" />}
-              className="h-auto rounded bg-white px-10 py-3.5 text-[15px] font-bold text-background hover:bg-ink/10"
-            >
-              {m.city_cta_button()}
-            </Button>
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <Button className="h-auto rounded bg-primary px-10 py-3.5 text-[15px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-background hover:shadow-[0_8px_24px_rgba(124,58,237,0.4)] dark:hover:bg-white dark:hover:text-background" />
+                }
+              >
+                {m.preregister_button()}
+              </DialogTrigger>
+              <PreregisterFormDialog />
+            </Dialog>
           </div>
         </div>
       </Reveal>
