@@ -19,7 +19,7 @@
     "db:seed": "tsx --env-file=.env src/server/scripts/seed-admin.ts",
     "db:seed:speakers": "tsx --env-file=.env src/server/scripts/seed-speakers.ts",
     "start": "node .output/server/index.mjs",
-    "ship": "./deploy/ship.sh"
+    "ship": "node ./deploy/ship.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1080.0",
