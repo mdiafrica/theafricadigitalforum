@@ -25,11 +25,11 @@ const TEAM_LOCATIONS = ["Togo / Senegal", "Ghana / Rwanda"]
 const TEAM_SOCIALS = [
   {
     linkedin: "https://linkedin.com/in/marcaboflan",
-    email: "marc@africadigitalforum.com",
+    email: "marc@theafricadigitalforum.com",
   },
   {
     linkedin: "https://www.linkedin.com/in/ecgyetuah/",
-    email: "clifford@africadigitalforum.com",
+    email: "clifford@theafricadigitalforum.com",
   },
 ]
 
