@@ -7,7 +7,9 @@ import {
 
 import {
   deleteContactSubmission,
+  forwardContactSubmission,
   listContactSubmissions,
+  listSubmissionRecipients,
   listNewsletterSubscribers,
   replyToContactSubmission,
 } from "./submissions.functions"
@@ -50,6 +52,24 @@ export function useReplyToContactSubmissionMutation() {
   return useMutation({
     mutationFn: (input: { id: string; message: string }) =>
       replyToContactSubmission({ data: input }),
+  })
+}
+
+export const submissionRecipientsQueryOptions = () =>
+  queryOptions({
+    queryKey: [...submissionKeys.all, "recipients"] as const,
+    queryFn: () => listSubmissionRecipients(),
+    staleTime: 60_000,
+  })
+
+export function useSubmissionRecipientsQuery() {
+  return useQuery(submissionRecipientsQueryOptions())
+}
+
+export function useForwardContactSubmissionMutation() {
+  return useMutation({
+    mutationFn: (input: { id: string; recipients: string[]; note: string }) =>
+      forwardContactSubmission({ data: input }),
   })
 }
 

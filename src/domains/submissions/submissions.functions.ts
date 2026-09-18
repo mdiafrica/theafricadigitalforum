@@ -7,6 +7,7 @@ import * as schema from "@/server/db/schema"
 import { sendEmail } from "@/server/email"
 import {
   contactInput,
+  forwardSubmissionInput,
   listSubmissionsInput,
   newsletterInput,
   replySubmissionInput,
@@ -116,6 +117,38 @@ export const replyToContactSubmission = createServerFn({ method: "POST" })
       message: data.message,
     })
 
+    return { ok: true as const }
+  })
+
+export const listSubmissionRecipients = createServerFn({ method: "GET" })
+  .middleware([requireOrgPermission({ submission: ["read"] })])
+  .handler(async () => {
+    const members = await db.query.member.findMany({
+      with: { user: { columns: { name: true, email: true } } },
+    })
+    return members.map(({ user }) => ({ name: user.name, email: user.email }))
+  })
+
+export const forwardContactSubmission = createServerFn({ method: "POST" })
+  .middleware([requireOrgPermission({ submission: ["update"] })])
+  .validator(forwardSubmissionInput)
+  .handler(async ({ data }) => {
+    const submission = await db.query.contactSubmission.findFirst({
+      where: eq(schema.contactSubmission.id, data.id),
+    })
+    if (!submission) throw new Error("Contact enquiry not found")
+
+    await Promise.all(
+      data.recipients.map((to) =>
+        sendEmail("contact-forward", to, {
+          name: submission.name,
+          email: submission.email,
+          subject: submission.subject,
+          originalMessage: submission.message,
+          note: data.note,
+        })
+      )
+    )
     return { ok: true as const }
   })
 

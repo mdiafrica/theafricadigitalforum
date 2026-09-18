@@ -1,13 +1,21 @@
 import * as React from "react"
 import type { ColumnDef, PaginationState } from "@tanstack/react-table"
-import { InboxIcon, MailIcon, ReplyIcon, Trash2Icon } from "lucide-react"
+import {
+  ForwardIcon,
+  InboxIcon,
+  MailIcon,
+  ReplyIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import {
   useDeleteContactSubmissionMutation,
   useContactSubmissionsQuery,
+  useForwardContactSubmissionMutation,
   useNewsletterSubscribersQuery,
   useReplyToContactSubmissionMutation,
+  useSubmissionRecipientsQuery,
   type ContactSubmissionItem,
   type NewsletterSubscriberItem,
 } from "@/domains/submissions"
@@ -18,14 +26,8 @@ import {
   ListSkeleton,
   QueryError,
 } from "@/components/admin/query-states"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { DataTable } from "@/components/ui/data-table/data-table"
+import { Badge } from "@/components/ui/badge"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -88,36 +90,44 @@ function ContactInbox() {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-heading text-lg font-semibold">Inbox</h2>
+          <p className="text-sm text-muted-foreground">Contact enquiries</p>
+        </div>
+        <Badge variant="secondary">
+          {total} {total === 1 ? "enquiry" : "enquiries"}
+        </Badge>
+      </div>
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         {items.map((item) => (
-          <Card key={item.id}>
-            <CardHeader className="pb-2">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <CardTitle className="text-base">{item.subject}</CardTitle>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(item.createdAt).toLocaleString()}
-                </span>
-              </div>
-              <CardDescription>
-                {item.name} ·{" "}
-                <a
-                  href={`mailto:${item.email}`}
-                  className="underline-offset-4 hover:underline"
-                >
+          <Dialog key={item.id}>
+            <DialogTrigger
+              render={
+                <button
+                  type="button"
+                  className="grid w-full grid-cols-[minmax(140px,220px)_minmax(0,1fr)_auto] items-center gap-4 border-b border-border px-4 py-4 text-left transition-colors last:border-b-0 hover:bg-muted/40"
+                />
+              }
+            >
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{item.name}</p>
+                <p className="truncate text-xs text-muted-foreground">
                   {item.email}
-                </a>
-              </CardDescription>
-              <div className="flex flex-wrap gap-2 pt-2">
-                <ReplyDialog submission={item} />
-                <DeleteInquiryButton submission={item} />
+                </p>
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm whitespace-pre-wrap text-foreground/90">
-                {item.message}
-              </p>
-            </CardContent>
-          </Card>
+              <div className="min-w-0">
+                <p className="truncate font-medium">{item.subject}</p>
+                <p className="truncate text-sm text-muted-foreground">
+                  {item.message}
+                </p>
+              </div>
+              <time className="text-xs whitespace-nowrap text-muted-foreground">
+                {new Date(item.createdAt).toLocaleDateString()}
+              </time>
+            </DialogTrigger>
+            <InquiryDetailDialog submission={item} />
+          </Dialog>
         ))}
       </div>
       <Pagination
@@ -130,83 +140,126 @@ function ContactInbox() {
   )
 }
 
-function ReplyDialog({ submission }: { submission: ContactSubmissionItem }) {
-  const [open, setOpen] = React.useState(false)
+function InquiryDetailDialog({
+  submission,
+}: {
+  submission: ContactSubmissionItem
+}) {
   const [message, setMessage] = React.useState("")
-  const mutation = useReplyToContactSubmissionMutation()
+  const [note, setNote] = React.useState("")
+  const [selectedRecipients, setSelectedRecipients] = React.useState<string[]>([])
+  const replyMutation = useReplyToContactSubmissionMutation()
+  const forwardMutation = useForwardContactSubmissionMutation()
+  const recipientsQuery = useSubmissionRecipientsQuery()
+  const deleteMutation = useDeleteContactSubmissionMutation()
 
-  const send = () => {
-    mutation.mutate(
+  const sendReply = () => {
+    replyMutation.mutate(
       { id: submission.id, message },
       {
         onSuccess: () => {
           toast.success("Reply sent.")
           setMessage("")
-          setOpen(false)
         },
         onError: () => toast.error("Couldn't send the reply."),
       }
     )
   }
 
+  const forward = () => {
+    forwardMutation.mutate(
+      { id: submission.id, recipients: selectedRecipients, note },
+      {
+        onSuccess: () => {
+          toast.success("Enquiry forwarded.")
+          setNote("")
+          setSelectedRecipients([])
+        },
+        onError: () => toast.error("Couldn't forward the enquiry."),
+      }
+    )
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>
-        <ReplyIcon data-icon="inline-start" />
-        Reply
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Reply to {submission.name}</DialogTitle>
-          <DialogDescription>
-            Your reply will be sent to {submission.email}.
-          </DialogDescription>
-        </DialogHeader>
+    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle>{submission.subject}</DialogTitle>
+        <DialogDescription>
+          From {submission.name} · {submission.email} · {new Date(submission.createdAt).toLocaleString()}
+        </DialogDescription>
+      </DialogHeader>
+      <div className="rounded-lg bg-muted/40 p-4 text-sm leading-7 whitespace-pre-wrap">
+        {submission.message}
+      </div>
+      <section className="space-y-3">
+        <h3 className="font-semibold">Reply</h3>
         <Textarea
-          rows={7}
+          rows={5}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           placeholder="Write your reply..."
         />
-        <DialogFooter>
-          <Button
-            type="button"
-            disabled={!message.trim() || mutation.isPending}
-            onClick={send}
-          >
-            {mutation.isPending && <Spinner />}
-            Send reply
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-function DeleteInquiryButton({
-  submission,
-}: {
-  submission: ContactSubmissionItem
-}) {
-  const mutation = useDeleteContactSubmissionMutation()
-
-  return (
-    <ConfirmDialog
-      trigger={
-        <Button variant="outline" size="sm" className="text-destructive">
-          <Trash2Icon data-icon="inline-start" />
-          Delete
+        <Button disabled={!message.trim() || replyMutation.isPending} onClick={sendReply}>
+          {replyMutation.isPending && <Spinner />}
+          <ReplyIcon data-icon="inline-start" />
+          Send reply
         </Button>
-      }
-      title="Delete this enquiry?"
-      description={`The enquiry from ${submission.name} will be permanently removed.`}
-      onConfirm={() =>
-        mutation.mutate(submission.id, {
-          onSuccess: () => toast.success("Enquiry deleted."),
-          onError: () => toast.error("Couldn't delete the enquiry."),
-        })
-      }
-    />
+      </section>
+      <section className="space-y-3 border-t border-border pt-4">
+        <h3 className="font-semibold">Forward to team</h3>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {recipientsQuery.data?.map((recipient) => (
+            <label key={recipient.email} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={selectedRecipients.includes(recipient.email)}
+                onChange={(event) =>
+                  setSelectedRecipients((current) =>
+                    event.target.checked
+                      ? [...current, recipient.email]
+                      : current.filter((email) => email !== recipient.email)
+                  )
+                }
+              />
+              <span className="min-w-0 truncate">{recipient.name} · {recipient.email}</span>
+            </label>
+          ))}
+        </div>
+        <Textarea
+          rows={3}
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+          placeholder="Optional note to the team..."
+        />
+        <Button
+          variant="outline"
+          disabled={selectedRecipients.length === 0 || forwardMutation.isPending}
+          onClick={forward}
+        >
+          {forwardMutation.isPending && <Spinner />}
+          <ForwardIcon data-icon="inline-start" />
+          Forward enquiry
+        </Button>
+      </section>
+      <DialogFooter className="justify-between">
+        <ConfirmDialog
+          trigger={
+            <Button variant="outline" className="text-destructive">
+              <Trash2Icon data-icon="inline-start" />
+              Delete
+            </Button>
+          }
+          title="Delete this enquiry?"
+          description={`The enquiry from ${submission.name} will be permanently removed.`}
+          onConfirm={() =>
+            deleteMutation.mutate(submission.id, {
+              onSuccess: () => toast.success("Enquiry deleted."),
+              onError: () => toast.error("Couldn't delete the enquiry."),
+            })
+          }
+        />
+      </DialogFooter>
+    </DialogContent>
   )
 }
 

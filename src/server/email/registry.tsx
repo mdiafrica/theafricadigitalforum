@@ -7,6 +7,10 @@ import {
   type ContactReplyEmailProps,
 } from "./templates/contact-reply-email"
 import {
+  ContactForwardEmail,
+  type ContactForwardEmailProps,
+} from "./templates/contact-forward-email"
+import {
   InvitationEmail,
   type InvitationEmailProps,
 } from "./templates/invitation-email"
@@ -27,6 +31,7 @@ export interface EmailPropsMap {
   "reset-password": ResetPasswordEmailProps
   "contact-notification": ContactNotificationEmailProps
   "contact-reply": ContactReplyEmailProps
+  "contact-forward": ContactForwardEmailProps
 }
 
 export type EmailKey = keyof EmailPropsMap
@@ -52,5 +57,9 @@ export const EMAIL_REGISTRY: { [K in EmailKey]: EmailRegistryEntry<K> } = {
   "contact-reply": {
     subject: (props) => `Re: ${props.subject}`,
     component: (props) => <ContactReplyEmail {...props} />,
+  },
+  "contact-forward": {
+    subject: (props) => `Fwd: ${props.subject}`,
+    component: (props) => <ContactForwardEmail {...props} />,
   },
 }

@@ -28,4 +28,10 @@ export const replySubmissionInput = z.object({
   id: z.uuid(),
   message: z.string().trim().min(1).max(5000),
 })
+
+export const forwardSubmissionInput = z.object({
+  id: z.uuid(),
+  recipients: z.array(z.email()).min(1).max(20),
+  note: z.string().trim().max(5000).default(""),
+})
 export type ListSubmissionsInput = z.infer<typeof listSubmissionsInput>
