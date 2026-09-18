@@ -1,10 +1,14 @@
 import * as React from "react"
 import type { ColumnDef, PaginationState } from "@tanstack/react-table"
-import { InboxIcon, MailIcon } from "lucide-react"
+import { InboxIcon, MailIcon, ReplyIcon, Trash2Icon } from "lucide-react"
+import { toast } from "sonner"
 
 import {
+  useDeleteContactSubmissionMutation,
   useContactSubmissionsQuery,
   useNewsletterSubscribersQuery,
+  useReplyToContactSubmissionMutation,
+  type ContactSubmissionItem,
   type NewsletterSubscriberItem,
 } from "@/domains/submissions"
 import { PageHeader } from "@/components/admin/page-header"
@@ -22,7 +26,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { DataTable } from "@/components/ui/data-table/data-table"
+import { ConfirmDialog } from "@/components/admin/confirm-dialog"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { Spinner } from "@/components/ui/spinner"
 import { useDataTable } from "@/hooks/use-data-table"
 
 export function SubmissionsView() {
@@ -90,6 +107,10 @@ function ContactInbox() {
                   {item.email}
                 </a>
               </CardDescription>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <ReplyDialog submission={item} />
+                <DeleteInquiryButton submission={item} />
+              </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm whitespace-pre-wrap text-foreground/90">
@@ -106,6 +127,86 @@ function ContactInbox() {
         onPageChange={setPage}
       />
     </div>
+  )
+}
+
+function ReplyDialog({ submission }: { submission: ContactSubmissionItem }) {
+  const [open, setOpen] = React.useState(false)
+  const [message, setMessage] = React.useState("")
+  const mutation = useReplyToContactSubmissionMutation()
+
+  const send = () => {
+    mutation.mutate(
+      { id: submission.id, message },
+      {
+        onSuccess: () => {
+          toast.success("Reply sent.")
+          setMessage("")
+          setOpen(false)
+        },
+        onError: () => toast.error("Couldn't send the reply."),
+      }
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger render={<Button variant="outline" size="sm" />}>
+        <ReplyIcon data-icon="inline-start" />
+        Reply
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Reply to {submission.name}</DialogTitle>
+          <DialogDescription>
+            Your reply will be sent to {submission.email}.
+          </DialogDescription>
+        </DialogHeader>
+        <Textarea
+          rows={7}
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          placeholder="Write your reply..."
+        />
+        <DialogFooter>
+          <Button
+            type="button"
+            disabled={!message.trim() || mutation.isPending}
+            onClick={send}
+          >
+            {mutation.isPending && <Spinner />}
+            Send reply
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function DeleteInquiryButton({
+  submission,
+}: {
+  submission: ContactSubmissionItem
+}) {
+  const mutation = useDeleteContactSubmissionMutation()
+
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button variant="outline" size="sm" className="text-destructive">
+          <Trash2Icon data-icon="inline-start" />
+          Delete
+        </Button>
+      }
+      title="Delete this enquiry?"
+      description={`The enquiry from ${submission.name} will be permanently removed.`}
+      onConfirm={() =>
+        mutation.mutate(submission.id, {
+          onSuccess: () => toast.success("Enquiry deleted."),
+          onError: () => toast.error("Couldn't delete the enquiry."),
+        })
+      }
+    />
   )
 }
 

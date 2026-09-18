@@ -21,4 +21,11 @@ export const listSubmissionsInput = z.object({
   page: z.number().int().min(1).default(1),
   pageSize: z.number().int().min(1).max(100).default(25),
 })
+
+export const submissionIdInput = z.object({ id: z.uuid() })
+
+export const replySubmissionInput = z.object({
+  id: z.uuid(),
+  message: z.string().trim().min(1).max(5000),
+})
 export type ListSubmissionsInput = z.infer<typeof listSubmissionsInput>

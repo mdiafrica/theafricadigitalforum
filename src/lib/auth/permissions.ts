@@ -61,7 +61,7 @@ export const orgStatements = {
   category: CRUD,
   pageContent: ["read", "update"],
   media: ["upload", "delete"],
-  submission: ["read"],
+  submission: ["create", "read", "update", "delete"],
 } as const
 
 export const orgAccessControl = createAccessControl(orgStatements)
@@ -81,7 +81,7 @@ export const orgRoles = {
     category: CRUD,
     pageContent: ["read", "update"],
     media: ["upload", "delete"],
-    submission: ["read"],
+    submission: ["read", "update", "delete"],
     member: ["create", "read", "update", "delete"],
     invitation: ["create", "read", "cancel"],
   }),

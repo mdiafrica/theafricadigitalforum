@@ -1,4 +1,4 @@
-import { desc, inArray, sql } from "drizzle-orm"
+import { desc, eq, inArray, sql } from "drizzle-orm"
 import { createServerFn } from "@tanstack/react-start"
 
 import { requireOrgPermission } from "@/domains/auth"
@@ -9,6 +9,8 @@ import {
   contactInput,
   listSubmissionsInput,
   newsletterInput,
+  replySubmissionInput,
+  submissionIdInput,
 } from "./submissions.schemas"
 
 /**
@@ -86,6 +88,36 @@ export const listContactSubmissions = createServerFn({ method: "GET" })
 export type ContactSubmissionItem = Awaited<
   ReturnType<typeof listContactSubmissions>
 >["items"][number]
+
+export const deleteContactSubmission = createServerFn({ method: "POST" })
+  .middleware([requireOrgPermission({ submission: ["delete"] })])
+  .validator(submissionIdInput)
+  .handler(async ({ data }) => {
+    const [row] = await db
+      .delete(schema.contactSubmission)
+      .where(eq(schema.contactSubmission.id, data.id))
+      .returning({ id: schema.contactSubmission.id })
+    if (!row) throw new Error("Contact enquiry not found")
+    return row
+  })
+
+export const replyToContactSubmission = createServerFn({ method: "POST" })
+  .middleware([requireOrgPermission({ submission: ["update"] })])
+  .validator(replySubmissionInput)
+  .handler(async ({ data }) => {
+    const submission = await db.query.contactSubmission.findFirst({
+      where: eq(schema.contactSubmission.id, data.id),
+    })
+    if (!submission) throw new Error("Contact enquiry not found")
+
+    await sendEmail("contact-reply", submission.email, {
+      name: submission.name,
+      subject: submission.subject,
+      message: data.message,
+    })
+
+    return { ok: true as const }
+  })
 
 export const listNewsletterSubscribers = createServerFn({ method: "GET" })
   .middleware([requireOrgPermission({ submission: ["read"] })])
