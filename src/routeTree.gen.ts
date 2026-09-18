@@ -9,44 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as PublicIndexRouteImport } from './routes/_public.index'
-import { Route as AdminTeamRouteImport } from './routes/admin.team'
-import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
-import { Route as AdminSponsorsRouteImport } from './routes/admin.sponsors'
-import { Route as AdminSpeakersRouteImport } from './routes/admin.speakers'
-import { Route as AdminPagesRouteImport } from './routes/admin.pages'
-import { Route as AdminMediaRouteImport } from './routes/admin.media'
-import { Route as AdminEventsRouteImport } from './routes/admin.events'
-import { Route as AdminEditorRouteImport } from './routes/admin.editor'
-import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
-import { Route as AdminAdvisorsRouteImport } from './routes/admin.advisors'
-import { Route as AdminAccountRouteImport } from './routes/admin.account'
-import { Route as PublicWhyAdfRouteImport } from './routes/_public.why-adf'
-import { Route as PublicTermsRouteImport } from './routes/_public.terms'
-import { Route as PublicPrivacyRouteImport } from './routes/_public.privacy'
-import { Route as PublicHostCityRouteImport } from './routes/_public.host-city'
-import { Route as PublicContactRouteImport } from './routes/_public.contact'
-import { Route as PublicBlogRouteImport } from './routes/_public.blog'
-import { Route as PublicAboutRouteImport } from './routes/_public.about'
-import { Route as AuthSignInRouteImport } from './routes/_auth.sign-in'
-import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-password'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth.forgot-password'
-import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
-import { Route as PublicBlogIndexRouteImport } from './routes/_public.blog.index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
-import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
-import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
-import { Route as PublicBlogSlugRouteImport } from './routes/_public.blog.$slug'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-password'
+import { Route as AuthSignInRouteImport } from './routes/_auth.sign-in'
+import { Route as PublicIndexRouteImport } from './routes/_public.index'
+import { Route as PublicAboutRouteImport } from './routes/_public.about'
+import { Route as PublicBlogRouteImport } from './routes/_public.blog'
+import { Route as PublicContactRouteImport } from './routes/_public.contact'
+import { Route as PublicHostCityRouteImport } from './routes/_public.host-city'
+import { Route as PublicPrivacyRouteImport } from './routes/_public.privacy'
+import { Route as PublicTentativeAgendaRouteImport } from './routes/_public.tentative-agenda'
+import { Route as PublicTermsRouteImport } from './routes/_public.terms'
+import { Route as PublicWhyAdfRouteImport } from './routes/_public.why-adf'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAccountRouteImport } from './routes/admin.account'
+import { Route as AdminAdvisorsRouteImport } from './routes/admin.advisors'
+import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminEditorRouteImport } from './routes/admin.editor'
+import { Route as AdminEventsRouteImport } from './routes/admin.events'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
+import { Route as AdminPagesRouteImport } from './routes/admin.pages'
+import { Route as AdminSpeakersRouteImport } from './routes/admin.speakers'
+import { Route as AdminSponsorsRouteImport } from './routes/admin.sponsors'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AuthAcceptInvitationInvitationIdRouteImport } from './routes/_auth.accept-invitation.$invitationId'
+import { Route as PublicBlogIndexRouteImport } from './routes/_public.blog.index'
+import { Route as PublicBlogSlugRouteImport } from './routes/_public.blog.$slug'
+import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
+import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
+import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -54,117 +59,14 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PublicRoute = PublicRouteImport.update({
-  id: '/_public',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const PublicIndexRoute = PublicIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PublicRoute,
-} as any)
-const AdminTeamRoute = AdminTeamRouteImport.update({
-  id: '/team',
-  path: '/team',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
-  id: '/submissions',
-  path: '/submissions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSponsorsRoute = AdminSponsorsRouteImport.update({
-  id: '/sponsors',
-  path: '/sponsors',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSpeakersRoute = AdminSpeakersRouteImport.update({
-  id: '/speakers',
-  path: '/speakers',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPagesRoute = AdminPagesRouteImport.update({
-  id: '/pages',
-  path: '/pages',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMediaRoute = AdminMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEventsRoute = AdminEventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEditorRoute = AdminEditorRouteImport.update({
-  id: '/editor',
-  path: '/editor',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAdvisorsRoute = AdminAdvisorsRouteImport.update({
-  id: '/advisors',
-  path: '/advisors',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAccountRoute = AdminAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => AdminRoute,
-} as any)
-const PublicWhyAdfRoute = PublicWhyAdfRouteImport.update({
-  id: '/why-adf',
-  path: '/why-adf',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicTermsRoute = PublicTermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicHostCityRoute = PublicHostCityRouteImport.update({
-  id: '/host-city',
-  path: '/host-city',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicContactRoute = PublicContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicBlogRoute = PublicBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicAboutRoute = PublicAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => PublicRoute,
-} as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -172,40 +74,120 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
-const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
-  id: '/posts/',
-  path: '/posts/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const PublicBlogIndexRoute = PublicBlogIndexRouteImport.update({
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PublicBlogRoute,
+  getParentRoute: () => PublicRoute,
 } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => PublicRoute,
 } as any)
-const AdminPostsNewRoute = AdminPostsNewRouteImport.update({
-  id: '/posts/new',
-  path: '/posts/new',
+const PublicBlogRoute = PublicBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicContactRoute = PublicContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicHostCityRoute = PublicHostCityRouteImport.update({
+  id: '/host-city',
+  path: '/host-city',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicTentativeAgendaRoute = PublicTentativeAgendaRouteImport.update({
+  id: '/tentative-agenda',
+  path: '/tentative-agenda',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicTermsRoute = PublicTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicWhyAdfRoute = PublicWhyAdfRouteImport.update({
+  id: '/why-adf',
+  path: '/why-adf',
+  getParentRoute: () => PublicRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPostsIdRoute = AdminPostsIdRouteImport.update({
-  id: '/posts/$id',
-  path: '/posts/$id',
+const AdminAccountRoute = AdminAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AdminRoute,
 } as any)
-const PublicBlogSlugRoute = PublicBlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => PublicBlogRoute,
+const AdminAdvisorsRoute = AdminAdvisorsRouteImport.update({
+  id: '/advisors',
+  path: '/advisors',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAgendaRoute = AdminAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEditorRoute = AdminEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPagesRoute = AdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSpeakersRoute = AdminSpeakersRouteImport.update({
+  id: '/speakers',
+  path: '/speakers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSponsorsRoute = AdminSponsorsRouteImport.update({
+  id: '/sponsors',
+  path: '/sponsors',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthAcceptInvitationInvitationIdRoute =
   AuthAcceptInvitationInvitationIdRouteImport.update({
@@ -213,6 +195,36 @@ const AuthAcceptInvitationInvitationIdRoute =
     path: '/accept-invitation/$invitationId',
     getParentRoute: () => AuthRoute,
   } as any)
+const PublicBlogIndexRoute = PublicBlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicBlogRoute,
+} as any)
+const PublicBlogSlugRoute = PublicBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PublicBlogRoute,
+} as any)
+const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPostsIdRoute = AdminPostsIdRouteImport.update({
+  id: '/posts/$id',
+  path: '/posts/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPostsNewRoute = AdminPostsNewRouteImport.update({
+  id: '/posts/new',
+  path: '/posts/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
@@ -226,10 +238,12 @@ export interface FileRoutesByFullPath {
   '/contact': typeof PublicContactRoute
   '/host-city': typeof PublicHostCityRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
@@ -258,10 +272,12 @@ export interface FileRoutesByTo {
   '/contact': typeof PublicContactRoute
   '/host-city': typeof PublicHostCityRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
@@ -294,10 +310,12 @@ export interface FileRoutesById {
   '/_public/contact': typeof PublicContactRoute
   '/_public/host-city': typeof PublicHostCityRoute
   '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/_public/terms': typeof PublicTermsRoute
   '/_public/why-adf': typeof PublicWhyAdfRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/advisors': typeof AdminAdvisorsRoute
+  '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
@@ -331,10 +349,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/host-city'
     | '/privacy'
+    | '/tentative-agenda'
     | '/terms'
     | '/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/agenda'
     | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
@@ -363,10 +383,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/host-city'
     | '/privacy'
+    | '/tentative-agenda'
     | '/terms'
     | '/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/agenda'
     | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
@@ -398,10 +420,12 @@ export interface FileRouteTypes {
     | '/_public/contact'
     | '/_public/host-city'
     | '/_public/privacy'
+    | '/_public/tentative-agenda'
     | '/_public/terms'
     | '/_public/why-adf'
     | '/admin/account'
     | '/admin/advisors'
+    | '/admin/agenda'
     | '/admin/categories'
     | '/admin/editor'
     | '/admin/events'
@@ -432,18 +456,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public': {
@@ -453,158 +470,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_public/': {
-      id: '/_public/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof PublicIndexRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/admin/team': {
-      id: '/admin/team'
-      path: '/team'
-      fullPath: '/admin/team'
-      preLoaderRoute: typeof AdminTeamRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/submissions': {
-      id: '/admin/submissions'
-      path: '/submissions'
-      fullPath: '/admin/submissions'
-      preLoaderRoute: typeof AdminSubmissionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/sponsors': {
-      id: '/admin/sponsors'
-      path: '/sponsors'
-      fullPath: '/admin/sponsors'
-      preLoaderRoute: typeof AdminSponsorsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/speakers': {
-      id: '/admin/speakers'
-      path: '/speakers'
-      fullPath: '/admin/speakers'
-      preLoaderRoute: typeof AdminSpeakersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/pages': {
-      id: '/admin/pages'
-      path: '/pages'
-      fullPath: '/admin/pages'
-      preLoaderRoute: typeof AdminPagesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/media': {
-      id: '/admin/media'
-      path: '/media'
-      fullPath: '/admin/media'
-      preLoaderRoute: typeof AdminMediaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/events': {
-      id: '/admin/events'
-      path: '/events'
-      fullPath: '/admin/events'
-      preLoaderRoute: typeof AdminEventsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/editor': {
-      id: '/admin/editor'
-      path: '/editor'
-      fullPath: '/admin/editor'
-      preLoaderRoute: typeof AdminEditorRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/categories': {
-      id: '/admin/categories'
-      path: '/categories'
-      fullPath: '/admin/categories'
-      preLoaderRoute: typeof AdminCategoriesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/advisors': {
-      id: '/admin/advisors'
-      path: '/advisors'
-      fullPath: '/admin/advisors'
-      preLoaderRoute: typeof AdminAdvisorsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/account': {
-      id: '/admin/account'
-      path: '/account'
-      fullPath: '/admin/account'
-      preLoaderRoute: typeof AdminAccountRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_public/why-adf': {
-      id: '/_public/why-adf'
-      path: '/why-adf'
-      fullPath: '/why-adf'
-      preLoaderRoute: typeof PublicWhyAdfRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/terms': {
-      id: '/_public/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof PublicTermsRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/privacy': {
-      id: '/_public/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PublicPrivacyRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/host-city': {
-      id: '/_public/host-city'
-      path: '/host-city'
-      fullPath: '/host-city'
-      preLoaderRoute: typeof PublicHostCityRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/contact': {
-      id: '/_public/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof PublicContactRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/blog': {
-      id: '/_public/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof PublicBlogRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/about': {
-      id: '/_public/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof PublicAboutRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_auth/sign-in': {
-      id: '/_auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/reset-password': {
@@ -614,19 +498,173 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/forgot-password': {
-      id: '/_auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/admin/posts/': {
-      id: '/admin/posts/'
-      path: '/posts'
-      fullPath: '/admin/posts/'
-      preLoaderRoute: typeof AdminPostsIndexRouteImport
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/blog': {
+      id: '/_public/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof PublicBlogRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/contact': {
+      id: '/_public/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof PublicContactRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/host-city': {
+      id: '/_public/host-city'
+      path: '/host-city'
+      fullPath: '/host-city'
+      preLoaderRoute: typeof PublicHostCityRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PublicPrivacyRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/tentative-agenda': {
+      id: '/_public/tentative-agenda'
+      path: '/tentative-agenda'
+      fullPath: '/tentative-agenda'
+      preLoaderRoute: typeof PublicTentativeAgendaRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/terms': {
+      id: '/_public/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof PublicTermsRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/why-adf': {
+      id: '/_public/why-adf'
+      path: '/why-adf'
+      fullPath: '/why-adf'
+      preLoaderRoute: typeof PublicWhyAdfRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/account': {
+      id: '/admin/account'
+      path: '/account'
+      fullPath: '/admin/account'
+      preLoaderRoute: typeof AdminAccountRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/advisors': {
+      id: '/admin/advisors'
+      path: '/advisors'
+      fullPath: '/admin/advisors'
+      preLoaderRoute: typeof AdminAdvisorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/agenda': {
+      id: '/admin/agenda'
+      path: '/agenda'
+      fullPath: '/admin/agenda'
+      preLoaderRoute: typeof AdminAgendaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/editor': {
+      id: '/admin/editor'
+      path: '/editor'
+      fullPath: '/admin/editor'
+      preLoaderRoute: typeof AdminEditorRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pages': {
+      id: '/admin/pages'
+      path: '/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AdminPagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/speakers': {
+      id: '/admin/speakers'
+      path: '/speakers'
+      fullPath: '/admin/speakers'
+      preLoaderRoute: typeof AdminSpeakersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sponsors': {
+      id: '/admin/sponsors'
+      path: '/sponsors'
+      fullPath: '/admin/sponsors'
+      preLoaderRoute: typeof AdminSponsorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_auth/accept-invitation/$invitationId': {
+      id: '/_auth/accept-invitation/$invitationId'
+      path: '/accept-invitation/$invitationId'
+      fullPath: '/accept-invitation/$invitationId'
+      preLoaderRoute: typeof AuthAcceptInvitationInvitationIdRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_public/blog/': {
       id: '/_public/blog/'
@@ -635,18 +673,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicBlogIndexRouteImport
       parentRoute: typeof PublicBlogRoute
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_public/blog/$slug': {
+      id: '/_public/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof PublicBlogSlugRouteImport
+      parentRoute: typeof PublicBlogRoute
     }
-    '/admin/posts/new': {
-      id: '/admin/posts/new'
-      path: '/posts/new'
-      fullPath: '/admin/posts/new'
-      preLoaderRoute: typeof AdminPostsNewRouteImport
+    '/admin/posts/': {
+      id: '/admin/posts/'
+      path: '/posts'
+      fullPath: '/admin/posts/'
+      preLoaderRoute: typeof AdminPostsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/posts/$id': {
@@ -656,19 +694,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPostsIdRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/_public/blog/$slug': {
-      id: '/_public/blog/$slug'
-      path: '/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof PublicBlogSlugRouteImport
-      parentRoute: typeof PublicBlogRoute
+    '/admin/posts/new': {
+      id: '/admin/posts/new'
+      path: '/posts/new'
+      fullPath: '/admin/posts/new'
+      preLoaderRoute: typeof AdminPostsNewRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/_auth/accept-invitation/$invitationId': {
-      id: '/_auth/accept-invitation/$invitationId'
-      path: '/accept-invitation/$invitationId'
-      fullPath: '/accept-invitation/$invitationId'
-      preLoaderRoute: typeof AuthAcceptInvitationInvitationIdRouteImport
-      parentRoute: typeof AuthRoute
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -709,6 +747,7 @@ interface PublicRouteChildren {
   PublicContactRoute: typeof PublicContactRoute
   PublicHostCityRoute: typeof PublicHostCityRoute
   PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicTentativeAgendaRoute: typeof PublicTentativeAgendaRoute
   PublicTermsRoute: typeof PublicTermsRoute
   PublicWhyAdfRoute: typeof PublicWhyAdfRoute
   PublicIndexRoute: typeof PublicIndexRoute
@@ -720,6 +759,7 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicContactRoute: PublicContactRoute,
   PublicHostCityRoute: PublicHostCityRoute,
   PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicTentativeAgendaRoute: PublicTentativeAgendaRoute,
   PublicTermsRoute: PublicTermsRoute,
   PublicWhyAdfRoute: PublicWhyAdfRoute,
   PublicIndexRoute: PublicIndexRoute,
@@ -731,6 +771,7 @@ const PublicRouteWithChildren =
 interface AdminRouteChildren {
   AdminAccountRoute: typeof AdminAccountRoute
   AdminAdvisorsRoute: typeof AdminAdvisorsRoute
+  AdminAgendaRoute: typeof AdminAgendaRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminEventsRoute: typeof AdminEventsRoute
@@ -749,6 +790,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccountRoute: AdminAccountRoute,
   AdminAdvisorsRoute: AdminAdvisorsRoute,
+  AdminAgendaRoute: AdminAgendaRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminEventsRoute: AdminEventsRoute,

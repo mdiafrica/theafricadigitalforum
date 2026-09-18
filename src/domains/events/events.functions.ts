@@ -24,8 +24,12 @@ async function upsertTranslations(
 ) {
   const values = (input: EventTranslationsInput["en"]) => ({
     title: input.title,
+    summary: input.summary,
+    expectedOutcome: input.expectedOutcome,
+    beneficiaries: input.beneficiaries,
+    speaker: input.speaker,
+    dayDescription: input.dayDescription,
     description: input.description,
-    location: input.location,
   })
 
   await upsertTranslationRows({
@@ -47,6 +51,7 @@ export const saveEvent = createServerFn({ method: "POST" })
     if (!data.id) assertOrgPermission(context.auth, { event: ["create"] })
 
     const values = {
+      day: data.day,
       startsAt: data.startsAt ? new Date(data.startsAt) : null,
       endsAt: data.endsAt ? new Date(data.endsAt) : null,
       sortOrder: data.sortOrder,
@@ -96,13 +101,18 @@ export const listEventsAdmin = createServerFn({ method: "GET" })
 
     return rows.map((row) => ({
       id: row.id,
+      day: row.day,
       startsAt: row.startsAt,
       endsAt: row.endsAt,
       sortOrder: row.sortOrder,
       translations: indexByLocale(row.translations, (t) => ({
         title: t.title,
+        summary: t.summary,
+        expectedOutcome: t.expectedOutcome,
+        beneficiaries: t.beneficiaries,
+        speaker: t.speaker,
+        dayDescription: t.dayDescription,
         description: t.description,
-        location: t.location,
       })),
     }))
   })
@@ -121,9 +131,14 @@ export const listPublicEvents = createServerFn({ method: "GET" })
         if (!translation) return null
         return {
           id: row.id,
+          day: row.day,
           title: translation.title,
+          summary: translation.summary,
+          expectedOutcome: translation.expectedOutcome,
+          beneficiaries: translation.beneficiaries,
+          speaker: translation.speaker,
+          dayDescription: translation.dayDescription,
           description: translation.description,
-          location: translation.location,
           startsAt: row.startsAt,
           endsAt: row.endsAt,
         }

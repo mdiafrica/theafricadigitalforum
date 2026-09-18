@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router"
 import {
+  CalendarDays,
   FileText,
   ImagePlus,
   Inbox,
@@ -12,6 +13,7 @@ import {
 import { useSessionQuery } from "@/domains/auth"
 import { usePostsAdminListQuery } from "@/domains/posts"
 import { useSpeakersAdminQuery } from "@/domains/speakers"
+import { useEventsAdminQuery } from "@/domains/events"
 import {
   useContactSubmissionsQuery,
   useNewsletterSubscribersQuery,
@@ -41,6 +43,7 @@ function AdminDashboard() {
 
   const postsQuery = usePostsAdminListQuery({ pageSize: 5 })
   const speakersQuery = useSpeakersAdminQuery()
+  const eventsQuery = useEventsAdminQuery()
   const contactQuery = useContactSubmissionsQuery({ pageSize: 3 })
   const newsletterQuery = useNewsletterSubscribersQuery({ pageSize: 1 })
 
@@ -74,6 +77,13 @@ function AdminDashboard() {
           value={speakersQuery.data?.length}
           pending={speakersQuery.isPending}
           to="/admin/speakers"
+        />
+        <StatCard
+          title="Agenda sessions"
+          icon={CalendarDays}
+          value={eventsQuery.data?.length}
+          pending={eventsQuery.isPending}
+          to="/admin/agenda"
         />
         <StatCard
           title="Enquiries"

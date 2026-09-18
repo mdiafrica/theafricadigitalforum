@@ -14,6 +14,7 @@ export {
   useSavePageContentMutation,
 } from "./page-content.queries"
 export {
+  agendaHeaderDefaults,
   homeDialoguesDefaults,
   homeHeroDefaults,
   homeStatsDefaults,

@@ -9,6 +9,13 @@ import type { Locale } from "@/lib/schemas"
 
 const opts = (locale?: Locale) => (locale ? { locale } : undefined)
 
+export const agendaHeaderDefaults = (_locale?: Locale) => ({
+  title: "Tentative Official Program Agenda",
+  theme: "Theme: Shaping Africa's Digital Future",
+  dates: "May 26-28, 2027",
+  backgroundImage: "",
+})
+
 export const homeHeroDefaults = (locale?: Locale) => ({
   date: m.home_hero_date({}, opts(locale)),
   title: m.home_hero_title({}, opts(locale)),

@@ -204,7 +204,7 @@ function HostCityRoute() {
           <Dialog>
             <DialogTrigger
               render={
-                <Button className="relative h-auto shrink-0 rounded bg-primary px-8 py-3 text-sm font-bold whitespace-nowrap text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-background hover:shadow-[0_8px_24px_rgba(124,58,237,0.4)] dark:hover:bg-white dark:hover:text-background" />
+                <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
               }
             >
               {m.preregister_button()}
@@ -276,7 +276,7 @@ function HostCityRoute() {
             <Dialog>
               <DialogTrigger
                 render={
-                  <Button className="h-auto rounded bg-primary px-10 py-3.5 text-[15px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-background hover:shadow-[0_8px_24px_rgba(124,58,237,0.4)] dark:hover:bg-white dark:hover:text-background" />
+                  <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
                 }
               >
                 {m.preregister_button()}

@@ -1,5 +1,8 @@
 packages: []
 
+overrides:
+  use-sync-external-store: ^1.6.0
+
 allowBuilds:
   esbuild: true
   lightningcss: true

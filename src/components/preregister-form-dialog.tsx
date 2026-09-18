@@ -25,7 +25,7 @@ export function PreregisterFormDialog() {
   useEffect(() => {
     if (!isLoading) return
 
-    const timeout = window.setTimeout(() => setHasFailed(true), 12_000)
+    const timeout = window.setTimeout(() => setHasFailed(true), 60_000)
     return () => window.clearTimeout(timeout)
   }, [attempt, isLoading])
 
@@ -55,19 +55,26 @@ export function PreregisterFormDialog() {
           </Button>
         </div>
       ) : (
-        <iframe
-          key={attempt}
-          src={formUrl}
-          title={m.preregister_dialog_title()}
-          className="h-[75vh] w-full rounded-md border-0"
-          onError={() => {
-            setHasFailed(true)
-            setIsLoading(false)
-          }}
-          onLoad={() => setIsLoading(false)}
-        >
-          Loading...
-        </iframe>
+        <div className="relative">
+          {isLoading && (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-background/80 text-sm text-muted-foreground">
+              Loading form...
+            </div>
+          )}
+          <iframe
+            key={attempt}
+            src={formUrl}
+            title={m.preregister_dialog_title()}
+            loading="eager"
+            className="h-[75vh] w-full rounded-md border-0"
+            onLoad={() => {
+              setHasFailed(false)
+              setIsLoading(false)
+            }}
+          >
+            Loading...
+          </iframe>
+        </div>
       )}
     </DialogContent>
   )

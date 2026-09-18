@@ -93,7 +93,7 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
       { to: "/admin/categories", label: "Categories", icon: Tags },
       { to: "/admin/speakers", label: "Speakers", icon: Mic },
       { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
-      { to: "/admin/events", label: "Events", icon: CalendarDays },
+      { to: "/admin/agenda", label: "Agenda", icon: CalendarDays },
       { to: "/admin/sponsors", label: "Sponsors", icon: Building2 },
       { to: "/admin/pages", label: "Pages", icon: Layout },
       { to: "/admin/media", label: "Media", icon: Image },

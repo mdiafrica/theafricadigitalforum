@@ -71,6 +71,13 @@
       "when": 1787125381860,
       "tag": "0009_friendly_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1789718761292,
+      "tag": "0010_small_siren",
+      "breakpoints": true
     }
   ]
 }

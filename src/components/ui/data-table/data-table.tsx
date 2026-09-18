@@ -1,5 +1,6 @@
 import * as React from "react"
 import { flexRender, type Table as TanstackTable } from "@tanstack/react-table"
+import { GripVertical } from "lucide-react"
 
 import { DataTablePagination } from "@/components/ui/data-table/data-table-pagination"
 import { DataTableSkeleton } from "@/components/ui/data-table/data-table-skeleton"
@@ -25,6 +26,8 @@ interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   pageSizeOptions?: number[]
   /** Called when a body row is clicked (whole row becomes the hit target). */
   onRowClick?: (row: TData) => void
+  /** Enable native drag-and-drop reordering with a grip handle. */
+  onRowReorder?: (fromIndex: number, toIndex: number) => void
 }
 
 export function DataTable<TData>({
@@ -33,6 +36,7 @@ export function DataTable<TData>({
   emptyState,
   pageSizeOptions,
   onRowClick,
+  onRowReorder,
   className,
   children,
   ...props
@@ -60,6 +64,7 @@ export function DataTable<TData>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
+                {onRowReorder && <TableHead className="w-10" />}
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
@@ -75,14 +80,44 @@ export function DataTable<TData>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, rowIndex) => (
                 <TableRow
                   key={row.id}
                   onClick={
                     onRowClick ? () => onRowClick(row.original) : undefined
                   }
-                  className={onRowClick ? "cursor-pointer" : undefined}
+                  draggable={Boolean(onRowReorder)}
+                  onDragStart={(event) => {
+                    if (!onRowReorder) return
+                    event.dataTransfer.effectAllowed = "move"
+                    event.dataTransfer.setData("text/plain", String(rowIndex))
+                  }}
+                  onDragOver={(event) => {
+                    if (onRowReorder) event.preventDefault()
+                  }}
+                  onDrop={(event) => {
+                    if (!onRowReorder) return
+                    event.preventDefault()
+                    const fromIndex = Number(
+                      event.dataTransfer.getData("text/plain")
+                    )
+                    if (Number.isInteger(fromIndex) && fromIndex !== rowIndex) {
+                      onRowReorder(fromIndex, rowIndex)
+                    }
+                  }}
+                  className={cn(
+                    onRowClick ? "cursor-pointer" : undefined,
+                    onRowReorder ? "cursor-grab active:cursor-grabbing" : undefined
+                  )}
                 >
+                  {onRowReorder && (
+                    <TableCell className="w-10 px-2">
+                      <GripVertical
+                        className="size-4 text-muted-foreground"
+                        aria-label="Drag to reorder"
+                      />
+                    </TableCell>
+                  )}
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -96,7 +131,7 @@ export function DataTable<TData>({
             ) : (
               <TableRow className="hover:bg-transparent">
                 <TableCell
-                  colSpan={table.getAllColumns().length}
+                  colSpan={table.getAllColumns().length + (onRowReorder ? 1 : 0)}
                   className="h-24"
                 >
                   {emptyState ?? (

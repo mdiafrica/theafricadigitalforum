@@ -24,7 +24,7 @@ const LINK_TARGETS: (string | null)[][] = [
     "/blog",
     "/host-city",
     "/#speakers",
-    "https://mdiafrica.org/en/",
+    "https://mdiafrica.org",
     "/contact",
   ],
   [
@@ -144,7 +144,7 @@ export function SiteFooter() {
             <p className="text-xs tracking-[0.04em] text-[#888888]">
               {m.footer_organizer()}:{" "}
               <a
-                href="https://mdiafrica.org/en/"
+                href="https://mdiafrica.org"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-[#aaaaaa] transition-colors hover:text-white"

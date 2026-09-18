@@ -334,9 +334,9 @@ function BioDialog({ member }: { member: Member }) {
         <BookOpen className="size-3.5" />
         Read more
       </DialogTrigger>
-      <DialogContent className="grid max-h-[80vh] gap-0 overflow-hidden p-0 sm:max-w-[880px] md:grid-cols-[280px_1fr]">
+      <DialogContent className="grid h-[80vh] max-h-[80vh] gap-0 overflow-hidden p-0 sm:max-w-[1100px] md:grid-cols-[320px_1fr]">
         {/* Left: profile */}
-        <div className="flex flex-col items-center overflow-y-auto border-b border-primary/[0.08] bg-[#f9f8ff] px-6 pt-8 pb-7 text-center md:border-r md:border-b-0">
+        <div className="flex h-full flex-col items-center overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-primary/[0.08] bg-[#f9f8ff] px-6 pt-8 pb-7 text-center md:border-r md:border-b-0">
           <img
             src={member.photo}
             alt={member.name}
@@ -386,7 +386,7 @@ function BioDialog({ member }: { member: Member }) {
         </div>
 
         {/* Right: bio */}
-        <div className="flex flex-col overflow-y-auto bg-white px-8 pt-7 pb-7">
+        <div className="flex h-full flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-white px-8 pt-7 pb-7">
           <div className="mb-5 border-b-2 border-primary/[0.08] pb-4">
             <p className="mb-1 text-[10px] font-bold tracking-[0.12em] text-primary uppercase">
               Bio

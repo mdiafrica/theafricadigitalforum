@@ -23,6 +23,7 @@ import type { Locale } from "@/lib/schemas"
 const NAV_ITEMS = [
   { to: "/", label: m.nav_home, exact: true },
   { to: "/about", label: m.nav_about, exact: false },
+  { to: "/tentative-agenda", label: () => "Agenda", exact: false },
   { to: "/why-adf", label: m.nav_why_adf, exact: false },
   { to: "/host-city", label: m.nav_host_city, exact: false },
   { to: "/blog", label: m.nav_blog, exact: false },
@@ -165,9 +166,29 @@ function ContactIcon() {
   )
 }
 
+function AgendaIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M8 2v4M16 2v4M3 10h18" />
+      <path d="M8 14h3M8 18h6" />
+    </svg>
+  )
+}
+
 const NAV_ICONS = {
   "/": HomeIcon,
   "/about": AboutIcon,
+  "/tentative-agenda": AgendaIcon,
   "/why-adf": WhyIcon,
   "/host-city": LocationIcon,
   "/blog": BlogIcon,
@@ -177,6 +198,9 @@ const NAV_ICONS = {
 export function SiteHeader() {
   const locale = getLocale()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navItems = NAV_ITEMS.filter(
+    (item) => item.to !== "/tentative-agenda" || locale === "en"
+  )
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 flex h-[85px] items-center justify-between border-b border-white/[0.12] bg-black px-[5%] font-nav tracking-[0.02em]">
@@ -193,7 +217,7 @@ export function SiteHeader() {
       </Link>
 
       <nav className="hidden items-center gap-10 lg:flex">
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <Link
             key={item.to}
             to={item.to}
@@ -234,7 +258,7 @@ export function SiteHeader() {
                 </span>
               </div>
 
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const IconComponent = NAV_ICONS[item.to]
                 return (
                   <SheetClose

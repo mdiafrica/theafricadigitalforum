@@ -2,7 +2,7 @@ import defaultEntry, {
   createServerEntry,
 } from "@tanstack/react-start/server-entry"
 
-import { paraglideMiddleware } from "./paraglide/server"
+import { paraglideMiddleware } from "./paraglide/server.js"
 
 // Resolves the request's locale into AsyncLocalStorage before SSR so server
 // HTML matches what the client hydrates, and 302s URLs whose locale disagrees
