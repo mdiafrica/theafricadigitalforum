@@ -284,13 +284,32 @@ function TentativeAgendaPage() {
                         </span>
                       </div>
                       {index === 0 && (
-                        <div className="grid gap-5 border-b border-violet-300/60 bg-[#e9e4da] px-5 py-3 text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:grid-cols-[72px_minmax(0,1fr)_minmax(0,1.6fr)_minmax(0,1.1fr)_minmax(0,1fr)] md:px-6">
-                          <span>Time</span>
-                          <span>Session Title</span>
-                          <span>Summary</span>
-                          <span>Expected Outcome</span>
-                          <span>Target Beneficiaries</span>
-                        </div>
+                        <>
+                          <div className="flex gap-2 overflow-x-auto border-b border-violet-300/60 bg-[#e9e4da] px-3 py-2 md:hidden">
+                            {[
+                              "Time",
+                              "Session",
+                              "Summary",
+                              "Outcome",
+                              "Beneficiaries",
+                            ].map((label) => (
+                              <span
+                                key={label}
+                                className="shrink-0 rounded-full border border-violet-300 bg-white/60 px-2.5 py-1 text-[9px] font-black tracking-[0.12em] text-violet-800 uppercase"
+                              >
+                                {label}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="hidden gap-5 border-b border-violet-300/60 bg-[#e9e4da] px-5 py-3 text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:grid md:grid-cols-[72px_minmax(0,1fr)_minmax(0,1.6fr)_minmax(0,1.1fr)_minmax(0,1fr)] md:px-6">
+                            <span>Time</span>
+                            <span>Session Title</span>
+                            <span>Summary</span>
+                            <span>Expected Outcome</span>
+                            <span>Target Beneficiaries</span>
+                          </div>
+                        </>
                       )}
                     </>
                   )}
@@ -299,29 +318,49 @@ function TentativeAgendaPage() {
                       {item.time}
                     </div>
 
-                    <div className="min-w-0 break-words">
-                      <div className="text-xs font-extrabold tracking-[-0.02em] text-[#13263f] md:text-sm">
-                        {item.title}
-                      </div>
-                      {item.speaker && (
-                        <div className="mt-2 text-xs font-semibold tracking-[0.08em] text-violet-700 uppercase md:text-[11px]">
-                          {item.speaker}
+                    <div className="min-w-0 break-words md:block">
+                      <div className="flex flex-col gap-1 md:block">
+                        <span className="text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:hidden">
+                          Session
+                        </span>
+                        <div className="text-xs font-extrabold tracking-[-0.02em] text-[#13263f] md:text-sm">
+                          {item.title}
                         </div>
-                      )}
+                      </div>
                     </div>
 
-                    <div className="min-w-0 break-words text-[11px] leading-5 font-medium text-[#4c5560] md:text-xs">
-                      {item.subtitle ?? "-"}
+                    <div className="min-w-0 break-words md:block">
+                      <div className="flex flex-col gap-1 md:block">
+                        <span className="text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:hidden">
+                          Summary
+                        </span>
+                        <div className="text-[11px] leading-5 font-medium text-[#4c5560] md:text-xs">
+                          {item.subtitle ?? "-"}
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="min-w-0 break-words text-[11px] leading-5 text-[#4c5560] md:text-xs">
-                      {outcome || "-"}
+                    <div className="min-w-0 break-words md:block">
+                      <div className="flex flex-col gap-1 md:block">
+                        <span className="text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:hidden">
+                          Outcome
+                        </span>
+                        <div className="text-[11px] leading-5 text-[#4c5560] md:text-xs">
+                          {outcome || "-"}
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="min-w-0 break-words text-[11px] leading-5 text-[#4c5560] md:text-xs">
-                      {beneficiaries || "-"}
+                    <div className="min-w-0 break-words md:block">
+                      <div className="flex flex-col gap-1 md:block">
+                        <span className="text-[10px] font-black tracking-[0.14em] text-violet-800 uppercase md:hidden">
+                          Beneficiaries
+                        </span>
+                        <div className="text-[11px] leading-5 text-[#4c5560] md:text-xs">
+                          {beneficiaries || "-"}
+                        </div>
+                      </div>
                     </div>
-
                   </div>
 
                   {item.bios?.length && (
