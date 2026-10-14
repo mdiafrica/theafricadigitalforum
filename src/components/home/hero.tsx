@@ -103,8 +103,8 @@ export function Hero() {
           loaded ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         )}
       >
-        <div className="mt-[18px] mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/[0.12] bg-white/[0.08] px-4 py-1.5 text-[10px] font-semibold tracking-[0.14em] text-white/90 capitalize backdrop-blur-md">
-          <span className="size-1.5 shrink-0 rounded-full bg-primary" />
+        <div className="mt-[18px] mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/[0.12] bg-white/[0.08]         px-6 py-2.5 text-[clamp(14px,1.6vw,20px)] font-semibold tracking-[0.14em] text-white/90 capitalize backdrop-blur-md">
+                  <span className="size-2.5 shrink-0 rounded-full bg-primary" />
           <span>{hero.date}</span>
         </div>
 

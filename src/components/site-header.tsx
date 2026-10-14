@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
 
 import { m } from "@/paraglide/messages"
 import { getLocale, locales, setLocale } from "@/paraglide/runtime"
@@ -19,16 +19,43 @@ import {
 import Logo from "@/assets/images/Logo.png"
 import type { Locale } from "@/lib/schemas"
 
-/** Route path paired with its nav label message. */
-const NAV_ITEMS = [
+type NavLinkItem = {
+  to:
+    | "/"
+    | "/about"
+    | "/tentative-agenda"
+    | "/why-adf"
+    | "/host-city"
+    | "/blog"
+    | "/contact"
+  label: () => string
+  exact: boolean
+}
+
+type NavGroupItem = {
+  label: () => string
+  children: ReadonlyArray<NavLinkItem>
+}
+
+type NavItem = NavLinkItem | NavGroupItem
+
+const isGroup = (item: NavItem): item is NavGroupItem => "children" in item
+
+/** Route path paired with its nav label message. Add `children` for a dropdown. */
+const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { to: "/", label: m.nav_home, exact: true },
-  { to: "/about", label: m.nav_about, exact: false },
+  {
+    label: m.nav_about,
+    children: [
+      { to: "/about", label: m.nav_about_us, exact: false },
+      { to: "/why-adf", label: m.nav_why_adf, exact: false },
+      { to: "/host-city", label: m.nav_host_city, exact: false },
+    ],
+  },
   { to: "/tentative-agenda", label: () => "Agenda", exact: false },
-  { to: "/why-adf", label: m.nav_why_adf, exact: false },
-  { to: "/host-city", label: m.nav_host_city, exact: false },
   { to: "/blog", label: m.nav_blog, exact: false },
   { to: "/contact", label: m.nav_contact, exact: false },
-] as const
+]
 
 const LANG_LABELS: Record<Locale, string> = {
   en: "English",
@@ -195,11 +222,74 @@ const NAV_ICONS = {
   "/contact": ContactIcon,
 }
 
+function MobileNavLink({ item }: { item: NavLinkItem }) {
+  const IconComponent = NAV_ICONS[item.to]
+  return (
+    <SheetClose
+      render={
+        <Link
+          to={item.to}
+          activeOptions={{ exact: item.exact }}
+          activeProps={{ "data-status": "active" }}
+          className="group relative flex items-center gap-4 rounded-xl px-5 py-4 text-[15px] font-medium tracking-[0.12em] text-white/80 uppercase transition-all duration-300 ease-out hover:bg-white/10 hover:pl-7 hover:text-white data-[status=active]:bg-gradient-to-r data-[status=active]:from-primary/20 data-[status=active]:to-transparent data-[status=active]:font-bold data-[status=active]:text-white data-[status=active]:shadow-[inset_0_1px_0_rgba(124,58,237,0.3)]"
+        >
+          <span className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 scale-50 rounded-r-full bg-gradient-to-b from-primary to-[#a066f5] opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-40 group-data-[status=active]:scale-100 group-data-[status=active]:opacity-100" />
+          <span className="text-primary/60 transition-colors group-hover:text-primary/80 group-data-[status=active]/nav:text-primary">
+            <IconComponent />
+          </span>
+          <span className="flex-1">{item.label()}</span>
+          <span className="-translate-x-2 text-xs opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-data-[status=active]:translate-x-0 group-data-[status=active]:text-primary group-data-[status=active]:opacity-100">
+            →
+          </span>
+        </Link>
+      }
+    />
+  )
+}
+
+function NavDropdown({ group }: { group: NavGroupItem }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const active = group.children.some((child) =>
+    child.exact ? pathname === child.to : pathname.startsWith(child.to)
+  )
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        openOnHover
+        delay={80}
+        data-status={active ? "active" : undefined}
+        className="group/nav relative flex cursor-pointer items-center gap-1.5 py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors outline-none hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
+      >
+        {group.label()}
+        <span className="text-[9px]">▼</span>
+        <span className="absolute inset-x-0 -bottom-[3px] h-[2.5px] rounded-full bg-gradient-to-r from-primary to-[#a066f5] opacity-0 transition-opacity group-hover/nav:opacity-40 group-data-[status=active]/nav:opacity-100" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        sideOffset={12}
+        className="w-auto min-w-[220px] border-white/10 bg-black p-1.5 text-white ring-white/15"
+      >
+        {group.children.map((child) => (
+          <DropdownMenuItem
+            key={child.to}
+            render={<Link to={child.to} />}
+            className="px-3 py-2.5 text-[14px] font-medium tracking-[0.08em] uppercase focus:bg-white/10 focus:text-white"
+          >
+            {child.label()}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export function SiteHeader() {
   const locale = getLocale()
   const [mobileOpen, setMobileOpen] = useState(false)
   const navItems = NAV_ITEMS.filter(
-    (item) => item.to !== "/tentative-agenda" || locale === "en"
+    (item) =>
+      isGroup(item) || item.to !== "/tentative-agenda" || locale === "en"
   )
 
   return (
@@ -212,23 +302,27 @@ export function SiteHeader() {
         <img
           src={Logo}
           alt="Africa Digital Forum"
-          className="h-20 w-auto sm:h-[150px]"
+          className="h-24 w-auto sm:h-[190px]"
         />
       </Link>
 
       <nav className="hidden items-center gap-10 lg:flex">
-        {navItems.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            activeOptions={{ exact: item.exact }}
-            activeProps={{ "data-status": "active" }}
-            className="group/nav relative py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
-          >
-            {item.label()}
-            <span className="absolute inset-x-0 -bottom-[3px] h-[2.5px] rounded-full bg-gradient-to-r from-primary to-[#a066f5] opacity-0 transition-opacity group-hover/nav:opacity-40 group-data-[status=active]/nav:opacity-100" />
-          </Link>
-        ))}
+        {navItems.map((item) =>
+          isGroup(item) ? (
+            <NavDropdown key={item.label()} group={item} />
+          ) : (
+            <Link
+              key={item.to}
+              to={item.to}
+              activeOptions={{ exact: item.exact }}
+              activeProps={{ "data-status": "active" }}
+              className="group/nav relative py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
+            >
+              {item.label()}
+              <span className="absolute inset-x-0 -bottom-[3px] h-[2.5px] rounded-full bg-gradient-to-r from-primary to-[#a066f5] opacity-0 transition-opacity group-hover/nav:opacity-40 group-data-[status=active]/nav:opacity-100" />
+            </Link>
+          )
+        )}
       </nav>
 
       <div className="flex items-center gap-2">
@@ -258,38 +352,21 @@ export function SiteHeader() {
                 </span>
               </div>
 
-              {navItems.map((item) => {
-                const IconComponent = NAV_ICONS[item.to]
-                return (
-                  <SheetClose
-                    key={item.to}
-                    render={
-                      <Link
-                        to={item.to}
-                        activeOptions={{ exact: item.exact }}
-                        activeProps={{ "data-status": "active" }}
-                        className={`group relative flex items-center gap-4 rounded-xl px-5 py-4 text-[15px] font-medium tracking-[0.12em] text-white/80 uppercase transition-all duration-300 ease-out hover:bg-white/10 hover:pl-7 hover:text-white data-[status=active]:bg-gradient-to-r data-[status=active]:from-primary/20 data-[status=active]:to-transparent data-[status=active]:font-bold data-[status=active]:text-white data-[status=active]:shadow-[inset_0_1px_0_rgba(124,58,237,0.3)]`}
+              {navItems.flatMap((item) =>
+                isGroup(item)
+                  ? [
+                      <span
+                        key={`${item.label()}-heading`}
+                        className="mt-2 px-5 text-xs font-medium tracking-[0.2em] text-white/40 uppercase"
                       >
-                        {/* Active indicator dot */}
-                        <span className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 scale-50 rounded-r-full bg-gradient-to-b from-primary to-[#a066f5] opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-40 group-data-[status=active]:scale-100 group-data-[status=active]:opacity-100" />
-
-                        {/* Icon */}
-                        <span className="text-primary/60 transition-colors group-hover:text-primary/80 group-data-[status=active]/nav:text-primary">
-                          <IconComponent />
-                        </span>
-
-                        {/* Label */}
-                        <span className="flex-1">{item.label()}</span>
-
-                        {/* Arrow indicator */}
-                        <span className="-translate-x-2 text-xs opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-data-[status=active]:translate-x-0 group-data-[status=active]:text-primary group-data-[status=active]:opacity-100">
-                          →
-                        </span>
-                      </Link>
-                    }
-                  />
-                )
-              })}
+                        {item.label()}
+                      </span>,
+                      ...item.children.map((child) => (
+                        <MobileNavLink key={child.to} item={child} />
+                      )),
+                    ]
+                  : [<MobileNavLink key={item.to} item={item} />]
+              )}
 
               {/* Language selector in mobile menu */}
               <div className="mt-6 border-t border-white/10 pt-6">
