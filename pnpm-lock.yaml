@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  use-sync-external-store: ^1.6.0
+
 importers:
 
   .:
