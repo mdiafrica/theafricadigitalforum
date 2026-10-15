@@ -18,6 +18,10 @@ import {
   LogOut,
   Mic,
   Tags,
+  Ticket,
+  KeyRound,
+  ScanLine,
+  BarChart3,
   UserCircle,
   UserRoundCheck,
   Users,
@@ -84,6 +88,18 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { to: "/admin/submissions", label: "Submissions", icon: Inbox },
+      { to: "/admin/registrations", label: "Registrations", icon: Ticket },
+      {
+        to: "/admin/check-in",
+        label: "Check-in",
+        icon: ScanLine,
+      },
+      {
+        to: "/admin/registration-overview",
+        label: "Registration overview",
+        icon: BarChart3,
+      },
+      { to: "/admin/registration-codes", label: "Access codes", icon: KeyRound },
     ],
   },
   {

@@ -1,0 +1,1 @@
+ALTER TABLE "registration" ADD COLUMN "title" text DEFAULT '' NOT NULL;

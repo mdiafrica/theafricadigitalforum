@@ -22,6 +22,7 @@ import { Route as PublicBlogRouteImport } from './routes/_public.blog'
 import { Route as PublicContactRouteImport } from './routes/_public.contact'
 import { Route as PublicHostCityRouteImport } from './routes/_public.host-city'
 import { Route as PublicPrivacyRouteImport } from './routes/_public.privacy'
+import { Route as PublicRegisterRouteImport } from './routes/_public.register'
 import { Route as PublicTentativeAgendaRouteImport } from './routes/_public.tentative-agenda'
 import { Route as PublicTermsRouteImport } from './routes/_public.terms'
 import { Route as PublicWhyAdfRouteImport } from './routes/_public.why-adf'
@@ -30,10 +31,14 @@ import { Route as AdminAccountRouteImport } from './routes/admin.account'
 import { Route as AdminAdvisorsRouteImport } from './routes/admin.advisors'
 import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminCheckInRouteImport } from './routes/admin.check-in'
 import { Route as AdminEditorRouteImport } from './routes/admin.editor'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminPagesRouteImport } from './routes/admin.pages'
+import { Route as AdminRegistrationCodesRouteImport } from './routes/admin.registration-codes'
+import { Route as AdminRegistrationOverviewRouteImport } from './routes/admin.registration-overview'
+import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
 import { Route as AdminSpeakersRouteImport } from './routes/admin.speakers'
 import { Route as AdminSponsorsRouteImport } from './routes/admin.sponsors'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
@@ -41,6 +46,7 @@ import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AuthAcceptInvitationInvitationIdRouteImport } from './routes/_auth.accept-invitation.$invitationId'
 import { Route as PublicBlogIndexRouteImport } from './routes/_public.blog.index'
 import { Route as PublicBlogSlugRouteImport } from './routes/_public.blog.$slug'
+import { Route as PublicVerifyReferenceRouteImport } from './routes/_public.verify.$reference'
 import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
 import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
 import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
@@ -109,6 +115,11 @@ const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicRegisterRoute = PublicRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicTentativeAgendaRoute = PublicTentativeAgendaRouteImport.update({
   id: '/tentative-agenda',
   path: '/tentative-agenda',
@@ -149,6 +160,11 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCheckInRoute = AdminCheckInRouteImport.update({
+  id: '/check-in',
+  path: '/check-in',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEditorRoute = AdminEditorRouteImport.update({
   id: '/editor',
   path: '/editor',
@@ -167,6 +183,22 @@ const AdminMediaRoute = AdminMediaRouteImport.update({
 const AdminPagesRoute = AdminPagesRouteImport.update({
   id: '/pages',
   path: '/pages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRegistrationCodesRoute = AdminRegistrationCodesRouteImport.update({
+  id: '/registration-codes',
+  path: '/registration-codes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRegistrationOverviewRoute =
+  AdminRegistrationOverviewRouteImport.update({
+    id: '/registration-overview',
+    path: '/registration-overview',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminRegistrationsRoute = AdminRegistrationsRouteImport.update({
+  id: '/registrations',
+  path: '/registrations',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSpeakersRoute = AdminSpeakersRouteImport.update({
@@ -205,6 +237,11 @@ const PublicBlogSlugRoute = PublicBlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => PublicBlogRoute,
 } as any)
+const PublicVerifyReferenceRoute = PublicVerifyReferenceRouteImport.update({
+  id: '/verify/$reference',
+  path: '/verify/$reference',
+  getParentRoute: () => PublicRoute,
+} as any)
 const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
@@ -238,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof PublicContactRoute
   '/host-city': typeof PublicHostCityRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/register': typeof PublicRegisterRoute
   '/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
@@ -245,10 +283,14 @@ export interface FileRoutesByFullPath {
   '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/check-in': typeof AdminCheckInRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/registration-codes': typeof AdminRegistrationCodesRoute
+  '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/speakers': typeof AdminSpeakersRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -256,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/accept-invitation/$invitationId': typeof AuthAcceptInvitationInvitationIdRoute
   '/blog/$slug': typeof PublicBlogSlugRoute
+  '/verify/$reference': typeof PublicVerifyReferenceRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -272,6 +315,7 @@ export interface FileRoutesByTo {
   '/contact': typeof PublicContactRoute
   '/host-city': typeof PublicHostCityRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/register': typeof PublicRegisterRoute
   '/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/terms': typeof PublicTermsRoute
   '/why-adf': typeof PublicWhyAdfRoute
@@ -279,10 +323,14 @@ export interface FileRoutesByTo {
   '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/check-in': typeof AdminCheckInRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/registration-codes': typeof AdminRegistrationCodesRoute
+  '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/speakers': typeof AdminSpeakersRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -290,6 +338,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/accept-invitation/$invitationId': typeof AuthAcceptInvitationInvitationIdRoute
   '/blog/$slug': typeof PublicBlogSlugRoute
+  '/verify/$reference': typeof PublicVerifyReferenceRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -310,6 +359,7 @@ export interface FileRoutesById {
   '/_public/contact': typeof PublicContactRoute
   '/_public/host-city': typeof PublicHostCityRoute
   '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/register': typeof PublicRegisterRoute
   '/_public/tentative-agenda': typeof PublicTentativeAgendaRoute
   '/_public/terms': typeof PublicTermsRoute
   '/_public/why-adf': typeof PublicWhyAdfRoute
@@ -317,10 +367,14 @@ export interface FileRoutesById {
   '/admin/advisors': typeof AdminAdvisorsRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/check-in': typeof AdminCheckInRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/registration-codes': typeof AdminRegistrationCodesRoute
+  '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/speakers': typeof AdminSpeakersRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -329,6 +383,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/_auth/accept-invitation/$invitationId': typeof AuthAcceptInvitationInvitationIdRoute
   '/_public/blog/$slug': typeof PublicBlogSlugRoute
+  '/_public/verify/$reference': typeof PublicVerifyReferenceRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -349,6 +404,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/host-city'
     | '/privacy'
+    | '/register'
     | '/tentative-agenda'
     | '/terms'
     | '/why-adf'
@@ -356,10 +412,14 @@ export interface FileRouteTypes {
     | '/admin/advisors'
     | '/admin/agenda'
     | '/admin/categories'
+    | '/admin/check-in'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/registration-codes'
+    | '/admin/registration-overview'
+    | '/admin/registrations'
     | '/admin/speakers'
     | '/admin/sponsors'
     | '/admin/submissions'
@@ -367,6 +427,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/accept-invitation/$invitationId'
     | '/blog/$slug'
+    | '/verify/$reference'
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
@@ -383,6 +444,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/host-city'
     | '/privacy'
+    | '/register'
     | '/tentative-agenda'
     | '/terms'
     | '/why-adf'
@@ -390,10 +452,14 @@ export interface FileRouteTypes {
     | '/admin/advisors'
     | '/admin/agenda'
     | '/admin/categories'
+    | '/admin/check-in'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/registration-codes'
+    | '/admin/registration-overview'
+    | '/admin/registrations'
     | '/admin/speakers'
     | '/admin/sponsors'
     | '/admin/submissions'
@@ -401,6 +467,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/accept-invitation/$invitationId'
     | '/blog/$slug'
+    | '/verify/$reference'
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
@@ -420,6 +487,7 @@ export interface FileRouteTypes {
     | '/_public/contact'
     | '/_public/host-city'
     | '/_public/privacy'
+    | '/_public/register'
     | '/_public/tentative-agenda'
     | '/_public/terms'
     | '/_public/why-adf'
@@ -427,10 +495,14 @@ export interface FileRouteTypes {
     | '/admin/advisors'
     | '/admin/agenda'
     | '/admin/categories'
+    | '/admin/check-in'
     | '/admin/editor'
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/registration-codes'
+    | '/admin/registration-overview'
+    | '/admin/registrations'
     | '/admin/speakers'
     | '/admin/sponsors'
     | '/admin/submissions'
@@ -439,6 +511,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/_auth/accept-invitation/$invitationId'
     | '/_public/blog/$slug'
+    | '/_public/verify/$reference'
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
@@ -547,6 +620,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicPrivacyRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/register': {
+      id: '/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublicRegisterRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/tentative-agenda': {
       id: '/_public/tentative-agenda'
       path: '/tentative-agenda'
@@ -603,6 +683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/check-in': {
+      id: '/admin/check-in'
+      path: '/check-in'
+      fullPath: '/admin/check-in'
+      preLoaderRoute: typeof AdminCheckInRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/editor': {
       id: '/admin/editor'
       path: '/editor'
@@ -629,6 +716,27 @@ declare module '@tanstack/react-router' {
       path: '/pages'
       fullPath: '/admin/pages'
       preLoaderRoute: typeof AdminPagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/registration-codes': {
+      id: '/admin/registration-codes'
+      path: '/registration-codes'
+      fullPath: '/admin/registration-codes'
+      preLoaderRoute: typeof AdminRegistrationCodesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/registration-overview': {
+      id: '/admin/registration-overview'
+      path: '/registration-overview'
+      fullPath: '/admin/registration-overview'
+      preLoaderRoute: typeof AdminRegistrationOverviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/registrations': {
+      id: '/admin/registrations'
+      path: '/registrations'
+      fullPath: '/admin/registrations'
+      preLoaderRoute: typeof AdminRegistrationsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/speakers': {
@@ -679,6 +787,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof PublicBlogSlugRouteImport
       parentRoute: typeof PublicBlogRoute
+    }
+    '/_public/verify/$reference': {
+      id: '/_public/verify/$reference'
+      path: '/verify/$reference'
+      fullPath: '/verify/$reference'
+      preLoaderRoute: typeof PublicVerifyReferenceRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/admin/posts/': {
       id: '/admin/posts/'
@@ -747,10 +862,12 @@ interface PublicRouteChildren {
   PublicContactRoute: typeof PublicContactRoute
   PublicHostCityRoute: typeof PublicHostCityRoute
   PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicRegisterRoute: typeof PublicRegisterRoute
   PublicTentativeAgendaRoute: typeof PublicTentativeAgendaRoute
   PublicTermsRoute: typeof PublicTermsRoute
   PublicWhyAdfRoute: typeof PublicWhyAdfRoute
   PublicIndexRoute: typeof PublicIndexRoute
+  PublicVerifyReferenceRoute: typeof PublicVerifyReferenceRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
@@ -759,10 +876,12 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicContactRoute: PublicContactRoute,
   PublicHostCityRoute: PublicHostCityRoute,
   PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicRegisterRoute: PublicRegisterRoute,
   PublicTentativeAgendaRoute: PublicTentativeAgendaRoute,
   PublicTermsRoute: PublicTermsRoute,
   PublicWhyAdfRoute: PublicWhyAdfRoute,
   PublicIndexRoute: PublicIndexRoute,
+  PublicVerifyReferenceRoute: PublicVerifyReferenceRoute,
 }
 
 const PublicRouteWithChildren =
@@ -773,10 +892,14 @@ interface AdminRouteChildren {
   AdminAdvisorsRoute: typeof AdminAdvisorsRoute
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminCheckInRoute: typeof AdminCheckInRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminPagesRoute: typeof AdminPagesRoute
+  AdminRegistrationCodesRoute: typeof AdminRegistrationCodesRoute
+  AdminRegistrationOverviewRoute: typeof AdminRegistrationOverviewRoute
+  AdminRegistrationsRoute: typeof AdminRegistrationsRoute
   AdminSpeakersRoute: typeof AdminSpeakersRoute
   AdminSponsorsRoute: typeof AdminSponsorsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
@@ -792,10 +915,14 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdvisorsRoute: AdminAdvisorsRoute,
   AdminAgendaRoute: AdminAgendaRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminCheckInRoute: AdminCheckInRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminPagesRoute: AdminPagesRoute,
+  AdminRegistrationCodesRoute: AdminRegistrationCodesRoute,
+  AdminRegistrationOverviewRoute: AdminRegistrationOverviewRoute,
+  AdminRegistrationsRoute: AdminRegistrationsRoute,
   AdminSpeakersRoute: AdminSpeakersRoute,
   AdminSponsorsRoute: AdminSponsorsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,

@@ -1,0 +1,1 @@
+ALTER TABLE "registration" ADD COLUMN "checked_in_at" timestamp;

@@ -1,4 +1,5 @@
 import { render } from "@react-email/render"
+import type { Attachment } from "nodemailer/lib/mailer"
 
 import { EMAIL_REGISTRY, type EmailKey, type EmailPropsMap } from "./registry"
 import { mailFrom, mailTransport } from "./transport"
@@ -10,7 +11,8 @@ import { mailFrom, mailTransport } from "./transport"
 export async function sendEmail<K extends EmailKey>(
   key: K,
   to: string,
-  props: EmailPropsMap[K]
+  props: EmailPropsMap[K],
+  attachments?: Attachment[]
 ): Promise<void> {
   const entry = EMAIL_REGISTRY[key]
   const subject =
@@ -18,7 +20,7 @@ export async function sendEmail<K extends EmailKey>(
   const html = await render(entry.component(props))
 
   try {
-    await mailTransport.sendMail({ from: mailFrom, to, subject, html })
+    await mailTransport.sendMail({ from: mailFrom, to, subject, html, attachments })
   } catch (error) {
     console.error(`[email] failed to send "${key}" to ${to}:`, error)
     throw error

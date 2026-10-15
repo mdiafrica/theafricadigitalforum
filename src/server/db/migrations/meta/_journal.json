@@ -78,6 +78,34 @@
       "when": 1789718761292,
       "tag": "0010_small_siren",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792001544800,
+      "tag": "0011_registrations",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792006644136,
+      "tag": "0012_registration_codes",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792090676795,
+      "tag": "0013_registration_check_in",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792093612395,
+      "tag": "0014_registration_title",
+      "breakpoints": true
     }
   ]
 }

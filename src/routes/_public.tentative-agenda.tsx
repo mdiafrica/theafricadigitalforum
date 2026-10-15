@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { pageHead } from "@/lib/seo"
 import { m } from "@/paraglide/messages"
@@ -11,9 +11,7 @@ import {
 } from "@/domains/page-content"
 import Logo from "@/assets/images/Logo.png"
 import agendaImage from "@/assets/images/Image2.jpg"
-import { PreregisterFormDialog } from "@/components/preregister-form-dialog"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 type AgendaItem = {
   day: string
@@ -394,16 +392,12 @@ function TentativeAgendaPage() {
                   Book a seat
                 </div>
               </div>
-              <Dialog>
-                <DialogTrigger
-                  render={
-                    <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
-                  }
-                >
-                  {m.preregister_button()}
-                </DialogTrigger>
-                <PreregisterFormDialog />
-              </Dialog>
+              <Button
+                render={<Link to="/register" />}
+                className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]"
+              >
+                {m.preregister_button()}
+              </Button>
             </div>
           </div>
         </main>

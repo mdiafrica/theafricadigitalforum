@@ -326,7 +326,16 @@ export function SiteHeader() {
       </nav>
 
       <div className="flex items-center gap-2">
-        <LanguageMenu />
+        <Button
+          render={<Link to="/register" />}
+          className="h-9 border-2 border-primary px-3.5 text-[13px] font-bold tracking-[0.06em] text-white shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:border-[#6d28d9] hover:bg-[#6d28d9] sm:px-6 sm:text-sm"
+        >
+          {m.preregister_button()}
+        </Button>
+
+        <div className="hidden sm:block">
+          <LanguageMenu />
+        </div>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger

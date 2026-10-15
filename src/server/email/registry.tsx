@@ -15,6 +15,10 @@ import {
   type InvitationEmailProps,
 } from "./templates/invitation-email"
 import {
+  RegistrationConfirmationEmail,
+  type RegistrationConfirmationEmailProps,
+} from "./templates/registration-confirmation-email"
+import {
   ResetPasswordEmail,
   type ResetPasswordEmailProps,
 } from "./templates/reset-password-email"
@@ -32,6 +36,7 @@ export interface EmailPropsMap {
   "contact-notification": ContactNotificationEmailProps
   "contact-reply": ContactReplyEmailProps
   "contact-forward": ContactForwardEmailProps
+  "registration-confirmation": RegistrationConfirmationEmailProps
 }
 
 export type EmailKey = keyof EmailPropsMap
@@ -61,5 +66,12 @@ export const EMAIL_REGISTRY: { [K in EmailKey]: EmailRegistryEntry<K> } = {
   "contact-forward": {
     subject: (props) => `Fwd: ${props.subject}`,
     component: (props) => <ContactForwardEmail {...props} />,
+  },
+  "registration-confirmation": {
+    subject: (props) =>
+      props.waived
+        ? "Your Africa Digital Forum registration is confirmed"
+        : "Your Africa Digital Forum pass is reserved",
+    component: (props) => <RegistrationConfirmationEmail {...props} />,
   },
 }

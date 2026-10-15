@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,8 +18,6 @@ import { pageHead } from "@/lib/seo"
 import { Reveal } from "@/components/motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { PreregisterFormDialog } from "@/components/preregister-form-dialog"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import heroBg from "@/assets/images/Image6.jpg"
 import promoBg from "@/assets/images/image9.jpg"
 import ctaBg from "@/assets/images/Image5.jpg"
@@ -201,16 +199,12 @@ function HostCityRoute() {
             </h3>
             <p className="text-sm text-white/65">{m.city_promo_subtitle()}</p>
           </div>
-          <Dialog>
-            <DialogTrigger
-              render={
-                <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
-              }
-            >
-              {m.preregister_button()}
-            </DialogTrigger>
-              <PreregisterFormDialog />
-          </Dialog>
+          <Button
+            render={<Link to="/register" />}
+            className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]"
+          >
+            {m.preregister_button()}
+          </Button>
         </div>
       </Reveal>
 
@@ -273,16 +267,12 @@ function HostCityRoute() {
             <p className="mb-8 text-base text-white/[0.72]">
               {m.city_cta_subtitle()}
             </p>
-            <Dialog>
-              <DialogTrigger
-                render={
-                  <Button className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]" />
-                }
-              >
-                {m.preregister_button()}
-              </DialogTrigger>
-              <PreregisterFormDialog />
-            </Dialog>
+            <Button
+              render={<Link to="/register" />}
+              className="h-auto border-2 border-primary px-9 py-3.5 text-sm font-bold tracking-[0.06em] text-white capitalize shadow-[0_4px_20px_rgba(124,58,237,0.45)] hover:-translate-y-0.5 hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_8px_28px_rgba(124,58,237,0.55)]"
+            >
+              {m.preregister_button()}
+            </Button>
           </div>
         </div>
       </Reveal>
