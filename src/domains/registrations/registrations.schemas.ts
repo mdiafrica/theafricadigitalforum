@@ -2,6 +2,7 @@ import { z } from "zod"
 
 import {
   COUNTRIES,
+  INTERNATIONAL,
   INTEREST_AREAS,
   OTHER_PREFIX,
   PARTICIPATION_TYPES,
@@ -110,6 +111,8 @@ export const updateRegistrationInput = registrationInput
     id: z.uuid(),
     // Registrations made before nationality existed have none stored.
     nationality: z.enum(COUNTRIES).or(z.literal("")),
+    // Earlier registrations may have "International" as their country.
+    country: z.enum(COUNTRIES).or(z.literal(INTERNATIONAL)),
   })
 export type UpdateRegistrationInput = z.infer<typeof updateRegistrationInput>
 

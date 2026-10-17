@@ -843,11 +843,13 @@ function StepDetails(props: StepProps) {
             )}
           >
             <option value="">{tr("Select a country")}</option>
-            {COUNTRIES.map((country) => (
-              <option key={country} value={country}>
-                {trCountry(country)}
-              </option>
-            ))}
+            {[...COUNTRIES]
+              .sort((a, b) => trCountry(a).localeCompare(trCountry(b)))
+              .map((country) => (
+                <option key={country} value={country}>
+                  {trCountry(country)}
+                </option>
+              ))}
           </select>
           <FieldError message={errors.country} />
         </div>
@@ -866,11 +868,13 @@ function StepDetails(props: StepProps) {
             )}
           >
             <option value="">{tr("Select a country")}</option>
-            {COUNTRIES.map((country) => (
-              <option key={country} value={country}>
-                {trCountry(country)}
-              </option>
-            ))}
+            {[...COUNTRIES]
+              .sort((a, b) => trCountry(a).localeCompare(trCountry(b)))
+              .map((country) => (
+                <option key={country} value={country}>
+                  {trCountry(country)}
+                </option>
+              ))}
           </select>
           <FieldError message={errors.nationality} />
         </div>

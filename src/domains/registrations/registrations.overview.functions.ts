@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start"
 import { requireOrgPermission } from "@/domains/auth"
 import { db } from "@/server/db"
 import * as schema from "@/server/db/schema"
-import { INTERNATIONAL, PASS_TIERS } from "./registrations.options"
+import { AFRICAN_COUNTRIES, PASS_TIERS } from "./registrations.options"
 
 type Count = { label: string; count: number }
 
@@ -66,7 +66,9 @@ export const getRegistrationOverview = createServerFn({ method: "GET" })
       list.reduce((total, row) => total + priceOf(row.passTier), 0)
 
     const countries = tally(rows.map((row) => row.country))
-    const africanRows = rows.filter((row) => row.country !== INTERNATIONAL)
+    const africanRows = rows.filter((row) =>
+      (AFRICAN_COUNTRIES as ReadonlyArray<string>).includes(row.country)
+    )
 
     const countOfType = (type: string) =>
       rows.filter((row) => row.participationType === type).length

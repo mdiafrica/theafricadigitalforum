@@ -1,3 +1,5 @@
+import { OTHER_COUNTRIES } from "./registrations.countries"
+
 /** Shared by the /register form and server-side validation. */
 
 export const EVENT_DATES = "June 2–4, 2027"
@@ -148,7 +150,7 @@ export const TITLES = [
   "Chief",
 ] as const
 
-export const COUNTRIES = [
+export const AFRICAN_COUNTRIES = [
   "Algeria",
   "Angola",
   "Benin",
@@ -203,5 +205,13 @@ export const COUNTRIES = [
   "Uganda",
   "Zambia",
   "Zimbabwe",
-  INTERNATIONAL,
 ] as const
+
+/** Every country, so attendees from outside Africa can register too. */
+export const COUNTRIES = [
+  ...AFRICAN_COUNTRIES,
+  ...(Object.keys(OTHER_COUNTRIES) as Array<string>),
+].sort((a, b) => a.localeCompare(b)) as unknown as readonly [
+  string,
+  ...Array<string>,
+]

@@ -1,4 +1,5 @@
 import { getLocale } from "@/paraglide/runtime"
+import { OTHER_COUNTRIES } from "./registrations.countries"
 
 /**
  * French labels for the registration form. Option values stay English (the
@@ -341,7 +342,8 @@ export function trTitle(title: string): string {
 }
 
 export function trCountry(country: string): string {
-  return isFrench() ? (FR_COUNTRIES[country] ?? country) : country
+  if (!isFrench()) return country
+  return FR_COUNTRIES[country] ?? OTHER_COUNTRIES[country] ?? country
 }
 
 /** Locale-explicit lookups for server code (emails) outside a request locale. */
