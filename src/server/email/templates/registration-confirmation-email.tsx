@@ -167,7 +167,7 @@ export function RegistrationConfirmationEmail({
   const firstName = name.trim().split(/\s+/)[0] || name
   const formalName = [title, name].filter(Boolean).join(" ")
   const isReservation = !waived && !paid
-  const dates = fr ? "2–4 Juin 2026" : "June 2–4, 2026"
+  const dates = fr ? "2–4 Juin 2027" : "June 2–4, 2027"
 
   return (
     <EmailLayout
@@ -176,10 +176,10 @@ export function RegistrationConfirmationEmail({
         fr
           ? isReservation
             ? `Votre ${passName} est réservé, ${firstName}. Les instructions de paiement suivront.`
-            : `Vous êtes inscrit(e), ${firstName} ! Rendez-vous à Lomé, du 2 au 4 Juin 2026.`
+            : `Vous êtes inscrit(e), ${firstName} ! Rendez-vous à Lomé, du 2 au 4 Juin 2027.`
           : isReservation
             ? `Your ${passName} is reserved, ${firstName}. Payment instructions will follow.`
-            : `You're in, ${firstName}! See you in Lomé, June 2–4, 2026.`
+            : `You're in, ${firstName}! See you in Lomé, June 2–4, 2027.`
       }
     >
       <Section className="adf-hero" style={s.hero}>
@@ -207,8 +207,8 @@ export function RegistrationConfirmationEmail({
               ? "Le paiement en ligne n’est pas encore disponible. Notre équipe vous enverra les instructions de paiement par e-mail."
               : "Online payment is not available yet. Our team will email you payment instructions."
             : fr
-              ? "Préparez-vous pour Africa Digital Forum 2026, où se construit l’avenir numérique de l’Afrique."
-              : "Get ready for Africa Digital Forum 2026, where Africa's digital future takes shape."}
+              ? "Préparez-vous pour Africa Digital Forum 2027, où se construit l’avenir numérique de l’Afrique."
+              : "Get ready for Africa Digital Forum 2027, where Africa's digital future takes shape."}
         </Text>
       </Section>
 

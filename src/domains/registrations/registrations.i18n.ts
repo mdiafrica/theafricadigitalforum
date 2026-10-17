@@ -20,7 +20,7 @@ const FR: Record<string, string> = {
   Location: "Lieu",
   "Host Organization": "Organisation hôte",
   "Expected Audience": "Public attendu",
-  "June 2–4, 2026": "2–4 Juin 2026",
+  "June 2–4, 2027": "2–4 Juin 2027",
   "Country of Nationality": "Pays de nationalité",
   "Please select your country of nationality.":
     "Veuillez sélectionner votre pays de nationalité.",

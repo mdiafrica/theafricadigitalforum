@@ -95,7 +95,7 @@ export const submitRegistration = createServerFn({ method: "POST" })
         const session = await createCheckoutSession({
           reference,
           email: data.email,
-          productName: `Africa Digital Forum 2026 — ${tier.name}`,
+          productName: `Africa Digital Forum 2027 — ${tier.name}`,
           amountUsd: tier.price,
           locale: data.locale,
           successUrl: `${base}?payment=success&ref=${reference}`,

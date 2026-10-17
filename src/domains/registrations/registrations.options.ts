@@ -1,6 +1,6 @@
 /** Shared by the /register form and server-side validation. */
 
-export const EVENT_DATES = "June 2–4, 2026"
+export const EVENT_DATES = "June 2–4, 2027"
 export const EVENT_LOCATION = "Lomé, Togo"
 export const EVENT_HOST = "Media and Digital Institute (MDI)"
 export const EVENT_AUDIENCE =
