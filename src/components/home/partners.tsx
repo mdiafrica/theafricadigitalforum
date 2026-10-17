@@ -15,8 +15,8 @@ const TIERS: Array<Tier> = [
   {
     label: () => m.home_partners_tier_cohosts(),
     partners: [
-      { name: "IMD University" },
-      { name: "MDI Africa Foundation Inc" },
+      { name: "IMD University", logo: mdiLogo },
+      { name: "MDI Africa Foundation Inc", logo: mdiLogo },
     ],
   },
   { label: () => m.home_partners_tier_title(), partners: [] },
