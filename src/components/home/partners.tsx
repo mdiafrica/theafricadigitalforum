@@ -1,13 +1,17 @@
 import { m } from "@/paraglide/messages"
 import { useInView } from "@/components/motion"
 import bolingoLogo from "@/assets/images/bolingo-logo.png"
+import mdiLogo from "@/assets/images/mdi-logo.png"
 
 type Partner = { name: string; logo?: string }
 type Tier = { label: () => string; partners: Array<Partner> }
 
 // Tiers with no names are hidden. Add a name here to show it on the homepage.
 const TIERS: Array<Tier> = [
-  { label: () => m.home_partners_tier_host(), partners: [{ name: "MDI" }] },
+  {
+    label: () => m.home_partners_tier_host(),
+    partners: [{ name: "MDI", logo: mdiLogo }],
+  },
   {
     label: () => m.home_partners_tier_cohosts(),
     partners: [
@@ -70,7 +74,7 @@ export function Partners() {
                         src={logo}
                         alt={name}
                         loading="lazy"
-                        className="h-14 w-auto rounded-xl bg-white"
+                        className="h-20 w-auto rounded-xl bg-white"
                       />
                     ) : (
                       <span className="text-[clamp(20px,2.4vw,30px)] font-extrabold tracking-[-0.02em] text-white">
