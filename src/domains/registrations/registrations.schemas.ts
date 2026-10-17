@@ -3,6 +3,7 @@ import { z } from "zod"
 import {
   COUNTRIES,
   INTEREST_AREAS,
+  OTHER_PREFIX,
   PARTICIPATION_TYPES,
   PARTNERSHIP_OPTIONS,
   PASS_TIER_IDS,
@@ -24,7 +25,30 @@ const linkedinUrl = z
   }, "Please enter a valid URL (https://linkedin.com/in/...).")
   .default("")
 
+export const OTHER_MESSAGE = "Please tell us what you mean by �Other�."
+
+/** One of the listed options, or `Other: <free text>`. */
+const choice = (options: ReadonlyArray<string>, message: string) =>
+  z
+    .string()
+    .trim()
+    .superRefine((value, ctx) => {
+      if (options.includes(value)) return
+      if (value.startsWith("Other:")) {
+        if (
+          !value.startsWith(OTHER_PREFIX) ||
+          value.length < OTHER_PREFIX.length + 2
+        ) {
+          ctx.addIssue({ code: "custom", message: OTHER_MESSAGE })
+        } else if (value.length > OTHER_PREFIX.length + 200) {
+          ctx.addIssue({ code: "custom", message: OTHER_MESSAGE })
+        }
+        return
+      }
+      ctx.addIssue({ code: "custom", message })
+    })
 export const registrationInput = z.object({
+  locale: z.enum(["en", "fr"]).default("en"),
   title: z.string().trim().max(40).default(""),
   fullName: z
     .string()
@@ -43,14 +67,17 @@ export const registrationInput = z.object({
     .min(1, "Please enter your organization.")
     .max(200),
   country: z.enum(COUNTRIES, "Please select your country of residence."),
+  nationality: z.enum(COUNTRIES, "Please select your country of nationality."),
   linkedinUrl,
   passTier: z.enum(PASS_TIER_IDS, "Please select a pass."),
-  interestAreas: z.array(z.enum(INTEREST_AREAS)).max(INTEREST_AREAS.length),
-  participationType: z.enum(
+  interestAreas: z
+    .array(choice(INTEREST_AREAS, "Please select at least one interest area."))
+    .max(INTEREST_AREAS.length + 1),
+  participationType: choice(
     PARTICIPATION_TYPES,
     "Please tell us how you wish to participate."
   ),
-  primaryGoal: z.enum(PRIMARY_GOALS, "Please select your primary goal."),
+  primaryGoal: choice(PRIMARY_GOALS, "Please select your primary goal."),
   partnershipInterest: z.enum(
     PARTNERSHIP_OPTIONS,
     "Please select a partnership option."
@@ -73,8 +100,17 @@ export const listRegistrationsInput = z.object({
 export type ListRegistrationsInput = z.infer<typeof listRegistrationsInput>
 
 export const updateRegistrationInput = registrationInput
-  .omit({ communicationsConsent: true, termsAccepted: true, accessCode: true })
-  .extend({ id: z.uuid() })
+  .omit({
+    communicationsConsent: true,
+    termsAccepted: true,
+    accessCode: true,
+    locale: true,
+  })
+  .extend({
+    id: z.uuid(),
+    // Registrations made before nationality existed have none stored.
+    nationality: z.enum(COUNTRIES).or(z.literal("")),
+  })
 export type UpdateRegistrationInput = z.infer<typeof updateRegistrationInput>
 
 export const registrationIdInput = z.object({ id: z.uuid() })

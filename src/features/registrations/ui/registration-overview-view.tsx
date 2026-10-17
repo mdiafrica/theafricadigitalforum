@@ -100,7 +100,9 @@ function Overview({ data }: { data: RegistrationOverview }) {
           icon={<UsersIcon />}
           label="Top country"
           value={topCountry?.label ?? "—"}
-          hint={topCountry ? `${topCountry.count} registrations` : "No data yet"}
+          hint={
+            topCountry ? `${topCountry.count} registrations` : "No data yet"
+          }
         />
       </div>
 
@@ -118,13 +120,16 @@ function Overview({ data }: { data: RegistrationOverview }) {
           />
         </Panel>
         <Panel title="Who is coming">
-          <Bars items={data.participation} />
+          <Bars items={data.participation.items} />
+          <OtherAnswers answers={data.participation.others} />
         </Panel>
         <Panel title="Areas of interest">
-          <Bars items={data.interests} />
+          <Bars items={data.interests.items} />
+          <OtherAnswers answers={data.interests.others} />
         </Panel>
         <Panel title="Primary goals">
-          <Bars items={data.goals} />
+          <Bars items={data.goals.items} />
+          <OtherAnswers answers={data.goals.others} />
         </Panel>
       </div>
     </>
@@ -170,9 +175,38 @@ function Panel({
   return (
     <section className="rounded-xl border border-border bg-card p-5">
       <h2 className="font-semibold">{title}</h2>
-      {note ? <p className="mb-3 text-xs text-muted-foreground">{note}</p> : <div className="mb-3" />}
+      {note ? (
+        <p className="mb-3 text-xs text-muted-foreground">{note}</p>
+      ) : (
+        <div className="mb-3" />
+      )}
       {children}
     </section>
+  )
+}
+
+function OtherAnswers({
+  answers,
+}: {
+  answers: Array<{ text: string; count: number }>
+}) {
+  if (answers.length === 0) return null
+  return (
+    <div className="mt-4 rounded-lg bg-muted/60 p-3">
+      <div className="mb-1.5 text-xs font-semibold text-muted-foreground uppercase">
+        What applicants wrote under “Other”
+      </div>
+      <ul className="space-y-1 text-sm">
+        {answers.map((answer) => (
+          <li key={answer.text} className="flex justify-between gap-3">
+            <span className="min-w-0 break-words">{answer.text}</span>
+            {answer.count > 1 ? (
+              <strong className="shrink-0">×{answer.count}</strong>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

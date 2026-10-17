@@ -1,6 +1,6 @@
 import { Hr, Img, Section, Text } from "@react-email/components"
 
-import { EmailLayout, emailTheme } from "./email-layout"
+import { EmailLayout, emailTheme, type EmailLocale } from "./email-layout"
 
 export const REGISTRATION_QR_CID = "registration-qr@adf"
 
@@ -54,18 +54,20 @@ export interface RegistrationConfirmationEmailProps {
   reference: string
   passName: string
   waived?: boolean
+  paid?: boolean
+  locale?: EmailLocale
 }
 
 const s = {
   hero: {
-    backgroundColor: emailTheme.brand,
-    backgroundImage: "linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%)",
+    backgroundColor: "#5b21b6",
+    backgroundImage: "linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%)",
     borderRadius: "12px",
     padding: "32px 24px",
     textAlign: "center" as const,
   },
   eyebrow: {
-    color: "#ddd6fe",
+    color: "#ffffff",
     fontSize: "12px",
     fontWeight: 700,
     letterSpacing: "0.14em",
@@ -80,7 +82,7 @@ const s = {
     margin: "0 0 8px",
   },
   heroSub: {
-    color: "#ede9fe",
+    color: "#ffffff",
     fontSize: "15px",
     lineHeight: "22px",
     margin: 0,
@@ -158,96 +160,154 @@ export function RegistrationConfirmationEmail({
   reference,
   passName,
   waived,
+  paid,
+  locale = "en",
 }: RegistrationConfirmationEmailProps) {
+  const fr = locale === "fr"
   const firstName = name.trim().split(/\s+/)[0] || name
   const formalName = [title, name].filter(Boolean).join(" ")
-  const isReservation = !waived
+  const isReservation = !waived && !paid
+  const dates = fr ? "2–4 Juin 2026" : "June 2–4, 2026"
 
   return (
     <EmailLayout
+      locale={locale}
       preview={
-        isReservation
-          ? `Your ${passName} is reserved, ${firstName}. Payment instructions will follow.`
-          : `You're in, ${firstName}! See you in Lomé, June 2–4, 2026.`
+        fr
+          ? isReservation
+            ? `Votre ${passName} est réservé, ${firstName}. Les instructions de paiement suivront.`
+            : `Vous êtes inscrit(e), ${firstName} ! Rendez-vous à Lomé, du 2 au 4 Juin 2026.`
+          : isReservation
+            ? `Your ${passName} is reserved, ${firstName}. Payment instructions will follow.`
+            : `You're in, ${firstName}! See you in Lomé, June 2–4, 2026.`
       }
     >
-      <Section style={s.hero}>
-        <Text style={s.eyebrow}>
+      <Section className="adf-hero" style={s.hero}>
+        <Text className="adf-hero-eyebrow" style={s.eyebrow}>
           {isReservation
-            ? "Pass reservation received"
-            : "Registration confirmed"}
+            ? fr
+              ? "Réservation de pass reçue"
+              : "Pass reservation received"
+            : fr
+              ? "Inscription confirmée"
+              : "Registration confirmed"}
         </Text>
-        <Text style={s.title}>
+        <Text className="adf-hero-title" style={s.title}>
           {isReservation
-            ? `Your pass is reserved, ${firstName}.`
-            : `You're in, ${firstName}! 🎉`}
+            ? fr
+              ? `Votre pass est réservé, ${firstName}.`
+              : `Your pass is reserved, ${firstName}.`
+            : fr
+              ? `Vous êtes inscrit(e), ${firstName} ! 🎉`
+              : `You're in, ${firstName}! 🎉`}
         </Text>
-        <Text style={s.heroSub}>
+        <Text className="adf-hero-sub" style={s.heroSub}>
           {isReservation
-            ? "Online payment is not available yet. Our team will email you payment instructions."
-            : "Get ready for Africa Digital Forum 2026, where Africa's digital future takes shape."}
+            ? fr
+              ? "Le paiement en ligne n’est pas encore disponible. Notre équipe vous enverra les instructions de paiement par e-mail."
+              : "Online payment is not available yet. Our team will email you payment instructions."
+            : fr
+              ? "Préparez-vous pour Africa Digital Forum 2026, où se construit l’avenir numérique de l’Afrique."
+              : "Get ready for Africa Digital Forum 2026, where Africa's digital future takes shape."}
         </Text>
       </Section>
 
       <Text style={s.text}>
-        Dear {formalName},{" "}
-        {isReservation
-          ? "thank you for your reservation. Your"
-          : "thank you for registering. Your"}{" "}
-        <strong>{passName}</strong> is reserved
-        {isReservation
-          ? ". No payment has been taken online. Our team will email you payment instructions."
-          : ", and no payment is required for this pass."}{" "}
-        Join government leaders, tech founders, investors and innovators for
-        three days of ideas, deals and connections.
+        {fr ? "Bonjour" : "Dear"} {formalName},{" "}
+        {fr
+          ? isReservation
+            ? "merci pour votre réservation. Votre"
+            : "merci pour votre inscription. Votre"
+          : isReservation
+            ? "thank you for your reservation. Your"
+            : "thank you for registering. Your"}{" "}
+        <strong>{passName}</strong>{" "}
+        {fr
+          ? isReservation
+            ? "est réservé. Aucun paiement n’a été prélevé en ligne. Notre équipe vous enverra les instructions de paiement."
+            : paid
+              ? "est confirmé. Nous avons bien reçu votre paiement, merci !"
+              : "est réservé, et aucun paiement n’est requis pour ce pass."
+          : isReservation
+            ? "is reserved. No payment has been taken online. Our team will email you payment instructions."
+            : paid
+              ? "is confirmed. We have received your payment, thank you!"
+              : "is reserved, and no payment is required for this pass."}{" "}
+        {fr
+          ? "Rejoignez dirigeants gouvernementaux, fondateurs de startups, investisseurs et innovateurs pendant trois jours d’idées, d’affaires et de rencontres."
+          : "Join government leaders, tech founders, investors and innovators for three days of ideas, deals and connections."}
       </Text>
 
       <Section style={s.ticket}>
         <Text style={s.passName}>{passName}</Text>
-        <Text style={s.label}>Your registration reference</Text>
+        <Text style={s.label}>
+          {fr ? "Votre référence d’inscription" : "Your registration reference"}
+        </Text>
         <Text style={s.reference}>{reference}</Text>
         <Img
           src={`cid:${REGISTRATION_QR_CID}`}
-          alt={`QR code for ${reference}`}
+          alt={fr ? `Code QR pour ${reference}` : `QR code for ${reference}`}
           width={200}
           height={200}
           style={{ margin: "0 auto", display: "block" }}
         />
         <Text style={s.hint}>
           {isReservation
-            ? "Keep this reservation reference for your records. Our team will contact you with payment instructions."
-            : "Your personal entry pass. Show this QR code at the door for check-in."}
+            ? fr
+              ? "Conservez cette référence de réservation. Notre équipe vous contactera avec les instructions de paiement."
+              : "Keep this reservation reference for your records. Our team will contact you with payment instructions."
+            : fr
+              ? "Votre pass d’entrée personnel. Présentez ce code QR à l’entrée pour l’enregistrement."
+              : "Your personal entry pass. Show this QR code at the door for check-in."}
         </Text>
       </Section>
 
       <Section style={{ margin: "24px 0 0" }}>
-        <Text style={s.detailLabel}>When</Text>
-        <Text style={s.detailValue}>June 2–4, 2026</Text>
-        <Text style={s.detailLabel}>Where</Text>
+        <Text style={s.detailLabel}>{fr ? "Quand" : "When"}</Text>
+        <Text style={s.detailValue}>{dates}</Text>
+        <Text style={s.detailLabel}>{fr ? "Où" : "Where"}</Text>
         <Text style={s.detailValue}>Lomé, Togo</Text>
-        <Text style={s.detailLabel}>Host</Text>
-        <Text style={s.detailValue}>Media and Digital Institute (MDI)</Text>
+        <Text style={s.detailLabel}>{fr ? "Organisateur" : "Host"}</Text>
+        <Text style={s.detailValue}>
+          {fr
+            ? "Institut des Médias et du Numérique (MDI)"
+            : "Media and Digital Institute (MDI)"}
+        </Text>
       </Section>
 
       <Hr style={{ borderColor: "#e2e8f0", margin: "8px 0 20px" }} />
 
-      <Text style={s.stepsTitle}>What happens next</Text>
+      <Text style={s.stepsTitle}>
+        {fr ? "Et ensuite ?" : "What happens next"}
+      </Text>
       {isReservation ? (
         <Step icon="check-circle">
-          Our team will email you instructions for completing payment.
+          {fr
+            ? "Notre équipe vous enverra les instructions pour finaliser le paiement."
+            : "Our team will email you instructions for completing payment."}
         </Step>
       ) : (
         <Step icon="check-circle">
-          Save this email. Your QR code is your ticket.
+          {fr
+            ? "Conservez cet e-mail. Votre code QR est votre billet."
+            : "Save this email. Your QR code is your ticket."}
         </Step>
       )}
-      <Step icon="calendar">Mark June 2–4, 2026 in your calendar.</Step>
+      <Step icon="calendar">
+        {fr
+          ? `Notez ${dates} dans votre agenda.`
+          : `Mark ${dates} in your calendar.`}
+      </Step>
       <Step icon="megaphone">
-        We&apos;ll share the official program as soon as it&apos;s published.
+        {fr
+          ? "Nous partagerons le programme officiel dès sa publication."
+          : "We'll share the official program as soon as it's published."}
       </Step>
 
       <Text style={s.hint}>
-        Questions? Contact our secretariat at contact@theafricadigitalforum.com.
+        {fr
+          ? "Des questions ? Contactez notre secrétariat à contact@theafricadigitalforum.com."
+          : "Questions? Contact our secretariat at contact@theafricadigitalforum.com."}
       </Text>
     </EmailLayout>
   )

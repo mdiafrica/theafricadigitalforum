@@ -21,6 +21,24 @@ pnpm build      # production build
 pnpm typecheck  # tsc --noEmit
 ```
 
+## Email
+
+Transactional email is sent through [Resend](https://resend.com). Set
+`RESEND_API_KEY` and use a `MAIL_DEFAULT_EMAIL` address on a domain verified
+with Resend. The local `.env.example` uses placeholders; replace them with your
+Resend API key and verified sender before running flows that send email.
+
+## Payments
+
+Passes are paid through [Stripe Checkout](https://stripe.com/docs/payments/checkout).
+Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`; without them registration
+falls back to reserving the pass. Point a Stripe webhook at
+`/api/stripe/webhook` (events `checkout.session.completed` and
+`checkout.session.async_payment_succeeded`). Locally, run
+`stripe listen --forward-to localhost:3000/api/stripe/webhook` and use the
+printed `whsec_…` secret. The payment is marked paid and the confirmation email
+is sent only once that webhook arrives.
+
 ## Project layout
 
 ```
@@ -42,8 +60,8 @@ src/
 - **Bilingual (EN/FR):** language auto‑detects Francophone‑Africa timezones and
   persists to `localStorage`. All page copy lives under `src/i18n/`.
 - **Server functions** (`src/lib/server/forms.ts`) validate the newsletter and
-  contact submissions server‑side. They currently acknowledge input; wiring them
-  to real persistence / email is the job of the forthcoming admin backend.
+  contact submissions server‑side. They currently acknowledge input; wiring
+  them to real persistence / email is the job of the forthcoming admin backend.
 - `vite.config.ts` sets `ssr.noExternal: ["@base-ui/react"]` and dedupes React —
   required so base‑ui components (Field/Input/Dialog) resolve a single React
   instance during SSR.

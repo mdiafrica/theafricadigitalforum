@@ -32,7 +32,7 @@
   "footer_col_social_link_instagram": "Instagram",
   "footer_col_social_link_youtube": "YouTube",
 
-  "home_hero_date": "2 - 4 juin 2026 • Lomé • Togo",
+  "home_hero_date": "2 - 4 Juin 2026 • Lomé • Togo",
   "home_hero_title": "Africa Digital Forum",
   "home_hero_tagline": "Africa Digital Forum - Façonner l'avenir numérique de l'Afrique. Le rendez-vous incontournable du continent des leaders de l'IA, de la tech et des médias du continent",
   "home_hero_button": "En savoir plus",
@@ -132,6 +132,8 @@
   "home_latest_newsletter_button": "S'abonner",
   "home_latest_newsletter_sending": "Envoi en cours...",
   "home_latest_newsletter_success": "✓ Vous êtes abonné !",
+  "home_latest_newsletter_already_title": "Vous êtes déjà abonné",
+  "home_latest_newsletter_already_message": "Cette adresse e-mail est déjà inscrite à notre newsletter. Inutile de vous réinscrire !",
   "home_latest_newsletter_error_generic": "Une erreur est survenue. Veuillez réessayer.",
   "home_latest_newsletter_message": "Merci de vous être abonné au digest ADF ! Vous recevrez notre newsletter hebdomadaire tous les jeudis.",
 

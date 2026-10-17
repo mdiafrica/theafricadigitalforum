@@ -51,7 +51,15 @@ export const submitContact = createServerFn({ method: "POST" })
 
     // Fire-and-forget style but awaited (serverless-safe); errors are logged
     // per-recipient by allSettled and never bubble to the visitor.
-    await notifyAdmins({ ...data, subject })
+    await Promise.allSettled([
+      notifyAdmins({ ...data, subject }),
+      sendEmail("contact-confirmation", data.email, {
+        name: data.name,
+        locale: data.locale,
+      }).catch((error: unknown) => {
+        console.error("[contact] confirmation email failed:", error)
+      }),
+    ])
 
     return { ok: true as const }
   })
@@ -59,13 +67,23 @@ export const submitContact = createServerFn({ method: "POST" })
 export const subscribeNewsletter = createServerFn({ method: "POST" })
   .validator(newsletterInput)
   .handler(async ({ data }) => {
-    // Duplicate signups succeed silently — no address enumeration.
-    await db
+    // Duplicate signups never get a repeat welcome email; the client is told
+    // so it can show an "already subscribed" message.
+    const inserted = await db
       .insert(schema.newsletterSubscriber)
       .values({ email: data.email })
       .onConflictDoNothing()
+      .returning({ id: schema.newsletterSubscriber.id })
 
-    return { ok: true as const }
+    if (inserted.length > 0) {
+      await sendEmail("newsletter-welcome", data.email, {
+        locale: data.locale,
+      }).catch((error: unknown) => {
+        console.error("[newsletter] welcome email failed:", error)
+      })
+    }
+
+    return { ok: true as const, alreadySubscribed: inserted.length === 0 }
   })
 
 export const listContactSubmissions = createServerFn({ method: "GET" })

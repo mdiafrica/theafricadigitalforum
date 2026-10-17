@@ -49,7 +49,7 @@ export const PASS_COMPARISON: ReadonlyArray<
   ],
   [
     "Innovation Expo Access",
-    "Full Access",
+    "Limited Access",
     "Full Access",
     "Full Access + Fast Track",
   ],
@@ -57,7 +57,7 @@ export const PASS_COMPARISON: ReadonlyArray<
     "Networking App & Directory",
     "Standard Profile",
     "Enhanced Matchmaking",
-    "AI-Powered Matchmaking & Direct Messaging",
+    "Matchmaking & Direct Messaging",
   ],
   [
     "Lunch & Coffee Breaks",
@@ -123,6 +123,9 @@ export const PARTNERSHIP_OPTIONS = [
   "I am interested in becoming a Knowledge/Media Partner",
   "Not at this time",
 ] as const
+
+/** Free-text answers are stored as `Other: <text>` in the same text column. */
+export const OTHER_PREFIX = "Other: "
 
 export const INTERNATIONAL = "International"
 

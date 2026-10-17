@@ -149,6 +149,43 @@
 }
 
 @layer components {
+  /* Registration form choice controls: violet fill with a white mark. */
+  .adf-choice {
+    appearance: none;
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1.5px solid #94a3b8;
+    background-color: #ffffff;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+  .adf-choice:checked {
+    border-color: #7c3aed;
+    background-color: #7c3aed;
+  }
+  .adf-choice:focus-visible {
+    outline: 2px solid #c4b5fd;
+    outline-offset: 2px;
+  }
+  .adf-choice[type="checkbox"] {
+    border-radius: 4px;
+  }
+  .adf-choice[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .adf-choice[type="radio"] {
+    border-radius: 9999px;
+  }
+  .adf-choice[type="radio"]:checked {
+    background-image: radial-gradient(circle, #ffffff 0 32%, transparent 36%);
+  }
+
   /* A very restrained top wash behind the hero — no heavy glows. */
   .adf-backdrop {
     position: fixed;

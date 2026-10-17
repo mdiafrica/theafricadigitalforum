@@ -28,16 +28,15 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.url(),
 
-    // --- Mail (nodemailer / SMTP) — 9 vars ---
-    MAIL_HOST: z.string().min(1),
-    MAIL_PORT: z.coerce.number().int().positive(),
-    MAIL_USER: z.string().optional(),
-    MAIL_PASSWORD: z.string().optional(),
-    MAIL_SECURE: z.stringbool().default(false),
-    MAIL_REQUIRE_TLS: z.stringbool().default(false),
-    MAIL_IGNORE_TLS: z.stringbool().default(false),
+    // --- Email (Resend) ---
+    RESEND_API_KEY: z.string().min(1),
     MAIL_DEFAULT_EMAIL: z.email(),
     MAIL_DEFAULT_NAME: z.string().min(1),
+    MAIL_REPLY_TO: z.email().optional(),
+
+    // --- Payments (Stripe Checkout). Unset = reservation-only registration. ---
+    STRIPE_SECRET_KEY: z.string().min(1).optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
 
     // --- Object storage (SeaweedFS S3) — 9 vars ---
     STORAGE_ENDPOINT: z.url(),
@@ -72,15 +71,13 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 
-    MAIL_HOST: process.env.MAIL_HOST,
-    MAIL_PORT: process.env.MAIL_PORT,
-    MAIL_USER: process.env.MAIL_USER,
-    MAIL_PASSWORD: process.env.MAIL_PASSWORD,
-    MAIL_SECURE: process.env.MAIL_SECURE,
-    MAIL_REQUIRE_TLS: process.env.MAIL_REQUIRE_TLS,
-    MAIL_IGNORE_TLS: process.env.MAIL_IGNORE_TLS,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     MAIL_DEFAULT_EMAIL: process.env.MAIL_DEFAULT_EMAIL,
     MAIL_DEFAULT_NAME: process.env.MAIL_DEFAULT_NAME,
+    MAIL_REPLY_TO: process.env.MAIL_REPLY_TO,
+
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
 
     STORAGE_ENDPOINT: process.env.STORAGE_ENDPOINT,
     STORAGE_REGION: process.env.STORAGE_REGION,

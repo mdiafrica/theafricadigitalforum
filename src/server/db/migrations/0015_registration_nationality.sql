@@ -1,0 +1,1 @@
+ALTER TABLE "registration" ADD COLUMN "nationality" text DEFAULT '' NOT NULL;

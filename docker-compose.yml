@@ -3,12 +3,11 @@
 # backing services live here. Compose auto-loads `.env` from this directory;
 # the `:-default` fallbacks let it boot even without one.
 #
-#   docker compose up -d      # start postgres + seaweedfs + mailpit
+#   docker compose up -d      # start postgres + seaweedfs
 #   docker compose down       # stop (volumes persist under ./.docker)
 #
 # Ports are set in .env (offset from defaults to avoid clashing with sibling
 # projects). With the shipped .env:
-#   Mailpit UI:    http://localhost:8026
 #   SeaweedFS S3:  http://localhost:8433   (filer UI http://localhost:8988)
 #   Postgres:      localhost:5433
 
@@ -29,7 +28,11 @@ services:
     volumes:
       - ./.docker/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-adf} -d ${POSTGRES_DB:-adf}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-adf} -d ${POSTGRES_DB:-adf}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -54,18 +57,3 @@ services:
       - -filer
     volumes:
       - ./.docker/seaweedfs:/data
-
-  # Local SMTP sink — captures every outgoing mail, never delivers.
-  mailpit:
-    image: axllent/mailpit:v1.25
-    container_name: adf-mailpit
-    restart: unless-stopped
-    # Public resolvers so the SMTP greeting's reverse-DNS lookup fails fast —
-    # through the host's Tailscale MagicDNS it times out and delays every
-    # connection by ~8s, breaking the email integration tests.
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    ports:
-      - "${MAIL_PORT:-1025}:1025" # SMTP
-      - "${MAILPIT_UI_PORT:-8025}:8025" # web UI

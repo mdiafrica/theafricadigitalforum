@@ -1,4 +1,8 @@
 import {
+  ContactConfirmationEmail,
+  type ContactConfirmationEmailProps,
+} from "./templates/contact-confirmation-email"
+import {
   ContactNotificationEmail,
   type ContactNotificationEmailProps,
 } from "./templates/contact-notification-email"
@@ -14,6 +18,10 @@ import {
   InvitationEmail,
   type InvitationEmailProps,
 } from "./templates/invitation-email"
+import {
+  NewsletterWelcomeEmail,
+  type NewsletterWelcomeEmailProps,
+} from "./templates/newsletter-welcome-email"
 import {
   RegistrationConfirmationEmail,
   type RegistrationConfirmationEmailProps,
@@ -34,6 +42,8 @@ export interface EmailPropsMap {
   invitation: InvitationEmailProps
   "reset-password": ResetPasswordEmailProps
   "contact-notification": ContactNotificationEmailProps
+  "contact-confirmation": ContactConfirmationEmailProps
+  "newsletter-welcome": NewsletterWelcomeEmailProps
   "contact-reply": ContactReplyEmailProps
   "contact-forward": ContactForwardEmailProps
   "registration-confirmation": RegistrationConfirmationEmailProps
@@ -59,6 +69,20 @@ export const EMAIL_REGISTRY: { [K in EmailKey]: EmailRegistryEntry<K> } = {
     subject: (props) => `Contact form: ${props.subject}`,
     component: (props) => <ContactNotificationEmail {...props} />,
   },
+  "contact-confirmation": {
+    subject: (props) =>
+      props.locale === "fr"
+        ? "Nous avons bien reçu votre message"
+        : "We have received your message",
+    component: (props) => <ContactConfirmationEmail {...props} />,
+  },
+  "newsletter-welcome": {
+    subject: (props) =>
+      props.locale === "fr"
+        ? "Bienvenue dans la newsletter d’Africa Digital Forum"
+        : "Welcome to the Africa Digital Forum newsletter",
+    component: (props) => <NewsletterWelcomeEmail {...props} />,
+  },
   "contact-reply": {
     subject: (props) => `Re: ${props.subject}`,
     component: (props) => <ContactReplyEmail {...props} />,
@@ -69,9 +93,13 @@ export const EMAIL_REGISTRY: { [K in EmailKey]: EmailRegistryEntry<K> } = {
   },
   "registration-confirmation": {
     subject: (props) =>
-      props.waived
-        ? "Your Africa Digital Forum registration is confirmed"
-        : "Your Africa Digital Forum pass is reserved",
+      props.locale === "fr"
+        ? props.waived || props.paid
+          ? "Votre inscription à Africa Digital Forum est confirmée"
+          : "Votre pass Africa Digital Forum est réservé"
+        : props.waived || props.paid
+          ? "Your Africa Digital Forum registration is confirmed"
+          : "Your Africa Digital Forum pass is reserved",
     component: (props) => <RegistrationConfirmationEmail {...props} />,
   },
 }

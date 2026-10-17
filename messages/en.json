@@ -132,6 +132,8 @@
   "home_latest_newsletter_button": "Subscribe",
   "home_latest_newsletter_sending": "Sending...",
   "home_latest_newsletter_success": "✓ You're subscribed!",
+  "home_latest_newsletter_already_title": "You're already subscribed",
+  "home_latest_newsletter_already_message": "This email address is already on our newsletter list. No need to sign up again!",
   "home_latest_newsletter_error_generic": "Something went wrong. Please try again.",
   "home_latest_newsletter_message": "Thank you for subscribing to the ADF Digest! You will receive our weekly newsletter every Thursday.",
 

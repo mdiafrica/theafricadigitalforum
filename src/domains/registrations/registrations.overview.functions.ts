@@ -17,6 +17,41 @@ const tally = (values: ReadonlyArray<string>): Array<Count> => {
 
 const normalizeOrg = (value: string) => value.trim().toLowerCase()
 
+const OTHER_LABEL = "Other"
+
+/** Tally answers, folding every `Other: <text>` into one "Other" row and
+ * collecting what people actually wrote. */
+const tallyWithOther = (values: ReadonlyArray<string>) => {
+  const written = new Map<string, { text: string; count: number }>()
+  const regular: Array<string> = []
+  let otherCount = 0
+  for (const value of values) {
+    if (!value.startsWith("Other:")) {
+      regular.push(value)
+      continue
+    }
+    otherCount += 1
+    const text = value.slice("Other:".length).trim()
+    const key = text.toLowerCase()
+    const entry = written.get(key)
+    if (entry) entry.count += 1
+    else written.set(key, { text, count: 1 })
+  }
+  const items = tally(regular)
+  if (otherCount > 0) items.push({ label: OTHER_LABEL, count: otherCount })
+  return {
+    items: items.sort(
+      (a, b) =>
+        Number(a.label === OTHER_LABEL) - Number(b.label === OTHER_LABEL) ||
+        b.count - a.count ||
+        a.label.localeCompare(b.label)
+    ),
+    others: [...written.values()].sort(
+      (a, b) => b.count - a.count || a.text.localeCompare(b.text)
+    ),
+  }
+}
+
 export const getRegistrationOverview = createServerFn({ method: "GET" })
   .middleware([requireOrgPermission({ submission: ["read"] })])
   .handler(async () => {
@@ -68,7 +103,9 @@ export const getRegistrationOverview = createServerFn({ method: "GET" })
           name: tier.name,
           price: tier.price,
           count: tierRows.length,
-          collected: sum(tierRows.filter((row) => row.paymentStatus === "paid")),
+          collected: sum(
+            tierRows.filter((row) => row.paymentStatus === "paid")
+          ),
         }
       }),
       audience: {
@@ -85,7 +122,7 @@ export const getRegistrationOverview = createServerFn({ method: "GET" })
           row.partnershipInterest.includes("Knowledge/Media Partner")
         ).length,
       },
-      participation: tally(rows.map((row) => row.participationType)),
+      participation: tallyWithOther(rows.map((row) => row.participationType)),
       diversity: {
         countryCount: new Set(africanRows.map((row) => row.country)).size,
         international: rows.length - africanRows.length,
@@ -96,8 +133,8 @@ export const getRegistrationOverview = createServerFn({ method: "GET" })
       },
       organizations: new Set(rows.map((row) => normalizeOrg(row.organization)))
         .size,
-      interests: tally(rows.flatMap((row) => row.interestAreas)),
-      goals: tally(rows.map((row) => row.primaryGoal)),
+      interests: tallyWithOther(rows.flatMap((row) => row.interestAreas)),
+      goals: tallyWithOther(rows.map((row) => row.primaryGoal)),
       codesUsed: rows.filter((row) => row.accessCode).length,
       timeline,
     }

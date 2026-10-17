@@ -5,6 +5,7 @@ import { toast } from "sonner"
 
 import { subscribeNewsletter } from "@/domains/submissions"
 import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,11 +30,17 @@ export function NewsletterForm({
   buttonClassName?: string
 }) {
   const subscribe = useMutation({
-    mutationFn: (email: string) => subscribeNewsletter({ data: { email } }),
-    onSuccess: () =>
-      toast.success(m.home_latest_newsletter_success().replace(/^✓\s*/, ""), {
-        description: m.home_latest_newsletter_message(),
-      }),
+    mutationFn: (email: string) =>
+      subscribeNewsletter({ data: { email, locale: getLocale() } }),
+    onSuccess: (result) =>
+      result.alreadySubscribed
+        ? toast.info(m.home_latest_newsletter_already_title(), {
+            description: m.home_latest_newsletter_already_message(),
+          })
+        : toast.success(
+            m.home_latest_newsletter_success().replace(/^✓\s*/, ""),
+            { description: m.home_latest_newsletter_message() }
+          ),
     onError: (error) =>
       toast.error(
         error instanceof Error

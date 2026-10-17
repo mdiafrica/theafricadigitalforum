@@ -23,6 +23,7 @@ export const registration = pgTable(
     jobTitle: text("job_title").notNull(),
     organization: text("organization").notNull(),
     country: text("country").notNull(),
+    nationality: text("nationality").notNull().default(""),
     linkedinUrl: text("linkedin_url"),
     passTier: text("pass_tier").notNull(),
     paymentStatus: text("payment_status").notNull().default("pending"),

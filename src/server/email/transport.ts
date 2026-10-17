@@ -1,21 +1,10 @@
-import nodemailer from "nodemailer"
+import { Resend } from "resend"
 
 import { env } from "@/env"
 
-/**
- * SMTP transport — provider-agnostic nodemailer. Dev points at
- * the Mailpit container; prod at any SMTP provider via the same MAIL_* vars.
- */
-export const mailTransport = nodemailer.createTransport({
-  host: env.MAIL_HOST,
-  port: env.MAIL_PORT,
-  secure: env.MAIL_SECURE,
-  requireTLS: env.MAIL_REQUIRE_TLS,
-  ignoreTLS: env.MAIL_IGNORE_TLS,
-  auth: env.MAIL_USER
-    ? { user: env.MAIL_USER, pass: env.MAIL_PASSWORD }
-    : undefined,
-})
+export const resend = new Resend(env.RESEND_API_KEY)
 
-/** RFC 5322 `"Name" <email>` default sender. */
+/** Resend sender in `"Name" <email>` format. */
 export const mailFrom = `"${env.MAIL_DEFAULT_NAME}" <${env.MAIL_DEFAULT_EMAIL}>`
+
+export const mailReplyTo = env.MAIL_REPLY_TO

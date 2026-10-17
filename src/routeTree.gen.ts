@@ -51,6 +51,7 @@ import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
 import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
 import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api.stripe.webhook'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -262,6 +263,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe/webhook',
+  path: '/api/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/blog/': typeof PublicBlogIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
 }
@@ -342,6 +349,7 @@ export interface FileRoutesByTo {
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/blog': typeof PublicBlogIndexRoute
   '/admin/posts': typeof AdminPostsIndexRoute
 }
@@ -387,6 +395,7 @@ export interface FileRoutesById {
   '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/_public/blog/': typeof PublicBlogIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
 }
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
+    | '/api/stripe/webhook'
     | '/blog/'
     | '/admin/posts/'
   fileRoutesByTo: FileRoutesByTo
@@ -471,6 +481,7 @@ export interface FileRouteTypes {
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
+    | '/api/stripe/webhook'
     | '/blog'
     | '/admin/posts'
   id:
@@ -515,6 +526,7 @@ export interface FileRouteTypes {
     | '/admin/posts/$id'
     | '/admin/posts/new'
     | '/api/auth/$'
+    | '/api/stripe/webhook'
     | '/_public/blog/'
     | '/admin/posts/'
   fileRoutesById: FileRoutesById
@@ -525,6 +537,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -823,6 +836,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe/webhook': {
+      id: '/api/stripe/webhook'
+      path: '/api/stripe/webhook'
+      fullPath: '/api/stripe/webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -941,6 +961,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

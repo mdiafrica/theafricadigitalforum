@@ -207,6 +207,7 @@ function ContactForm() {
           name: value.name,
           email: value.email,
           subject: value.subject,
+          locale: getLocale(),
           message: extra ? `${value.message}\n\n${extra}` : value.message,
         },
       })

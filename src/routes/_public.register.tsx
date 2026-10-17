@@ -14,12 +14,18 @@ import { toast } from "sonner"
 import { getLocale } from "@/paraglide/runtime"
 import { pageHead } from "@/lib/seo"
 import {
+  trCountry,
+  trTitle,
+  tr,
+} from "@/domains/registrations/registrations.i18n"
+import {
   COUNTRIES,
   EVENT_AUDIENCE,
   EVENT_DATES,
   EVENT_HOST,
   EVENT_LOCATION,
   INTEREST_AREAS,
+  OTHER_PREFIX,
   PARTICIPATION_TYPES,
   PARTNERSHIP_OPTIONS,
   PASS_COMPARISON,
@@ -45,13 +51,22 @@ const PAGE_DESCRIPTION =
 export const Route = createFileRoute("/_public/register")({
   head: () => ({
     ...pageHead({
-      title: `${PAGE_TITLE} | Africa Digital Forum`,
-      description: PAGE_DESCRIPTION,
+      title: `${tr(PAGE_TITLE)} | Africa Digital Forum`,
+      description: tr(PAGE_DESCRIPTION),
       path: "/register",
       locale: getLocale(),
     }),
   }),
   component: RegisterRoute,
+  validateSearch: (
+    search: Record<string, unknown>
+  ): { payment?: "success" | "cancelled"; ref?: string } => ({
+    payment:
+      search.payment === "success" || search.payment === "cancelled"
+        ? search.payment
+        : undefined,
+    ref: typeof search.ref === "string" ? search.ref.slice(0, 40) : undefined,
+  }),
 })
 
 const INPUT_CLASS =
@@ -70,6 +85,7 @@ const STEP_FIELDS = [
     "jobTitle",
     "organization",
     "country",
+    "nationality",
     "linkedinUrl",
   ],
   ["interestAreas", "participationType", "primaryGoal"],
@@ -83,6 +99,7 @@ interface FormValues {
   jobTitle: string
   organization: string
   country: string
+  nationality: string
   linkedinUrl: string
   passTier: PassTierId | ""
   interestAreas: string[]
@@ -101,6 +118,7 @@ const INITIAL_VALUES: FormValues = {
   jobTitle: "",
   organization: "",
   country: "",
+  nationality: "",
   linkedinUrl: "",
   passTier: "",
   interestAreas: [],
@@ -130,19 +148,26 @@ function RegisterRoute() {
   const [reference, setReference] = useState<string | null>(null)
   const [waived, setWaived] = useState(false)
   const [appliedCode, setAppliedCode] = useState<AppliedCode | null>(null)
+  const search = Route.useSearch()
+  const paidReference =
+    search.payment === "success" && search.ref ? search.ref : null
 
   const submit = useMutation({
     mutationFn: (data: ReturnType<typeof registrationInput.parse>) =>
       submitRegistration({ data }),
     onSuccess: (result) => {
+      if (result.checkoutUrl) {
+        window.location.assign(result.checkoutUrl)
+        return
+      }
       setReference(result.reference)
       setWaived(result.waived)
       window.scrollTo({ top: 0, behavior: "smooth" })
     },
     onError: (error) =>
-      toast.error("We could not complete your registration", {
+      toast.error(tr("We could not complete your registration"), {
         description:
-          error instanceof Error ? error.message : "Please try again.",
+          error instanceof Error ? tr(error.message) : tr("Please try again."),
       }),
   })
 
@@ -163,7 +188,7 @@ function RegisterRoute() {
         (STEP_FIELDS[index] as ReadonlyArray<string>).includes(key) &&
         !stepErrors[key]
       ) {
-        stepErrors[key] = issue.message
+        stepErrors[key] = tr(issue.message)
       }
     }
     setErrors(stepErrors)
@@ -182,6 +207,7 @@ function RegisterRoute() {
     if (!validateStep(step)) return
     const parsed = registrationInput.safeParse({
       ...values,
+      locale: getLocale(),
       accessCode: appliedCode?.code ?? "",
     })
     if (parsed.success) submit.mutate(parsed.data)
@@ -197,22 +223,36 @@ function RegisterRoute() {
         <div className="relative px-5">
           <Reveal>
             <h1 className="mb-3 text-[clamp(30px,4vw,52px)] leading-[1.1] font-extrabold tracking-[0.05em] text-white">
-              {PAGE_TITLE}
+              {tr(PAGE_TITLE)}
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mx-auto max-w-[680px] text-base leading-[1.6] text-white/85">
-              {PAGE_DESCRIPTION}
+              {tr(PAGE_DESCRIPTION)}
             </p>
           </Reveal>
         </div>
       </section>
 
       <div className="relative z-[2] mx-auto -mt-16 max-w-[1100px] px-[5%] pb-20">
-        {reference ? (
-          <Confirmation reference={reference} waived={waived} />
+        {reference || paidReference ? (
+          <Confirmation
+            reference={(reference ?? paidReference)!}
+            waived={waived}
+            paid={Boolean(paidReference) && !reference}
+          />
         ) : (
           <>
+            {search.payment === "cancelled" && (
+              <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] leading-[1.7] text-amber-950">
+                <strong>{tr("Payment not completed")}</strong>
+                <p className="mt-1">
+                  {tr(
+                    "Your registration was saved but the payment was not completed. Our team will contact you, or you can register again to pay now."
+                  )}
+                </p>
+              </div>
+            )}
             {!values.passTier && (
               <>
                 <EventSummary />
@@ -235,13 +275,23 @@ function RegisterRoute() {
                       <div>
                         <strong className="text-amber-950">
                           {appliedCode
-                            ? "No payment required"
-                            : "Online payment is not available yet"}
+                            ? tr("No payment required")
+                            : tr("Secure online payment")}
                         </strong>
                         <p className="mt-1">
-                          {appliedCode
-                            ? `${PASS_TIERS.find((tier) => tier.id === values.passTier)?.name} selected. Your access code covers this pass.`
-                            : `${PASS_TIERS.find((tier) => tier.id === values.passTier)?.name} selected. You can still reserve it now; our team will email you payment instructions. No payment will be taken online at this stage.`}
+                          {tr(
+                            appliedCode
+                              ? "{name} selected. Your access code covers this pass."
+                              : "{name} selected. After the last step you will be taken to Stripe's secure checkout to pay {price}.",
+                            {
+                              name: tr(
+                                PASS_TIERS.find(
+                                  (tier) => tier.id === values.passTier
+                                )?.name ?? ""
+                              ),
+                              price: `$${PASS_TIERS.find((tier) => tier.id === values.passTier)?.price ?? ""}`,
+                            }
+                          )}
                         </p>
                         <button
                           type="button"
@@ -252,7 +302,7 @@ function RegisterRoute() {
                             setStep(0)
                           }}
                         >
-                          Change pass
+                          {tr("Change pass")}
                         </button>
                       </div>
                     </div>
@@ -283,7 +333,7 @@ function RegisterRoute() {
                         disabled={submit.isPending}
                         className="h-auto px-6 py-3 text-sm font-bold text-[#111111] dark:text-[#111111]"
                       >
-                        Back
+                        {tr("Back")}
                       </Button>
                       {step < STEPS.length - 1 ? (
                         <Button
@@ -291,7 +341,7 @@ function RegisterRoute() {
                           onClick={next}
                           className="h-auto px-8 py-3 text-sm font-bold"
                         >
-                          Continue
+                          {tr("Continue")}
                         </Button>
                       ) : (
                         <Button
@@ -302,8 +352,8 @@ function RegisterRoute() {
                         >
                           {submit.isPending && <Spinner />}
                           {appliedCode
-                            ? "Complete registration"
-                            : "Reserve my pass"}
+                            ? tr("Complete registration")
+                            : tr("Continue to payment")}
                         </Button>
                       )}
                     </div>
@@ -342,10 +392,10 @@ function EventSummary() {
             </span>
             <div>
               <div className="mb-1 text-[11px] font-bold tracking-[0.12em] text-white/50 uppercase">
-                {label}
+                {tr(label)}
               </div>
               <div className="text-[15px] leading-[1.5] font-semibold text-white">
-                {value}
+                {tr(value)}
               </div>
             </div>
           </div>
@@ -385,7 +435,9 @@ function PassComparison({
     } catch (err) {
       onCodeChange(null)
       toast.error(
-        err instanceof Error ? err.message : "Could not check this code."
+        err instanceof Error
+          ? tr(err.message)
+          : tr("Could not check this code.")
       )
     } finally {
       setChecking(false)
@@ -401,17 +453,19 @@ function PassComparison({
     <Reveal delay={0.05}>
       <section className="mt-10">
         <h2 className="mb-2 text-[26px] font-extrabold tracking-[0.03em] text-white">
-          Choose Your Pass
+          {tr("Choose Your Pass")}
         </h2>
         <p className="mb-6 text-sm text-white/70">
-          Select the participation tier that best aligns with your goals, or use
-          an access code. The registration form appears once you choose.
+          {tr(
+            "Select the participation tier that best aligns with your goals, or use an access code. The registration form appears once you choose."
+          )}
         </p>
 
         <div className="grid gap-4 md:grid-cols-3">
           {PASS_TIERS.map((tier, tierIndex) => {
             const selected = values.passTier === tier.id
             const disabled = locked !== null && locked !== tier.id
+            const popular = tier.id === "executive"
             return (
               <button
                 key={tier.id}
@@ -420,20 +474,30 @@ function PassComparison({
                 aria-pressed={selected}
                 onClick={() => set("passTier", tier.id)}
                 className={cn(
-                  "flex cursor-pointer flex-col rounded-2xl border-2 p-5 text-left transition",
+                  "group relative flex cursor-pointer flex-col rounded-2xl border-2 p-5 text-left transition",
                   selected
                     ? "border-primary bg-primary/10"
                     : "border-white/10 bg-white/[0.04] hover:border-primary/60",
+                  popular &&
+                    !selected &&
+                    "border-primary/50 shadow-[0_0_32px_-8px_var(--primary)]",
                   disabled &&
                     "cursor-not-allowed opacity-40 hover:border-white/10"
                 )}
               >
-                <div className="text-lg font-bold text-white">{tier.name}</div>
+                {popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3.5 py-1 text-[11px] font-bold tracking-[0.08em] whitespace-nowrap text-white uppercase shadow-lg">
+                    ★ {tr("Most Popular")}
+                  </span>
+                )}
+                <div className="text-lg font-bold text-white">
+                  {tr(tier.name)}
+                </div>
                 <div className="mb-3 text-2xl font-extrabold text-primary">
                   ${tier.price}
                 </div>
                 <p className="mb-4 text-[13px] leading-[1.7] text-white/70">
-                  {tier.audience}
+                  {tr(tier.audience)}
                 </p>
                 <ul className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-4 text-[13px] leading-[1.4]">
                   {PASS_COMPARISON.map(([feature, ...cells]) => (
@@ -441,10 +505,10 @@ function PassComparison({
                       <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                       <span>
                         <span className="block text-[11px] tracking-[0.06em] text-white/50 uppercase">
-                          {feature}
+                          {tr(feature)}
                         </span>
                         <span className="font-semibold text-white">
-                          {cells[tierIndex]}
+                          {tr(cells[tierIndex])}
                         </span>
                       </span>
                     </li>
@@ -452,13 +516,15 @@ function PassComparison({
                 </ul>
                 <span
                   className={cn(
-                    "mt-5 rounded-lg px-4 py-2 text-center text-sm font-bold",
+                    "mt-5 rounded-lg px-4 py-2 text-center text-sm font-bold transition",
                     selected
-                      ? "bg-primary text-white"
-                      : "border border-white/20 text-white"
+                      ? "bg-white text-primary"
+                      : "bg-primary text-white group-hover:brightness-110"
                   )}
                 >
-                  {selected ? "Selected" : `Select ${tier.name}`}
+                  {selected
+                    ? tr("Selected")
+                    : tr("Select {name}", { name: tr(tier.name) })}
                 </span>
               </button>
             )
@@ -481,14 +547,17 @@ function PassComparison({
         >
           <span>
             <span className="block text-lg font-bold text-white">
-              I have an access code
+              {tr("I have an access code")}
             </span>
             <span className="text-[13px] text-white/70">
-              For the ADF team, partners and organizations that registered on
-              your behalf. Payment is waived.
+              {tr(
+                "For the ADF team, partners and organizations that registered on your behalf. Payment is waived."
+              )}
             </span>
           </span>
-          <span className="text-2xl font-extrabold text-primary">Free</span>
+          <span className="text-2xl font-extrabold text-primary">
+            {tr("Free")}
+          </span>
         </button>
 
         {codeOpen && (
@@ -497,28 +566,33 @@ function PassComparison({
               <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-white">
                 <span>
                   <Check className="mr-1.5 inline size-4 text-primary" />
-                  Code <strong>{appliedCode.code}</strong> applied
-                  {appliedCode.label ? ` (${appliedCode.label})` : ""}. No
-                  payment is required
-                  {appliedCode.passTier ? "." : " — now pick your pass above."}
+                  {tr("Code {code} applied", { code: appliedCode.code })}
+                  {appliedCode.label ? ` (${appliedCode.label})` : ""}
+                  {tr(". No payment is required")}
+                  {appliedCode.passTier
+                    ? "."
+                    : tr(" — now pick your pass above.")}
                 </span>
                 <button
                   type="button"
                   onClick={clearCode}
                   className="text-xs font-bold text-primary underline"
                 >
-                  Remove
+                  {tr("Remove")}
                 </button>
               </div>
             ) : (
               <div className="flex flex-wrap gap-2">
                 <Input
                   id="accessCode"
-                  aria-label="Access code"
+                  aria-label={tr("Access code")}
                   value={values.accessCode}
                   onChange={(event) => set("accessCode", event.target.value)}
-                  placeholder="Enter your access code"
-                  className={cn(INPUT_CLASS, "max-w-xs uppercase")}
+                  placeholder={tr("Enter your access code")}
+                  className={cn(
+                    INPUT_CLASS,
+                    "max-w-xs border-2 border-primary uppercase focus-visible:border-primary focus-visible:ring-primary/40"
+                  )}
                   autoComplete="off"
                 />
                 <Button
@@ -528,7 +602,7 @@ function PassComparison({
                   className="h-auto px-5 py-2.5 text-sm font-bold"
                 >
                   {checking && <Spinner />}
-                  Apply
+                  {tr("Apply")}
                 </Button>
               </div>
             )}
@@ -538,7 +612,7 @@ function PassComparison({
 
         {!values.passTier && (
           <p className="mt-5 text-center text-sm text-white/60">
-            Choose a pass above to continue to the registration form.
+            {tr("Choose a pass above to continue to the registration form.")}
           </p>
         )}
       </section>
@@ -576,7 +650,7 @@ function Stepper({ current }: { current: number }) {
                 active ? "text-[#111111]" : "text-[#718096]"
               )}
             >
-              {label}
+              {tr(label)}
             </span>
           </li>
         )
@@ -614,7 +688,7 @@ function Checkbox({
       type="checkbox"
       checked={checked}
       onChange={(event) => onCheckedChange(event.target.checked)}
-      className={cn("size-4 shrink-0 accent-[#7c3aed]", className)}
+      className={cn("adf-choice", className)}
     />
   )
 }
@@ -648,10 +722,10 @@ function TextField({
   return (
     <div>
       <label htmlFor={id} className={LABEL_CLASS}>
-        {label}
+        {tr(label)}
         {optional && (
           <span className="ml-1 font-medium normal-case opacity-60">
-            (optional)
+            {tr("(optional)")}
           </span>
         )}
       </label>
@@ -660,7 +734,7 @@ function TextField({
         type={type}
         value={values[id]}
         onChange={(event) => set(id, event.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ? tr(placeholder) : undefined}
         autoComplete={autoComplete}
         aria-invalid={Boolean(errors[id])}
         className={INPUT_CLASS}
@@ -679,9 +753,9 @@ function TitleField({ values, set }: StepProps) {
   return (
     <div>
       <label htmlFor="title" className={LABEL_CLASS}>
-        Title
+        {tr("Title")}
         <span className="ml-1 font-medium normal-case opacity-60">
-          (optional)
+          {tr("(optional)")}
         </span>
       </label>
       <select
@@ -697,21 +771,21 @@ function TitleField({ values, set }: StepProps) {
           "w-full rounded-lg border px-3.5 py-2.5 outline-none focus:border-primary"
         )}
       >
-        <option value="">No title</option>
+        <option value="">{tr("No title")}</option>
         {TITLES.map((title) => (
           <option key={title} value={title}>
-            {title}
+            {trTitle(title)}
           </option>
         ))}
-        <option value="__other">Other…</option>
+        <option value="__other">{tr("Other…")}</option>
       </select>
       {custom && (
         <Input
-          aria-label="Your title"
+          aria-label={tr("Your title")}
           value={values.title}
           maxLength={40}
           onChange={(event) => set("title", event.target.value)}
-          placeholder="Type your title"
+          placeholder={tr("Type your title")}
           className={cn(INPUT_CLASS, "mt-2")}
         />
       )}
@@ -724,14 +798,14 @@ function StepDetails(props: StepProps) {
 
   return (
     <div>
-      <SectionTitle>Personal &amp; Professional Information</SectionTitle>
+      <SectionTitle>{tr("Personal & Professional Information")}</SectionTitle>
       <div className="grid gap-5 sm:grid-cols-2">
         <TitleField {...props} />
         <TextField
           {...props}
           id="fullName"
           label="Full Name"
-          placeholder="First and last name"
+          placeholder={tr("First and last name")}
           autoComplete="name"
         />
         <TextField
@@ -739,7 +813,7 @@ function StepDetails(props: StepProps) {
           id="email"
           label="Business Email"
           type="email"
-          placeholder="you@organization.com"
+          placeholder={tr("you@organization.com")}
           autoComplete="email"
         />
         <TextField
@@ -756,7 +830,7 @@ function StepDetails(props: StepProps) {
         />
         <div>
           <label htmlFor="country" className={LABEL_CLASS}>
-            Country of Residence
+            {tr("Country of Residence")}
           </label>
           <select
             id="country"
@@ -768,14 +842,37 @@ function StepDetails(props: StepProps) {
               "w-full rounded-lg border px-3.5 py-2.5 outline-none focus:border-primary"
             )}
           >
-            <option value="">Select a country</option>
+            <option value="">{tr("Select a country")}</option>
             {COUNTRIES.map((country) => (
               <option key={country} value={country}>
-                {country}
+                {trCountry(country)}
               </option>
             ))}
           </select>
           <FieldError message={errors.country} />
+        </div>
+        <div>
+          <label htmlFor="nationality" className={LABEL_CLASS}>
+            {tr("Country of Nationality")}
+          </label>
+          <select
+            id="nationality"
+            value={values.nationality}
+            onChange={(event) => set("nationality", event.target.value)}
+            aria-invalid={Boolean(errors.nationality)}
+            className={cn(
+              INPUT_CLASS,
+              "w-full rounded-lg border px-3.5 py-2.5 outline-none focus:border-primary"
+            )}
+          >
+            <option value="">{tr("Select a country")}</option>
+            {COUNTRIES.map((country) => (
+              <option key={country} value={country}>
+                {trCountry(country)}
+              </option>
+            ))}
+          </select>
+          <FieldError message={errors.nationality} />
         </div>
         <TextField
           {...props}
@@ -790,6 +887,29 @@ function StepDetails(props: StepProps) {
   )
 }
 
+function OtherInput({
+  value,
+  onChange,
+  invalid,
+}: {
+  value: string
+  onChange: (text: string) => void
+  invalid?: boolean
+}) {
+  return (
+    <input
+      type="text"
+      autoFocus
+      maxLength={200}
+      value={value.slice(OTHER_PREFIX.length)}
+      onChange={(event) => onChange(OTHER_PREFIX + event.target.value)}
+      placeholder={tr("Please tell us what you have in mind")}
+      aria-invalid={invalid || undefined}
+      className="mt-2 w-full rounded-lg border-2 border-primary/60 px-3 py-2 text-sm text-[#2d3748] outline-none focus:border-primary focus:ring-2 focus:ring-primary/25"
+    />
+  )
+}
+
 function RadioGroup({
   legend,
   name,
@@ -797,6 +917,7 @@ function RadioGroup({
   value,
   error,
   onChange,
+  allowOther,
 }: {
   legend: string
   name: string
@@ -804,10 +925,13 @@ function RadioGroup({
   value: string
   error?: string
   onChange: (value: string) => void
+  allowOther?: boolean
 }) {
+  const otherSelected = value.startsWith("Other:")
+
   return (
     <fieldset className="mb-8">
-      <legend className={LABEL_CLASS}>{legend}</legend>
+      <legend className={LABEL_CLASS}>{tr(legend)}</legend>
       <div className="flex flex-col gap-2.5">
         {options.map((option) => (
           <label
@@ -820,11 +944,29 @@ function RadioGroup({
               value={option}
               checked={value === option}
               onChange={() => onChange(option)}
-              className="size-4 accent-[#7c3aed]"
+              className="adf-choice"
             />
-            {option}
+            {tr(option)}
           </label>
         ))}
+        {allowOther && (
+          <div>
+            <label className="flex cursor-pointer items-center gap-3 text-sm text-[#2d3748]">
+              <input
+                type="radio"
+                name={name}
+                value="Other"
+                checked={otherSelected}
+                onChange={() => onChange(OTHER_PREFIX)}
+                className="adf-choice"
+              />
+              {tr("Other")}
+            </label>
+            {otherSelected && (
+              <OtherInput value={value} onChange={onChange} invalid={!!error} />
+            )}
+          </div>
+        )}
       </div>
       <FieldError message={error} />
     </fieldset>
@@ -839,14 +981,24 @@ function StepInterests({ values, errors, set }: StepProps) {
         ? [...values.interestAreas, area]
         : values.interestAreas.filter((item) => item !== area)
     )
+  const otherValue = values.interestAreas.find((item) =>
+    item.startsWith("Other:")
+  )
+  const setOther = (text: string | null) =>
+    set("interestAreas", [
+      ...values.interestAreas.filter((item) => !item.startsWith("Other:")),
+      ...(text === null ? [] : [text]),
+    ])
 
   return (
     <div>
-      <SectionTitle>Participation Profile &amp; Area of Interest</SectionTitle>
+      <SectionTitle>
+        {tr("Participation Profile & Area of Interest")}
+      </SectionTitle>
 
       <fieldset className="mb-8">
         <legend className={LABEL_CLASS}>
-          Primary Interest Area (select all that apply)
+          {tr("Primary Interest Area (select all that apply)")}
         </legend>
         <div className="grid gap-2.5 sm:grid-cols-2">
           {INTEREST_AREAS.map((area) => (
@@ -858,16 +1010,36 @@ function StepInterests({ values, errors, set }: StepProps) {
                 checked={values.interestAreas.includes(area)}
                 onCheckedChange={(checked) => toggle(area, checked === true)}
               />
-              {area}
+              {tr(area)}
             </label>
           ))}
+          <div>
+            <label className="flex cursor-pointer items-center gap-3 text-sm text-[#2d3748]">
+              <Checkbox
+                checked={otherValue !== undefined}
+                onCheckedChange={(checked) =>
+                  setOther(checked === true ? OTHER_PREFIX : null)
+                }
+              />
+              {tr("Other")}
+            </label>
+            {otherValue !== undefined && (
+              <OtherInput
+                value={otherValue}
+                onChange={setOther}
+                invalid={!!errors.interestAreas}
+              />
+            )}
+          </div>
         </div>
+        <FieldError message={errors.interestAreas} />
       </fieldset>
 
       <RadioGroup
         legend="How do you wish to participate?"
         name="participationType"
         options={PARTICIPATION_TYPES}
+        allowOther
         value={values.participationType}
         error={errors.participationType}
         onChange={(value) => set("participationType", value)}
@@ -876,6 +1048,7 @@ function StepInterests({ values, errors, set }: StepProps) {
         legend="Primary Goal for Attending"
         name="primaryGoal"
         options={PRIMARY_GOALS}
+        allowOther
         value={values.primaryGoal}
         error={errors.primaryGoal}
         onChange={(value) => set("primaryGoal", value)}
@@ -887,7 +1060,7 @@ function StepInterests({ values, errors, set }: StepProps) {
 function StepConsent({ values, errors, set }: StepProps) {
   return (
     <div>
-      <SectionTitle>Sponsorship Interest &amp; Data Consent</SectionTitle>
+      <SectionTitle>{tr("Sponsorship Interest & Data Consent")}</SectionTitle>
 
       <RadioGroup
         legend="Would you like to receive information regarding specific partnership tiers?"
@@ -909,9 +1082,10 @@ function StepConsent({ values, errors, set }: StepProps) {
               }
             />
             <span>
-              <strong>Data Consent:</strong> I agree to receive official
-              communications from the Media and Digital Institute (MDI)
-              regarding ADF and related initiatives.
+              <strong>{tr("Data Consent:")}</strong>{" "}
+              {tr(
+                "I agree to receive official communications from the Media and Digital Institute (MDI) regarding ADF and related initiatives."
+              )}
             </span>
           </label>
           <FieldError message={errors.communicationsConsent} />
@@ -926,22 +1100,22 @@ function StepConsent({ values, errors, set }: StepProps) {
               }
             />
             <span>
-              <strong>Terms Acceptance:</strong> I accept the Africa Digital
-              Forum{" "}
+              <strong>{tr("Terms Acceptance:")}</strong>{" "}
+              {tr("I accept the Africa Digital Forum")}{" "}
               <Link
                 to="/privacy"
                 target="_blank"
                 className="text-primary underline"
               >
-                Privacy Policy
+                {tr("Privacy Policy")}
               </Link>{" "}
-              and{" "}
+              {tr("and")}{" "}
               <Link
                 to="/terms"
                 target="_blank"
                 className="text-primary underline"
               >
-                Event Terms of Use
+                {tr("Event Terms of Use")}
               </Link>
               .
             </span>
@@ -956,10 +1130,13 @@ function StepConsent({ values, errors, set }: StepProps) {
 function Confirmation({
   reference,
   waived,
+  paid,
 }: {
   reference: string
   waived: boolean
+  paid: boolean
 }) {
+  const confirmed = waived || paid
   return (
     <Reveal>
       <div className="rounded-2xl bg-white px-6 py-10 shadow-[0_8px_48px_rgba(0,0,0,0.25)] sm:px-12 sm:py-14">
@@ -967,41 +1144,50 @@ function Confirmation({
           <Check className="size-7" />
         </div>
         <h2 className="mb-3 text-[clamp(24px,3vw,34px)] font-extrabold tracking-[-0.02em] text-[#111111]">
-          {waived
-            ? "Registration confirmed! Welcome to ADF."
-            : "Your pass is reserved!"}
+          {confirmed
+            ? tr("Registration confirmed! Welcome to ADF.")
+            : tr("Your pass is reserved!")}
         </h2>
         <p className="mb-2 text-[15px] leading-[1.7] text-[#2d3748]">
-          Thank you for registering for the Africa Digital Forum!
+          {tr("Thank you for registering for the Africa Digital Forum!")}
         </p>
         <p className="mb-6 text-[15px] leading-[1.7] text-[#4a5568]">
-          {waived
-            ? "Your participation pass is confirmed, and no payment is required. A confirmation email has been sent to your email address."
-            : "Your participation pass reservation is confirmed. Online payment is not available yet, and no payment has been taken. Our team will email you payment instructions. A confirmation email has been sent to your email address."}
+          {tr(
+            paid
+              ? "Your payment was received and your participation pass is confirmed. A confirmation email with your QR ticket is on its way to your email address."
+              : waived
+                ? "Your participation pass is confirmed, and no payment is required. A confirmation email has been sent to your email address."
+                : "Your participation pass reservation is confirmed. No payment has been taken. Our team will email you payment instructions. A confirmation email has been sent to your email address."
+          )}
         </p>
         <div className="mb-8 inline-block rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-4 py-2.5 text-sm text-[#2d3748]">
-          Registration reference:{" "}
+          {tr("Registration reference:")}{" "}
           <strong className="tracking-[0.06em]">{reference}</strong>
         </div>
 
         <h3 className="mb-3 text-sm font-bold tracking-[0.08em] text-[#111111] uppercase">
-          Next Steps
+          {tr("Next Steps")}
         </h3>
         <ul className="flex flex-col gap-3 text-[14px] leading-[1.7] text-[#4a5568]">
           <li>
-            <strong className="text-[#111111]">Official Program:</strong> The
-            complete speaker schedule and breakout agenda will be published
-            ahead of the event.
+            <strong className="text-[#111111]">
+              {tr("Official Program:")}
+            </strong>{" "}
+            {tr(
+              "The complete speaker schedule and breakout agenda will be published ahead of the event."
+            )}
           </li>
           <li>
-            <strong className="text-[#111111]">B2B Matchmaking:</strong> You
-            will receive an invitation link to download the official ADF
-            Networking Mobile App closer to the event date.
+            <strong className="text-[#111111]">{tr("B2B Matchmaking:")}</strong>{" "}
+            {tr(
+              "You will receive an invitation link to download the official ADF Networking Mobile App closer to the event date."
+            )}
           </li>
           <li>
-            <strong className="text-[#111111]">Inquiries:</strong> For
-            assistance with any requests or administrative questions, please
-            contact our secretariat at{" "}
+            <strong className="text-[#111111]">{tr("Inquiries:")}</strong>{" "}
+            {tr(
+              "For assistance with any requests or administrative questions, please contact our secretariat at"
+            )}{" "}
             <a
               href="mailto:contact@theafricadigitalforum.com"
               className="text-primary underline"
