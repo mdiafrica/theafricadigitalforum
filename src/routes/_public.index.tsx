@@ -8,6 +8,7 @@ import { Hero } from "@/components/home/hero"
 import { Stats } from "@/components/home/stats"
 import { Dialogues } from "@/components/home/dialogues"
 import { Speakers } from "@/components/home/speakers"
+import { Partners } from "@/components/home/partners"
 import { LatestArticles } from "@/components/home/latest-articles"
 
 export const Route = createFileRoute("/_public/")({
@@ -36,6 +37,7 @@ function HomeRoute() {
       <Stats />
       <Dialogues />
       <Speakers />
+      <Partners />
       <LatestArticles />
     </>
   )
