@@ -1,25 +1,33 @@
 import { m } from "@/paraglide/messages"
 import { useInView } from "@/components/motion"
+import bolingoLogo from "@/assets/images/bolingo-logo.png"
 
-type Tier = { label: () => string; names: Array<string> }
+type Partner = { name: string; logo?: string }
+type Tier = { label: () => string; partners: Array<Partner> }
 
 // Tiers with no names are hidden. Add a name here to show it on the homepage.
 const TIERS: Array<Tier> = [
-  { label: () => m.home_partners_tier_host(), names: ["MDI"] },
+  { label: () => m.home_partners_tier_host(), partners: [{ name: "MDI" }] },
   {
     label: () => m.home_partners_tier_cohosts(),
-    names: ["IMD University", "MDI Africa Foundation Inc"],
+    partners: [
+      { name: "IMD University" },
+      { name: "MDI Africa Foundation Inc" },
+    ],
   },
-  { label: () => m.home_partners_tier_title(), names: [] },
-  { label: () => m.home_partners_tier_platinum(), names: [] },
-  { label: () => m.home_partners_tier_diamond(), names: [] },
-  { label: () => m.home_partners_tier_gold(), names: [] },
-  { label: () => m.home_partners_tier_silver(), names: ["Bolingo Consult"] },
+  { label: () => m.home_partners_tier_title(), partners: [] },
+  { label: () => m.home_partners_tier_platinum(), partners: [] },
+  { label: () => m.home_partners_tier_diamond(), partners: [] },
+  { label: () => m.home_partners_tier_gold(), partners: [] },
+  {
+    label: () => m.home_partners_tier_silver(),
+    partners: [{ name: "Bolingo Consult", logo: bolingoLogo }],
+  },
 ]
 
 export function Partners() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.15 })
-  const tiers = TIERS.filter((tier) => tier.names.length > 0)
+  const tiers = TIERS.filter((tier) => tier.partners.length > 0)
   if (tiers.length === 0) return null
 
   return (
@@ -55,12 +63,20 @@ export function Partners() {
                 {tier.label()}
               </h3>
               <ul className="flex flex-wrap items-center gap-x-14 gap-y-8">
-                {tier.names.map((name) => (
-                  <li
-                    key={name}
-                    className="text-[clamp(20px,2.4vw,30px)] font-extrabold tracking-[-0.02em] text-white"
-                  >
-                    {name}
+                {tier.partners.map(({ name, logo }) => (
+                  <li key={name}>
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt={name}
+                        loading="lazy"
+                        className="h-14 w-auto rounded-xl bg-white"
+                      />
+                    ) : (
+                      <span className="text-[clamp(20px,2.4vw,30px)] font-extrabold tracking-[-0.02em] text-white">
+                        {name}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
