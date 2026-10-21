@@ -11,6 +11,7 @@ import {
   ExternalLink,
   FileText,
   Globe,
+  Handshake,
   Image,
   Inbox,
   Layout,
@@ -99,7 +100,11 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
         label: "Registration overview",
         icon: BarChart3,
       },
-      { to: "/admin/registration-codes", label: "Access codes", icon: KeyRound },
+      {
+        to: "/admin/registration-codes",
+        label: "Access codes",
+        icon: KeyRound,
+      },
     ],
   },
   {
@@ -111,6 +116,7 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
       { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
       { to: "/admin/agenda", label: "Agenda", icon: CalendarDays },
       { to: "/admin/sponsors", label: "Sponsors", icon: Building2 },
+      { to: "/admin/partners", label: "Partners", icon: Handshake },
       { to: "/admin/pages", label: "Pages", icon: Layout },
       { to: "/admin/media", label: "Media", icon: Image },
     ],

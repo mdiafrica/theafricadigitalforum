@@ -9,6 +9,7 @@ import { Stats } from "@/components/home/stats"
 import { Dialogues } from "@/components/home/dialogues"
 import { Speakers } from "@/components/home/speakers"
 import { LatestArticles } from "@/components/home/latest-articles"
+import { Partners } from "@/components/home/partners"
 
 export const Route = createFileRoute("/_public/")({
   // The homepage must never 500 over a posts fetch — fall back and let the
@@ -37,6 +38,7 @@ function HomeRoute() {
       <Dialogues />
       <Speakers />
       <LatestArticles />
+      <Partners />
     </>
   )
 }

@@ -309,15 +309,15 @@ export function SiteHeader() {
       <nav className="hidden items-center gap-10 lg:flex">
         {navItems.map((item) =>
           isGroup(item) ? (
-            <NavDropdown key={item.label()} group={item} />
+          <NavDropdown key={item.label()} group={item} />
           ) : (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.exact }}
-              activeProps={{ "data-status": "active" }}
-              className="group/nav relative py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
-            >
+          <Link
+            key={item.to}
+            to={item.to}
+            activeOptions={{ exact: item.exact }}
+            activeProps={{ "data-status": "active" }}
+            className="group/nav relative py-1.5 text-[18px] font-medium tracking-[0.08em] text-white uppercase transition-colors hover:text-[#cccccc] data-[status=active]:font-bold data-[status=active]:text-primary"
+          >
               {item.label()}
               <span className="absolute inset-x-0 -bottom-[3px] h-[2.5px] rounded-full bg-gradient-to-r from-primary to-[#a066f5] opacity-0 transition-opacity group-hover/nav:opacity-40 group-data-[status=active]/nav:opacity-100" />
             </Link>

@@ -52,7 +52,7 @@ describe("permission matrix", () => {
     ).toBe(false)
   })
 
-  it("editor can only update speakers/sponsors, admin has full CRUD", () => {
+  it("editor can update speakers/partners, admin has full CRUD", () => {
     expect(
       hasOrgPermission(asRole(OrgRole.Editor), { speaker: ["update"] })
     ).toBe(true)
@@ -61,6 +61,17 @@ describe("permission matrix", () => {
     ).toBe(false)
     expect(
       hasOrgPermission(asRole(OrgRole.Admin), { speaker: ["create", "delete"] })
+    ).toBe(true)
+    expect(
+      hasOrgPermission(asRole(OrgRole.Editor), { partner: ["update"] })
+    ).toBe(true)
+    expect(
+      hasOrgPermission(asRole(OrgRole.Editor), { partner: ["create"] })
+    ).toBe(false)
+    expect(
+      hasOrgPermission(asRole(OrgRole.Admin), {
+        partner: ["create", "delete"],
+      })
     ).toBe(true)
   })
 

@@ -12,9 +12,10 @@ import {
 
 import { media } from "./media"
 import type { JsonValue } from "./posts"
+import type { PartnerTier } from "@/domains/partners/partners.schemas"
 
 /**
- * Content collections: speakers, sponsors, events follow the
+ * Content collections: speakers, sponsors, partners, and events follow the
  * posts translation-row pattern; page_content holds per-(page, section,
  * locale) JSONB singletons for copy that used to live in src/i18n.
  */
@@ -227,6 +228,33 @@ export const advisorTranslationRelations = relations(
 export const sponsorRelations = relations(sponsor, ({ one }) => ({
   logoMedia: one(media, {
     fields: [sponsor.logoMediaId],
+    references: [media.id],
+  }),
+}))
+
+export const partner = pgTable(
+  "partner",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    logoMediaId: uuid("logo_media_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    websiteUrl: text("website_url"),
+    tier: text("tier").$type<PartnerTier>().notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("partner_sort_order_idx").on(table.sortOrder)]
+)
+
+export const partnerRelations = relations(partner, ({ one }) => ({
+  logoMedia: one(media, {
+    fields: [partner.logoMediaId],
     references: [media.id],
   }),
 }))

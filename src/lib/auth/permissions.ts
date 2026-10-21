@@ -58,6 +58,7 @@ export const orgStatements = {
   speaker: CRUD,
   advisor: CRUD,
   sponsor: CRUD,
+  partner: CRUD,
   category: CRUD,
   pageContent: ["read", "update"],
   media: ["upload", "delete"],
@@ -78,6 +79,7 @@ export const orgRoles = {
     speaker: CRUD,
     advisor: CRUD,
     sponsor: CRUD,
+    partner: CRUD,
     category: CRUD,
     pageContent: ["read", "update"],
     media: ["upload", "delete"],
@@ -93,6 +95,7 @@ export const orgRoles = {
     speaker: ["read", "update"],
     advisor: ["read", "update"],
     sponsor: ["read", "update"],
+    partner: ["read", "update"],
     category: ["read"],
     pageContent: ["read", "update"],
     media: ["upload"],
@@ -142,8 +145,7 @@ export function hasOrgPermission(
   request: OrgPermissionRequest
 ): boolean {
   if (isSuperAdmin(globalRole)) return true
-  if (!orgRole) return false
-  const role = orgRoles[orgRole as OrgRole]
+  const role = Object.values(OrgRole).find((candidate) => candidate === orgRole)
   if (!role) return false
-  return role.authorize(request).success
+  return orgRoles[role].authorize(request).success
 }
