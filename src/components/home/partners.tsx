@@ -4,7 +4,7 @@ import { PARTNER_TIERS, usePublicPartnersQuery } from "@/domains/partners"
 import type { PartnerTier, PublicPartner } from "@/domains/partners"
 import bolingoLogo from "@/assets/images/bolingo-logo.png"
 import mdiLogo from "@/assets/images/mdi-logo.png"
-import partnersBackground from "@/assets/images/Image2.jpg"
+import partnersBackground from "@/assets/images/Image8.jpg"
 
 const TIER_LABELS: Record<PartnerTier, () => string> = {
   host: () => m.home_partners_tier_host(),
@@ -64,7 +64,7 @@ export function Partners() {
       id="partners"
       className="relative scroll-mt-[85px] overflow-hidden border-b border-primary/20 bg-cover bg-center px-[5%] py-[90px] font-nav"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.84), rgba(0, 0, 0, 0.84)), url(${partnersBackground})`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.93), rgba(0, 0, 0, 0.93)), url(${partnersBackground})`,
       }}
     >
       <div
@@ -125,10 +125,10 @@ export function Partners() {
                             src={logo}
                             alt=""
                             loading="lazy"
-                            className="h-12 w-16 shrink-0 rounded-lg bg-white object-contain p-2"
+                            className="h-20 w-28 shrink-0 rounded-lg bg-white object-contain p-2.5 shadow-lg"
                           />
                         )}
-                        <span className="text-sm font-semibold text-white">
+                        <span className="text-[11px] leading-snug font-medium text-white/60">
                           {partner.name}
                         </span>
                       </>
@@ -137,19 +137,19 @@ export function Partners() {
                     return (
                       <li
                         key={partner.id}
-                        className="min-h-20 rounded-xl border border-white/10 bg-black/40 p-3"
+                        className="min-h-24 rounded-xl border border-white/10 bg-black/40 p-3"
                       >
                         {partner.websiteUrl ? (
                           <a
                             href={partner.websiteUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex min-h-14 items-center gap-3"
+                            className="flex min-h-[4.5rem] items-center gap-3"
                           >
                             {details}
                           </a>
                         ) : (
-                          <div className="flex min-h-14 items-center gap-3">
+                          <div className="flex min-h-[4.5rem] items-center gap-3">
                             {details}
                           </div>
                         )}
