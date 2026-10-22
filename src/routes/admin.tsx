@@ -5,7 +5,6 @@ import {
   useLocation,
 } from "@tanstack/react-router"
 import {
-  Building2,
   CalendarDays,
   ChevronsUpDown,
   ExternalLink,
@@ -89,6 +88,11 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { to: "/admin/submissions", label: "Submissions", icon: Inbox },
+    ],
+  },
+  {
+    label: "Registration",
+    items: [
       { to: "/admin/registrations", label: "Registrations", icon: Ticket },
       {
         to: "/admin/check-in",
@@ -112,13 +116,17 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     items: [
       { to: "/admin/posts", label: "Posts", icon: FileText },
       { to: "/admin/categories", label: "Categories", icon: Tags },
-      { to: "/admin/speakers", label: "Speakers", icon: Mic },
-      { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
       { to: "/admin/agenda", label: "Agenda", icon: CalendarDays },
-      { to: "/admin/sponsors", label: "Sponsors", icon: Building2 },
-      { to: "/admin/partners", label: "Partners", icon: Handshake },
       { to: "/admin/pages", label: "Pages", icon: Layout },
       { to: "/admin/media", label: "Media", icon: Image },
+    ],
+  },
+  {
+    label: "People",
+    items: [
+      { to: "/admin/speakers", label: "Speakers", icon: Mic },
+      { to: "/admin/partners", label: "Partners", icon: Handshake },
+      { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
     ],
   },
   {

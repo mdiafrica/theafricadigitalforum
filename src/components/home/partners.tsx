@@ -1,20 +1,13 @@
 import { m } from "@/paraglide/messages"
 import { useInView } from "@/components/motion"
-import { PARTNER_TIERS, usePublicPartnersQuery } from "@/domains/partners"
-import type { PartnerTier, PublicPartner } from "@/domains/partners"
+import {
+  usePartnerCategoriesQuery,
+  usePublicPartnersQuery,
+} from "@/domains/partners"
+import type { PartnerCategoryItem, PublicPartner } from "@/domains/partners"
 import bolingoLogo from "@/assets/images/bolingo-logo.png"
 import mdiLogo from "@/assets/images/mdi-logo.png"
 import partnersBackground from "@/assets/images/Image8.jpg"
-
-const TIER_LABELS: Record<PartnerTier, () => string> = {
-  host: () => m.home_partners_tier_host(),
-  cohosts: () => m.home_partners_tier_cohosts(),
-  title: () => m.home_partners_tier_title(),
-  platinum: () => m.home_partners_tier_platinum(),
-  diamond: () => m.home_partners_tier_diamond(),
-  gold: () => m.home_partners_tier_gold(),
-  silver: () => m.home_partners_tier_silver(),
-}
 
 function fallbackLogo(partner: PublicPartner) {
   if (partner.logoUrl) return partner.logoUrl
@@ -29,33 +22,34 @@ function fallbackLogo(partner: PublicPartner) {
   return undefined
 }
 
-type Tier = { id: PartnerTier; label: () => string; partners: PublicPartner[] }
+type Tier = { id: string; label: string; partners: PublicPartner[] }
 
-function groupPartners(partners: PublicPartner[]): Tier[] {
-  return PARTNER_TIERS.map((id) => ({
-    id,
-    label: TIER_LABELS[id],
-    partners: partners.filter((partner) => partner.tier === id),
-  })).filter((tier) => tier.partners.length > 0)
-}
-
-function sortPartners(partners: PublicPartner[]) {
-  return [...partners].sort(
-    (left, right) =>
-      PARTNER_TIERS.indexOf(left.tier) - PARTNER_TIERS.indexOf(right.tier) ||
-      left.sortOrder - right.sortOrder
-  )
+function groupPartners(
+  categories: PartnerCategoryItem[],
+  partners: PublicPartner[]
+): Tier[] {
+  return categories
+    .map((category) => ({
+      id: category.slug,
+      label: category.name,
+      partners: partners
+        .filter((partner) => partner.tier === category.slug)
+        .sort((left, right) => left.sortOrder - right.sortOrder),
+    }))
+    .filter((tier) => tier.partners.length > 0)
 }
 
 export function Partners() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.15 })
   const partnersQuery = usePublicPartnersQuery()
-  const tiers = groupPartners(sortPartners(partnersQuery.data ?? []))
-  if (
-    tiers.length === 0 &&
-    !partnersQuery.isPending &&
-    !partnersQuery.isError
-  ) {
+  const categoriesQuery = usePartnerCategoriesQuery()
+  const tiers = groupPartners(
+    categoriesQuery.data ?? [],
+    partnersQuery.data ?? []
+  )
+  const isPending = partnersQuery.isPending || categoriesQuery.isPending
+  const isError = partnersQuery.isError || categoriesQuery.isError
+  if (tiers.length === 0 && !isPending && !isError) {
     return null
   }
 
@@ -92,7 +86,7 @@ export function Partners() {
           {m.home_partners_subtitle()}
         </p>
 
-        {partnersQuery.isError && (
+        {isError && (
           <p role="status" className="mb-6 text-sm text-white/70">
             Partner information is temporarily unavailable.
           </p>
@@ -113,7 +107,7 @@ export function Partners() {
                 }}
               >
                 <h3 className="mb-4 text-[10px] font-semibold tracking-[0.18em] text-white/45 uppercase">
-                  {tier.label()}
+                  {tier.label}
                 </h3>
                 <ul className="flex flex-col gap-3">
                   {tier.partners.map((partner) => {

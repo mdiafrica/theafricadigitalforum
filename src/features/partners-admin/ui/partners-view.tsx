@@ -5,12 +5,12 @@ import { toast } from "sonner"
 
 import { useSessionQuery } from "@/domains/auth"
 import {
-  PARTNER_TIERS,
   useDeletePartnerMutation,
+  usePartnerCategoriesQuery,
   usePartnersAdminQuery,
   useSavePartnerMutation,
 } from "@/domains/partners"
-import type { PartnerAdminItem, PartnerTier } from "@/domains/partners"
+import type { PartnerAdminItem } from "@/domains/partners"
 import { EntityDialog } from "@/components/admin/entity-dialog"
 import { PageHeader } from "@/components/admin/page-header"
 import { EmptyState, QueryError } from "@/components/admin/query-states"
@@ -36,19 +36,11 @@ import {
 import { useDataTable } from "@/hooks/use-data-table"
 import { hasOrgPermission } from "@/lib/auth/permissions"
 import { getErrorMessage } from "@/lib/error"
-
-const TIER_LABELS: Record<PartnerTier, string> = {
-  host: "Host",
-  cohosts: "Co-hosts",
-  title: "Title",
-  platinum: "Platinum",
-  diamond: "Diamond",
-  gold: "Gold",
-  silver: "Silver",
-}
+import { PartnerCategoriesSection } from "./partner-categories-section"
 
 function usePartnerColumns(
   canEdit: boolean,
+  categoryNames: Map<string, string>,
   onEdit: (partner: PartnerAdminItem) => void
 ) {
   return React.useMemo<ColumnDef<PartnerAdminItem, unknown>[]>(
@@ -87,7 +79,9 @@ function usePartnerColumns(
         accessorKey: "tier",
         header: "Category",
         cell: ({ row }) => (
-          <Badge variant="secondary">{TIER_LABELS[row.original.tier]}</Badge>
+          <Badge variant="secondary">
+            {categoryNames.get(row.original.tier) ?? row.original.tier}
+          </Badge>
         ),
       },
       {
@@ -116,13 +110,14 @@ function usePartnerColumns(
           ) : null,
       },
     ],
-    [canEdit, onEdit]
+    [canEdit, categoryNames, onEdit]
   )
 }
 
 export function PartnersView() {
   const sessionQuery = useSessionQuery()
   const partnersQuery = usePartnersAdminQuery()
+  const categoriesQuery = usePartnerCategoriesQuery()
   const [editing, setEditing] = React.useState<PartnerAdminItem | "new" | null>(
     null
   )
@@ -134,7 +129,14 @@ export function PartnersView() {
   const canEdit = hasOrgPermission(caller, { partner: ["update"] })
   const canDelete = hasOrgPermission(caller, { partner: ["delete"] })
 
-  const columns = usePartnerColumns(canEdit, setEditing)
+  const categoryNames = React.useMemo(
+    () =>
+      new Map(
+        (categoriesQuery.data ?? []).map((item) => [item.slug, item.name])
+      ),
+    [categoriesQuery.data]
+  )
+  const columns = usePartnerColumns(canEdit, categoryNames, setEditing)
   const table = useDataTable({
     data: canRead ? (partnersQuery.data ?? []) : [],
     columns,
@@ -173,6 +175,14 @@ export function PartnersView() {
         />
       )}
 
+      {canRead && (
+        <PartnerCategoriesSection
+          canCreate={canCreate}
+          canEdit={canEdit}
+          canDelete={canDelete}
+        />
+      )}
+
       {editing !== null && (
         <PartnerDialog
           partner={editing === "new" ? undefined : editing}
@@ -195,10 +205,11 @@ function PartnerDialog({
 }) {
   const saveMutation = useSavePartnerMutation()
   const deleteMutation = useDeletePartnerMutation()
+  const categories = usePartnerCategoriesQuery().data ?? []
   const [values, setValues] = React.useState({
     name: partner?.name ?? "",
     websiteUrl: partner?.websiteUrl ?? "",
-    tier: partner?.tier ?? "host",
+    tier: partner?.tier ?? "",
     sortOrder: partner?.sortOrder ?? 0,
     logoMediaId: partner?.logoMediaId ?? null,
   })
@@ -211,6 +222,10 @@ function PartnerDialog({
     event.preventDefault()
     if (!values.name.trim()) {
       toast.error("The partner name is required.")
+      return
+    }
+    if (!values.tier) {
+      toast.error("Choose a category. Add one first if none exist.")
       return
     }
     saveMutation.mutate(
@@ -304,19 +319,16 @@ function PartnerDialog({
             <Select
               value={values.tier}
               onValueChange={(tier) => {
-                const selectedTier = PARTNER_TIERS.find(
-                  (validTier) => validTier === tier
-                )
-                if (selectedTier) set({ tier: selectedTier })
+                if (tier) set({ tier })
               }}
             >
               <SelectTrigger id="partner-tier" className="w-full">
                 <SelectValue placeholder="Choose a category" />
               </SelectTrigger>
               <SelectContent>
-                {PARTNER_TIERS.map((tier) => (
-                  <SelectItem key={tier} value={tier}>
-                    {TIER_LABELS[tier]}
+                {categories.map((category) => (
+                  <SelectItem key={category.slug} value={category.slug}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>

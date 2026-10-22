@@ -120,6 +120,13 @@
       "when": 1792608235204,
       "tag": "0016_graceful_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792666850374,
+      "tag": "0017_partner_categories",
+      "breakpoints": true
     }
   ]
 }

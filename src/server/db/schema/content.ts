@@ -12,7 +12,6 @@ import {
 
 import { media } from "./media"
 import type { JsonValue } from "./posts"
-import type { PartnerTier } from "@/domains/partners/partners.schemas"
 
 /**
  * Content collections: speakers, sponsors, partners, and events follow the
@@ -232,6 +231,18 @@ export const sponsorRelations = relations(sponsor, ({ one }) => ({
   }),
 }))
 
+export const partnerCategory = pgTable("partner_category", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+})
+
 export const partner = pgTable(
   "partner",
   {
@@ -241,7 +252,7 @@ export const partner = pgTable(
       onDelete: "set null",
     }),
     websiteUrl: text("website_url"),
-    tier: text("tier").$type<PartnerTier>().notNull(),
+    tier: text("tier").notNull(),
     sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")

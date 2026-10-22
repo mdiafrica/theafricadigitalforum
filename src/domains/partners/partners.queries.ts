@@ -7,16 +7,55 @@ import {
 
 import {
   deletePartner,
+  deletePartnerCategory,
+  listPartnerCategories,
   listPartnersAdmin,
   listPublicPartners,
   savePartner,
+  savePartnerCategory,
 } from "./partners.functions"
-import type { SavePartnerInput } from "./partners.schemas"
+import type {
+  SavePartnerCategoryInput,
+  SavePartnerInput,
+} from "./partners.schemas"
 
 export const partnerKeys = {
   all: ["partners"] as const,
   adminList: () => [...partnerKeys.all, "admin-list"] as const,
   publicList: () => [...partnerKeys.all, "public-list"] as const,
+  categories: () => [...partnerKeys.all, "categories"] as const,
+}
+
+export const partnerCategoriesQueryOptions = () =>
+  queryOptions({
+    queryKey: partnerKeys.categories(),
+    queryFn: () => listPartnerCategories(),
+    staleTime: 15_000,
+  })
+
+export function usePartnerCategoriesQuery() {
+  return useQuery(partnerCategoriesQueryOptions())
+}
+
+export function useSavePartnerCategoryMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: SavePartnerCategoryInput) =>
+      savePartnerCategory({ data: input }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: partnerKeys.all })
+    },
+  })
+}
+
+export function useDeletePartnerCategoryMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deletePartnerCategory({ data: { id } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: partnerKeys.all })
+    },
+  })
 }
 
 export const partnersAdminQueryOptions = () =>
