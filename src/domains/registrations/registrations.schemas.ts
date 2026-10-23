@@ -68,7 +68,6 @@ export const registrationInput = z.object({
     .min(1, "Please enter your organization.")
     .max(200),
   country: z.enum(COUNTRIES, "Please select your country of residence."),
-  nationality: z.enum(COUNTRIES, "Please select your country of nationality."),
   linkedinUrl,
   passTier: z.enum(PASS_TIER_IDS, "Please select a pass."),
   interestAreas: z
@@ -109,8 +108,6 @@ export const updateRegistrationInput = registrationInput
   })
   .extend({
     id: z.uuid(),
-    // Registrations made before nationality existed have none stored.
-    nationality: z.enum(COUNTRIES).or(z.literal("")),
     // Earlier registrations may have "International" as their country.
     country: z.enum(COUNTRIES).or(z.literal(INTERNATIONAL)),
   })

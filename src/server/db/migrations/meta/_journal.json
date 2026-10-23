@@ -127,6 +127,13 @@
       "when": 1792666850374,
       "tag": "0017_partner_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792768725999,
+      "tag": "0018_knowledge_partner_category",
+      "breakpoints": true
     }
   ]
 }

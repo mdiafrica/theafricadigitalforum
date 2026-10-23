@@ -126,6 +126,11 @@ const NAV_GROUPS: Array<{ label?: string; items: NavItem[] }> = [
     items: [
       { to: "/admin/speakers", label: "Speakers", icon: Mic },
       { to: "/admin/partners", label: "Partners", icon: Handshake },
+      {
+        to: "/admin/partner-categories",
+        label: "Partner categories",
+        icon: Tags,
+      },
       { to: "/admin/advisors", label: "Advisory board", icon: UserRoundCheck },
     ],
   },

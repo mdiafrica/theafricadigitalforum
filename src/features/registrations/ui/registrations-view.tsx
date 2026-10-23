@@ -370,7 +370,6 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
       jobTitle: item.jobTitle,
       organization: item.organization,
       country: item.country,
-      nationality: item.nationality,
       linkedinUrl: item.linkedinUrl ?? "",
       passTier: item.passTier,
       interestAreas: item.interestAreas,
@@ -467,18 +466,11 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
               />
             </Field>
             <SelectField
-              label="Country"
+              label="Country of residence"
               value={form.country}
               options={COUNTRIES}
               error={errors.country}
               onChange={(value) => set("country", value)}
-            />
-            <SelectField
-              label="Nationality"
-              value={form.nationality}
-              options={COUNTRIES}
-              error={errors.nationality}
-              onChange={(value) => set("nationality", value)}
             />
             <Field label="LinkedIn" error={errors.linkedinUrl}>
               <Input
@@ -564,8 +556,7 @@ function RegistrationDetail({ item }: { item: RegistrationItem }) {
     ["Reference", item.reference],
     ["Job title", item.jobTitle],
     ["Organization", item.organization],
-    ["Country", item.country],
-    ["Nationality", item.nationality || "—"],
+    ["Country of residence", item.country],
     [
       "LinkedIn",
       item.linkedinUrl ? (

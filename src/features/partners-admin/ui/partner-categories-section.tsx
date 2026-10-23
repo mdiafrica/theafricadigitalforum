@@ -9,7 +9,9 @@ import {
   useSavePartnerCategoryMutation,
 } from "@/domains/partners"
 import type { PartnerCategoryItem } from "@/domains/partners"
+import { useSessionQuery } from "@/domains/auth"
 import { EntityDialog } from "@/components/admin/entity-dialog"
+import { PageHeader } from "@/components/admin/page-header"
 import { EmptyState, QueryError } from "@/components/admin/query-states"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table/data-table"
@@ -22,6 +24,7 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { useDataTable } from "@/hooks/use-data-table"
+import { hasOrgPermission } from "@/lib/auth/permissions"
 import { getErrorMessage } from "@/lib/error"
 
 function useCategoryColumns(
@@ -62,15 +65,14 @@ function useCategoryColumns(
   )
 }
 
-export function PartnerCategoriesSection({
-  canCreate,
-  canEdit,
-  canDelete,
-}: {
-  canCreate: boolean
-  canEdit: boolean
-  canDelete: boolean
-}) {
+export function PartnerCategoriesView() {
+  const sessionQuery = useSessionQuery()
+  const session = sessionQuery.data
+  const caller = { globalRole: session?.user.role, orgRole: session?.orgRole }
+  const canRead = hasOrgPermission(caller, { partner: ["read"] })
+  const canCreate = hasOrgPermission(caller, { partner: ["create"] })
+  const canEdit = hasOrgPermission(caller, { partner: ["update"] })
+  const canDelete = hasOrgPermission(caller, { partner: ["delete"] })
   const categoriesQuery = usePartnerCategoriesQuery()
   const [editing, setEditing] = React.useState<
     PartnerCategoryItem | "new" | null
@@ -78,26 +80,23 @@ export function PartnerCategoriesSection({
 
   const columns = useCategoryColumns(canEdit, setEditing)
   const table = useDataTable({
-    data: categoriesQuery.data ?? [],
+    data: canRead ? (categoriesQuery.data ?? []) : [],
     columns,
   })
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold">Categories</h2>
-          <p className="text-sm text-muted-foreground">
-            Groups shown on the homepage, such as Host, Gold or Silver sponsors.
-          </p>
-        </div>
+    <div className="mx-auto max-w-4xl space-y-6">
+      <PageHeader
+        title="Partner categories"
+        description="Groups shown on the homepage, such as Host, Gold or Knowledge Partner."
+      >
         {canCreate && (
-          <Button variant="outline" onClick={() => setEditing("new")}>
+          <Button onClick={() => setEditing("new")}>
             <PlusIcon data-icon="inline-start" />
             Add category
           </Button>
         )}
-      </div>
+      </PageHeader>
 
       {categoriesQuery.isError ? (
         <QueryError
@@ -125,7 +124,7 @@ export function PartnerCategoriesSection({
           onClose={() => setEditing(null)}
         />
       )}
-    </section>
+    </div>
   )
 }
 

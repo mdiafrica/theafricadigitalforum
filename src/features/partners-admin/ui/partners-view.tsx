@@ -36,7 +36,6 @@ import {
 import { useDataTable } from "@/hooks/use-data-table"
 import { hasOrgPermission } from "@/lib/auth/permissions"
 import { getErrorMessage } from "@/lib/error"
-import { PartnerCategoriesSection } from "./partner-categories-section"
 
 function usePartnerColumns(
   canEdit: boolean,
@@ -172,14 +171,6 @@ export function PartnersView() {
               {canCreate ? " Add a partner to get started." : ""}
             </EmptyState>
           }
-        />
-      )}
-
-      {canRead && (
-        <PartnerCategoriesSection
-          canCreate={canCreate}
-          canEdit={canEdit}
-          canDelete={canDelete}
         />
       )}
 

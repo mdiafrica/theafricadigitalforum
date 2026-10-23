@@ -22,9 +22,6 @@ const FR: Record<string, string> = {
   "Host Organization": "Organisation hôte",
   "Expected Audience": "Public attendu",
   "June 2–4, 2027": "2–4 Juin 2027",
-  "Country of Nationality": "Pays de nationalité",
-  "Please select your country of nationality.":
-    "Veuillez sélectionner votre pays de nationalité.",
   Other: "Autre",
   "Please tell us what you have in mind": "Dites-nous ce que vous avez en tête",
   "Please tell us what you mean by “Other”.":
@@ -35,7 +32,7 @@ const FR: Record<string, string> = {
     "Dirigeants gouvernementaux, cadres dirigeants, fondateurs de startups technologiques, investisseurs, chercheurs et société civile",
 
   // Pass selection
-  "Choose Your Pass": "Choisissez votre pass",
+  "Choose Your Early Bird Pass": "Choisissez votre pass Early Bird",
   "Select the participation tier that best aligns with your goals, or use an access code. The registration form appears once you choose.":
     "Sélectionnez la formule de participation qui correspond le mieux à vos objectifs, ou utilisez un code d'accès. Le formulaire d'inscription apparaît une fois votre choix effectué.",
   "Most Popular": "Le plus populaire",

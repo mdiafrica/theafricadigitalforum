@@ -8,7 +8,6 @@ const base = {
   jobTitle: "Engineer",
   organization: "ADF",
   country: "Togo",
-  nationality: "Togo",
   passTier: "general",
   interestAreas: [] as string[],
   participationType: "Attendee",

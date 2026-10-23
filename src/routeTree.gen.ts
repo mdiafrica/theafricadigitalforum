@@ -36,6 +36,7 @@ import { Route as AdminEditorRouteImport } from './routes/admin.editor'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminPagesRouteImport } from './routes/admin.pages'
+import { Route as AdminPartnerCategoriesRouteImport } from './routes/admin.partner-categories'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminRegistrationCodesRouteImport } from './routes/admin.registration-codes'
 import { Route as AdminRegistrationOverviewRouteImport } from './routes/admin.registration-overview'
@@ -187,6 +188,11 @@ const AdminPagesRoute = AdminPagesRouteImport.update({
   path: '/pages',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPartnerCategoriesRoute = AdminPartnerCategoriesRouteImport.update({
+  id: '/partner-categories',
+  path: '/partner-categories',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPartnersRoute = AdminPartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
@@ -300,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
@@ -342,6 +349,7 @@ export interface FileRoutesByTo {
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
@@ -388,6 +396,7 @@ export interface FileRoutesById {
   '/admin/events': typeof AdminEventsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
+  '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
@@ -435,6 +444,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/partner-categories'
     | '/admin/partners'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
@@ -477,6 +487,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/partner-categories'
     | '/admin/partners'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
@@ -522,6 +533,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/media'
     | '/admin/pages'
+    | '/admin/partner-categories'
     | '/admin/partners'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
@@ -743,6 +755,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPagesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/partner-categories': {
+      id: '/admin/partner-categories'
+      path: '/partner-categories'
+      fullPath: '/admin/partner-categories'
+      preLoaderRoute: typeof AdminPartnerCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/partners': {
       id: '/admin/partners'
       path: '/partners'
@@ -936,6 +955,7 @@ interface AdminRouteChildren {
   AdminEventsRoute: typeof AdminEventsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminPagesRoute: typeof AdminPagesRoute
+  AdminPartnerCategoriesRoute: typeof AdminPartnerCategoriesRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
   AdminRegistrationCodesRoute: typeof AdminRegistrationCodesRoute
   AdminRegistrationOverviewRoute: typeof AdminRegistrationOverviewRoute
@@ -960,6 +980,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEventsRoute: AdminEventsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminPagesRoute: AdminPagesRoute,
+  AdminPartnerCategoriesRoute: AdminPartnerCategoriesRoute,
   AdminPartnersRoute: AdminPartnersRoute,
   AdminRegistrationCodesRoute: AdminRegistrationCodesRoute,
   AdminRegistrationOverviewRoute: AdminRegistrationOverviewRoute,

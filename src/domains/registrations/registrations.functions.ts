@@ -53,7 +53,6 @@ export const submitRegistration = createServerFn({ method: "POST" })
         jobTitle: data.jobTitle,
         organization: data.organization,
         country: data.country,
-        nationality: data.nationality,
         linkedinUrl: data.linkedinUrl || null,
         passTier,
         paymentStatus: waived ? "waived" : "pending",

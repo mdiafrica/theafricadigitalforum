@@ -85,7 +85,6 @@ const STEP_FIELDS = [
     "jobTitle",
     "organization",
     "country",
-    "nationality",
     "linkedinUrl",
   ],
   ["interestAreas", "participationType", "primaryGoal"],
@@ -99,7 +98,6 @@ interface FormValues {
   jobTitle: string
   organization: string
   country: string
-  nationality: string
   linkedinUrl: string
   passTier: PassTierId | ""
   interestAreas: string[]
@@ -118,7 +116,6 @@ const INITIAL_VALUES: FormValues = {
   jobTitle: "",
   organization: "",
   country: "",
-  nationality: "",
   linkedinUrl: "",
   passTier: "",
   interestAreas: [],
@@ -453,7 +450,7 @@ function PassComparison({
     <Reveal delay={0.05}>
       <section className="mt-10">
         <h2 className="mb-2 text-[26px] font-extrabold tracking-[0.03em] text-white">
-          {tr("Choose Your Pass")}
+          {tr("Choose Your Early Bird Pass")}
         </h2>
         <p className="mb-6 text-sm text-white/70">
           {tr(
@@ -852,31 +849,6 @@ function StepDetails(props: StepProps) {
               ))}
           </select>
           <FieldError message={errors.country} />
-        </div>
-        <div>
-          <label htmlFor="nationality" className={LABEL_CLASS}>
-            {tr("Country of Nationality")}
-          </label>
-          <select
-            id="nationality"
-            value={values.nationality}
-            onChange={(event) => set("nationality", event.target.value)}
-            aria-invalid={Boolean(errors.nationality)}
-            className={cn(
-              INPUT_CLASS,
-              "w-full rounded-lg border px-3.5 py-2.5 outline-none focus:border-primary"
-            )}
-          >
-            <option value="">{tr("Select a country")}</option>
-            {[...COUNTRIES]
-              .sort((a, b) => trCountry(a).localeCompare(trCountry(b)))
-              .map((country) => (
-                <option key={country} value={country}>
-                  {trCountry(country)}
-                </option>
-              ))}
-          </select>
-          <FieldError message={errors.nationality} />
         </div>
         <TextField
           {...props}
