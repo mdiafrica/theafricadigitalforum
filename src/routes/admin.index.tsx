@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router"
 import {
   CalendarDays,
+  Coins,
   FileText,
   ImagePlus,
   Inbox,
@@ -8,9 +9,11 @@ import {
   Mail,
   Mic,
   PlusIcon,
+  Users,
 } from "lucide-react"
 
 import { useSessionQuery } from "@/domains/auth"
+import { useRegistrationOverviewQuery } from "@/domains/registrations"
 import { usePostsAdminListQuery } from "@/domains/posts"
 import { useSpeakersAdminQuery } from "@/domains/speakers"
 import { useEventsAdminQuery } from "@/domains/events"
@@ -40,12 +43,17 @@ function AdminDashboard() {
   const session = sessionQuery.data
   const caller = { globalRole: session?.user.role, orgRole: session?.orgRole }
   const canCreatePosts = hasOrgPermission(caller, { post: ["create"] })
+  const canReadRegistrations = hasOrgPermission(caller, {
+    submission: ["read"],
+  })
 
   const postsQuery = usePostsAdminListQuery({ pageSize: 5 })
   const speakersQuery = useSpeakersAdminQuery()
   const eventsQuery = useEventsAdminQuery()
   const contactQuery = useContactSubmissionsQuery({ pageSize: 3 })
   const newsletterQuery = useNewsletterSubscribersQuery({ pageSize: 1 })
+  const registrationOverviewQuery =
+    useRegistrationOverviewQuery(canReadRegistrations)
 
   const firstName = session?.user.name.split(/\s+/)[0]
 
@@ -99,6 +107,40 @@ function AdminDashboard() {
           pending={newsletterQuery.isPending}
           to="/admin/submissions"
         />
+        {canReadRegistrations && (
+          <>
+            <StatCard
+              title="Attendees"
+              icon={Users}
+              value={
+                registrationOverviewQuery.isError
+                  ? "Unavailable"
+                  : registrationOverviewQuery.data?.total
+              }
+              pending={registrationOverviewQuery.isPending}
+              to="/admin/registrations"
+            />
+            <StatCard
+              title="Money raised"
+              icon={Coins}
+              value={
+                registrationOverviewQuery.isError
+                  ? "Unavailable"
+                  : registrationOverviewQuery.data
+                    ? new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                        maximumFractionDigits: 0,
+                      }).format(
+                        registrationOverviewQuery.data.revenue.collected
+                      )
+                    : undefined
+              }
+              pending={registrationOverviewQuery.isPending}
+              to="/admin/registration-overview"
+            />
+          </>
+        )}
       </div>
 
       <div className="grid items-start gap-4 lg:grid-cols-2">
@@ -216,7 +258,7 @@ function StatCard({
 }: {
   title: string
   icon: typeof FileText
-  value: number | undefined
+  value: string | number | undefined
   pending: boolean
   to: string
 }) {

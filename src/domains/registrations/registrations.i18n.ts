@@ -163,7 +163,7 @@ const FR: Record<string, string> = {
   "Infrastructure & Connectivity": "Infrastructures et connectivité",
   "Youth Empowerment & Digital Skills":
     "Autonomisation des jeunes et compétences numériques",
-  Attendee: "Participant",
+  Delegate: "Délégué(e)",
   "Potential Speaker / Thought Leader":
     "Intervenant potentiel / Leader d'opinion",
   "Sponsor / Partner": "Sponsor / Partenaire",

@@ -10,7 +10,7 @@ const base = {
   country: "Togo",
   passTier: "general",
   interestAreas: [] as string[],
-  participationType: "Attendee",
+  participationType: "Delegate",
   primaryGoal: "Securing investment for my startup",
   partnershipInterest: "Not at this time",
   communicationsConsent: true,

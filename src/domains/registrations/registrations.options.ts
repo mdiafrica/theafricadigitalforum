@@ -104,7 +104,7 @@ export const INTEREST_AREAS = [
 ] as const
 
 export const PARTICIPATION_TYPES = [
-  "Attendee",
+  "Delegate",
   "Potential Speaker / Thought Leader",
   "Sponsor / Partner",
   "Exhibitor (Innovation Expo)",

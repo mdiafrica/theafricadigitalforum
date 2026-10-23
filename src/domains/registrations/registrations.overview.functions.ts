@@ -116,7 +116,7 @@ export const getRegistrationOverview = createServerFn({ method: "GET" })
         exhibitors: countOfType("Exhibitor (Innovation Expo)"),
         media: countOfType("Media / Press"),
         speakers: countOfType("Potential Speaker / Thought Leader"),
-        attendees: countOfType("Attendee"),
+        attendees: countOfType("Delegate") + countOfType("Attendee"),
         sponsorshipDeckRequests: rows.filter((row) =>
           row.partnershipInterest.startsWith("Yes")
         ).length,

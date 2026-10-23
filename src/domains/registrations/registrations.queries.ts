@@ -66,11 +66,12 @@ export function useDeleteRegistrationMutation() {
   })
 }
 
-export function useRegistrationOverviewQuery() {
+export function useRegistrationOverviewQuery(enabled = true) {
   return useQuery(
     queryOptions({
       queryKey: [...registrationKeys.all, "overview"] as const,
       queryFn: () => getRegistrationOverview(),
+      enabled,
       staleTime: 15_000,
     })
   )
