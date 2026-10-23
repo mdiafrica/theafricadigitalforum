@@ -72,9 +72,9 @@ export function MediaPickerDialog({
           </div>
 
           {mediaQuery.isPending && (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }, (_, i) => (
-                <Skeleton key={i} className="aspect-square w-full" />
+                <Skeleton key={i} className="h-36 w-full sm:h-40 lg:h-44" />
               ))}
             </div>
           )}
@@ -92,7 +92,7 @@ export function MediaPickerDialog({
                 <button
                   key={item.id}
                   type="button"
-                  className="group relative block aspect-square w-full min-w-0 cursor-pointer overflow-hidden rounded-md border border-border bg-muted transition-shadow hover:ring-2 hover:ring-ring"
+                  className="group relative block h-36 w-full min-w-0 cursor-pointer overflow-hidden rounded-md border border-border bg-muted transition-shadow hover:ring-2 hover:ring-ring sm:h-40 lg:h-44"
                   onClick={() => {
                     onSelect(item)
                     setOpen(false)
