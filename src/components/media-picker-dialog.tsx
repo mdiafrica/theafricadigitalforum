@@ -1,8 +1,8 @@
 import * as React from "react"
 import { ImageIcon, XIcon } from "lucide-react"
 
-import { useMediaListQuery  } from "@/domains/media"
-import type {MediaItem} from "@/domains/media";
+import { useMediaListQuery } from "@/domains/media"
+import type { MediaItem } from "@/domains/media"
 import { MediaUploadButton } from "@/components/admin/media-upload-button"
 import { Button } from "@/components/ui/button"
 import {
@@ -87,12 +87,12 @@ export function MediaPickerDialog({
             <p className="py-6 text-sm text-muted-foreground">No images yet.</p>
           )}
           {mediaQuery.data && mediaQuery.data.items.length > 0 && (
-            <div className="grid max-h-[50vh] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-4">
+            <div className="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto p-1 sm:grid-cols-3 lg:grid-cols-4">
               {mediaQuery.data.items.map((item) => (
                 <button
                   key={item.id}
                   type="button"
-                  className="group aspect-square cursor-pointer overflow-hidden rounded-md border border-border transition-shadow hover:ring-2 hover:ring-ring"
+                  className="group relative block aspect-square w-full min-w-0 cursor-pointer overflow-hidden rounded-md border border-border bg-muted transition-shadow hover:ring-2 hover:ring-ring"
                   onClick={() => {
                     onSelect(item)
                     setOpen(false)
@@ -105,7 +105,7 @@ export function MediaPickerDialog({
                     }
                     alt={item.alt ?? ""}
                     loading="lazy"
-                    className="size-full object-cover transition-transform group-hover:scale-105"
+                    className="absolute inset-0 size-full object-cover transition-transform group-hover:scale-105"
                   />
                 </button>
               ))}
