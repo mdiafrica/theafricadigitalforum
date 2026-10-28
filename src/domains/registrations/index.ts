@@ -9,6 +9,7 @@ export {
 } from "./registrations.checkin.functions"
 export type { RegistrationOverview } from "./registrations.overview.functions"
 export type { RegistrationItem } from "./registrations.admin.functions"
+export type { ReferralOptionItem } from "./registrations.referrals.functions"
 export {
   validateRegistrationCode,
   type RegistrationCodeItem,
@@ -23,6 +24,10 @@ export {
 } from "./registrations.queries"
 export {
   registrationKeys,
+  useDeleteReferralOptionMutation,
+  useReferralOptionsAdminQuery,
+  useReferralOptionsQuery,
+  useSaveReferralOptionMutation,
   useDeleteRegistrationMutation,
   useExportRegistrationsMutation,
   useUpdateRegistrationMutation,

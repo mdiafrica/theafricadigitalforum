@@ -25,6 +25,12 @@ export const submitRegistration = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const reference = newReference()
 
+    const [validReferral] = await db
+      .select({ id: schema.referralOption.id })
+      .from(schema.referralOption)
+      .where(eq(schema.referralOption.name, data.referral))
+    if (!validReferral) throw new Error("Please select who referred you.")
+
     const { passTier, waived } = await db.transaction(async (tx) => {
       let passTier: string = data.passTier
       let waived = false
@@ -53,6 +59,7 @@ export const submitRegistration = createServerFn({ method: "POST" })
         jobTitle: data.jobTitle,
         organization: data.organization,
         country: data.country,
+        referral: data.referral,
         linkedinUrl: data.linkedinUrl || null,
         passTier,
         paymentStatus: waived ? "waived" : "pending",

@@ -8,6 +8,7 @@ const base = {
   jobTitle: "Engineer",
   organization: "ADF",
   country: "Togo",
+  referral: "Not Applicable",
   passTier: "general",
   interestAreas: [] as string[],
   participationType: "Delegate",

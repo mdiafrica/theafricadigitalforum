@@ -24,6 +24,7 @@ export const registration = pgTable(
     organization: text("organization").notNull(),
     country: text("country").notNull(),
     nationality: text("nationality").notNull().default(""),
+    referral: text("referral").notNull().default(""),
     linkedinUrl: text("linkedin_url"),
     passTier: text("pass_tier").notNull(),
     paymentStatus: text("payment_status").notNull().default("pending"),
@@ -42,6 +43,14 @@ export const registration = pgTable(
     index("registration_email_idx").on(table.email),
   ]
 )
+
+/** Admin-managed answers to "Who referred you?" on the registration form. */
+export const referralOption = pgTable("referral_option", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
 
 /**
  * Access codes that waive payment (staff, partners, organizations that paid

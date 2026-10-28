@@ -1,5 +1,12 @@
 import * as React from "react"
-import { DownloadIcon, EyeIcon, PencilIcon, SearchIcon, TicketIcon, Trash2Icon } from "lucide-react"
+import {
+  DownloadIcon,
+  EyeIcon,
+  PencilIcon,
+  SearchIcon,
+  TicketIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -48,7 +55,9 @@ const selectClass =
   "h-8 rounded-lg border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
 
 function downloadCsv(filename: string, csv: string) {
-  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }))
+  const url = URL.createObjectURL(
+    new Blob([csv], { type: "text/csv;charset=utf-8" })
+  )
   const link = document.createElement("a")
   link.href = url
   link.download = filename
@@ -225,7 +234,9 @@ function RegistrationRow({ item }: { item: RegistrationItem }) {
   return (
     <tr className="border-b border-border last:border-b-0">
       <td className="px-4 py-3">
-        <span className="block font-semibold">{[item.title, item.fullName].filter(Boolean).join(" ")}</span>
+        <span className="block font-semibold">
+          {[item.title, item.fullName].filter(Boolean).join(" ")}
+        </span>
         <span className="block text-xs text-muted-foreground">
           {item.email}
         </span>
@@ -274,7 +285,11 @@ function RegistrationRow({ item }: { item: RegistrationItem }) {
           <Dialog>
             <DialogTrigger
               render={
-                <Button variant="ghost" size="icon" aria-label="View registration" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="View registration"
+                />
               }
             >
               <EyeIcon />
@@ -300,7 +315,8 @@ function RegistrationRow({ item }: { item: RegistrationItem }) {
                 { data: { id: item.id } },
                 {
                   onSuccess: () => toast.success("Registration deleted."),
-                  onError: () => toast.error("Couldn't delete the registration."),
+                  onError: () =>
+                    toast.error("Couldn't delete the registration."),
                 }
               )
             }
@@ -324,7 +340,9 @@ function Field({
     <label className="block space-y-1 text-sm">
       <span className="text-muted-foreground">{label}</span>
       {children}
-      {error ? <span className="block text-xs text-destructive">{error}</span> : null}
+      {error ? (
+        <span className="block text-xs text-destructive">{error}</span>
+      ) : null}
     </label>
   )
 }
@@ -371,6 +389,7 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
       organization: item.organization,
       country: item.country,
       linkedinUrl: item.linkedinUrl ?? "",
+      referral: item.referral,
       passTier: item.passTier,
       interestAreas: item.interestAreas,
       participationType: item.participationType,
@@ -390,8 +409,10 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
     setOpen(next)
   }
 
-  const set = <K extends keyof typeof initial>(key: K, value: (typeof initial)[K]) =>
-    setForm((current) => ({ ...current, [key]: value }))
+  const set = <K extends keyof typeof initial>(
+    key: K,
+    value: (typeof initial)[K]
+  ) => setForm((current) => ({ ...current, [key]: value }))
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -422,7 +443,9 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
-        render={<Button variant="ghost" size="icon" aria-label="Edit registration" />}
+        render={
+          <Button variant="ghost" size="icon" aria-label="Edit registration" />
+        }
       >
         <PencilIcon />
       </DialogTrigger>
@@ -472,6 +495,12 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
               error={errors.country}
               onChange={(value) => set("country", value)}
             />
+            <Field label="Referred by" error={errors.referral}>
+              <Input
+                value={form.referral}
+                onChange={(event) => set("referral", event.target.value)}
+              />
+            </Field>
             <Field label="LinkedIn" error={errors.linkedinUrl}>
               <Input
                 value={form.linkedinUrl}
@@ -515,7 +544,9 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
             />
           </div>
           <fieldset className="space-y-2">
-            <legend className="text-sm text-muted-foreground">Interest areas</legend>
+            <legend className="text-sm text-muted-foreground">
+              Interest areas
+            </legend>
             <div className="grid gap-2 sm:grid-cols-2">
               {INTEREST_AREAS.map((area) => (
                 <label key={area} className="flex items-center gap-2 text-sm">
@@ -537,7 +568,11 @@ function EditRegistrationDialog({ item }: { item: RegistrationItem }) {
             </div>
           </fieldset>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
@@ -573,6 +608,7 @@ function RegistrationDetail({ item }: { item: RegistrationItem }) {
       ),
     ],
     ["Pass", tierName(item.passTier)],
+    ["Referred by", item.referral || "—"],
     ["Interest areas", item.interestAreas.join(", ") || "—"],
     ["Participation", item.participationType],
     ["Primary goal", item.primaryGoal],

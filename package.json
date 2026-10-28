@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
+    "dev": "node init && vite dev --port 3000",
+    "build": "node init && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
@@ -19,7 +19,7 @@
     "db:seed": "tsx --env-file=.env src/server/scripts/seed-admin.ts",
     "db:seed:speakers": "tsx --env-file=.env src/server/scripts/seed-speakers.ts",
     "db:seed:agenda": "tsx --env-file=.env src/server/scripts/seed-agenda.ts",
-    "start": "node .output/server/index.mjs",
+    "start": "node init && node .output/server/index.mjs",
     "ship": "node ./deploy/ship.mjs"
   },
   "dependencies": {

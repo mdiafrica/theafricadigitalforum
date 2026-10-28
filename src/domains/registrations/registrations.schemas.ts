@@ -84,6 +84,11 @@ export const registrationInput = z.object({
   ),
   communicationsConsent: z.literal(true, "Consent is required to register."),
   termsAccepted: z.literal(true, "Please accept the terms to continue."),
+  referral: z
+    .string()
+    .trim()
+    .min(1, "Please select who referred you.")
+    .max(200),
   accessCode: z.string().trim().toUpperCase().max(40).optional(),
 })
 export type RegistrationInput = z.infer<typeof registrationInput>
@@ -108,6 +113,8 @@ export const updateRegistrationInput = registrationInput
   })
   .extend({
     id: z.uuid(),
+    // Earlier registrations have no referral.
+    referral: z.string().trim().max(200),
     // Earlier registrations may have "International" as their country.
     country: z.enum(COUNTRIES).or(z.literal(INTERNATIONAL)),
   })

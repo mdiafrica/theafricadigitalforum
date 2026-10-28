@@ -35,7 +35,9 @@ const selectClass =
   "h-8 rounded-lg border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
 
 const tierName = (id: string | null) =>
-  id ? (PASS_TIERS.find((tier) => tier.id === id)?.name ?? id) : "Attendee picks"
+  id
+    ? (PASS_TIERS.find((tier) => tier.id === id)?.name ?? id)
+    : "Attendee picks"
 
 function codeStatus(item: RegistrationCodeItem) {
   if (!item.active) return "Inactive"
@@ -179,7 +181,11 @@ function CreateCodeForm() {
           onChange={(event) => setExpiresAt(event.target.value)}
         />
       </label>
-      <Button type="submit" disabled={create.isPending} className="lg:col-start-6">
+      <Button
+        type="submit"
+        disabled={create.isPending}
+        className="lg:col-start-6"
+      >
         {create.isPending && <Spinner />}
         Create code
       </Button>
@@ -297,7 +303,12 @@ function CodeRow({ item }: { item: RegistrationCodeItem }) {
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-1">
-          <Button variant="ghost" size="icon-sm" aria-label="Copy code" onClick={copy}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Copy code"
+            onClick={copy}
+          >
             <CopyIcon />
           </Button>
           <Button

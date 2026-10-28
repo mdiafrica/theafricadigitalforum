@@ -3,7 +3,6 @@ node_modules
 dist
 dist-ssr
 *.local
-.env*
 !.env.example
 .tanstack
 
@@ -22,3 +21,4 @@ todos.json
 /legacy-frontend/
 /.claude/
 /docs/
+config.bat

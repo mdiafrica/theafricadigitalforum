@@ -143,6 +143,9 @@ const FR: Record<string, string> = {
   "Organization / Company": "Organisation / Entreprise",
   "Country of Residence": "Pays de résidence",
   "Select a country": "Sélectionnez un pays",
+  "Who referred you?": "Qui vous a recommandé ?",
+  "Select an option": "Sélectionnez une option",
+  "Please select who referred you.": "Veuillez indiquer qui vous a recommandé.",
   "LinkedIn Profile URL": "URL du profil LinkedIn",
 
   // Step 2

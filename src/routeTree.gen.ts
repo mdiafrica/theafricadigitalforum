@@ -38,6 +38,7 @@ import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminPagesRouteImport } from './routes/admin.pages'
 import { Route as AdminPartnerCategoriesRouteImport } from './routes/admin.partner-categories'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
+import { Route as AdminReferralsRouteImport } from './routes/admin.referrals'
 import { Route as AdminRegistrationCodesRouteImport } from './routes/admin.registration-codes'
 import { Route as AdminRegistrationOverviewRouteImport } from './routes/admin.registration-overview'
 import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
@@ -198,6 +199,11 @@ const AdminPartnersRoute = AdminPartnersRouteImport.update({
   path: '/partners',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReferralsRoute = AdminReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRegistrationCodesRoute = AdminRegistrationCodesRouteImport.update({
   id: '/registration-codes',
   path: '/registration-codes',
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partner-categories': typeof AdminPartnerCategoriesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/registration-codes': typeof AdminRegistrationCodesRoute
   '/admin/registration-overview': typeof AdminRegistrationOverviewRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
@@ -446,6 +455,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/partner-categories'
     | '/admin/partners'
+    | '/admin/referrals'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
     | '/admin/registrations'
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/partner-categories'
     | '/admin/partners'
+    | '/admin/referrals'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
     | '/admin/registrations'
@@ -535,6 +546,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/partner-categories'
     | '/admin/partners'
+    | '/admin/referrals'
     | '/admin/registration-codes'
     | '/admin/registration-overview'
     | '/admin/registrations'
@@ -769,6 +781,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPartnersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/referrals': {
+      id: '/admin/referrals'
+      path: '/referrals'
+      fullPath: '/admin/referrals'
+      preLoaderRoute: typeof AdminReferralsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/registration-codes': {
       id: '/admin/registration-codes'
       path: '/registration-codes'
@@ -957,6 +976,7 @@ interface AdminRouteChildren {
   AdminPagesRoute: typeof AdminPagesRoute
   AdminPartnerCategoriesRoute: typeof AdminPartnerCategoriesRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
+  AdminReferralsRoute: typeof AdminReferralsRoute
   AdminRegistrationCodesRoute: typeof AdminRegistrationCodesRoute
   AdminRegistrationOverviewRoute: typeof AdminRegistrationOverviewRoute
   AdminRegistrationsRoute: typeof AdminRegistrationsRoute
@@ -982,6 +1002,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPagesRoute: AdminPagesRoute,
   AdminPartnerCategoriesRoute: AdminPartnerCategoriesRoute,
   AdminPartnersRoute: AdminPartnersRoute,
+  AdminReferralsRoute: AdminReferralsRoute,
   AdminRegistrationCodesRoute: AdminRegistrationCodesRoute,
   AdminRegistrationOverviewRoute: AdminRegistrationOverviewRoute,
   AdminRegistrationsRoute: AdminRegistrationsRoute,

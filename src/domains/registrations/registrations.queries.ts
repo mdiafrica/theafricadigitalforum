@@ -21,6 +21,49 @@ import {
   setRegistrationCodeActive,
   updateRegistrationCode,
 } from "./registrations.codes.functions"
+import {
+  deleteReferralOption,
+  listReferralOptions,
+  listReferralOptionsAdmin,
+  saveReferralOption,
+} from "./registrations.referrals.functions"
+
+export function useReferralOptionsQuery() {
+  return useQuery(
+    queryOptions({
+      queryKey: [...registrationKeys.all, "referrals", "public"] as const,
+      queryFn: () => listReferralOptions(),
+      staleTime: 60_000,
+    })
+  )
+}
+
+export function useReferralOptionsAdminQuery() {
+  return useQuery(
+    queryOptions({
+      queryKey: [...registrationKeys.all, "referrals", "admin"] as const,
+      queryFn: () => listReferralOptionsAdmin(),
+    })
+  )
+}
+
+export function useSaveReferralOptionMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: saveReferralOption,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: registrationKeys.all }),
+  })
+}
+
+export function useDeleteReferralOptionMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteReferralOption,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: registrationKeys.all }),
+  })
+}
 
 export const registrationKeys = {
   all: ["registrations"] as const,

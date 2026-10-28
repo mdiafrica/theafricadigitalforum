@@ -34,6 +34,7 @@ import {
   registrationInput,
   submitRegistration,
   TITLES,
+  useReferralOptionsQuery,
   validateRegistrationCode,
   type PassTierId,
 } from "@/domains/registrations"
@@ -85,6 +86,7 @@ const STEP_FIELDS = [
     "jobTitle",
     "organization",
     "country",
+    "referral",
     "linkedinUrl",
   ],
   ["interestAreas", "participationType", "primaryGoal"],
@@ -98,6 +100,7 @@ interface FormValues {
   jobTitle: string
   organization: string
   country: string
+  referral: string
   linkedinUrl: string
   passTier: PassTierId | ""
   interestAreas: string[]
@@ -116,6 +119,7 @@ const INITIAL_VALUES: FormValues = {
   jobTitle: "",
   organization: "",
   country: "",
+  referral: "",
   linkedinUrl: "",
   passTier: "",
   interestAreas: [],
@@ -792,6 +796,7 @@ function TitleField({ values, set }: StepProps) {
 
 function StepDetails(props: StepProps) {
   const { values, errors, set } = props
+  const referralOptions = useReferralOptionsQuery()
 
   return (
     <div>
@@ -849,6 +854,29 @@ function StepDetails(props: StepProps) {
               ))}
           </select>
           <FieldError message={errors.country} />
+        </div>
+        <div>
+          <label htmlFor="referral" className={LABEL_CLASS}>
+            {tr("Who referred you?")}
+          </label>
+          <select
+            id="referral"
+            value={values.referral}
+            onChange={(event) => set("referral", event.target.value)}
+            aria-invalid={Boolean(errors.referral)}
+            className={cn(
+              INPUT_CLASS,
+              "w-full rounded-lg border px-3.5 py-2.5 outline-none focus:border-primary"
+            )}
+          >
+            <option value="">{tr("Select an option")}</option>
+            {(referralOptions.data ?? []).map((option) => (
+              <option key={option.id} value={option.name}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+          <FieldError message={errors.referral} />
         </div>
         <TextField
           {...props}

@@ -14,7 +14,9 @@ import {
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&")
 
-function buildFilter(data: Pick<ListRegistrationsInput, "search" | "passTier">) {
+function buildFilter(
+  data: Pick<ListRegistrationsInput, "search" | "passTier">
+) {
   const term = data.search ? `%${escapeLike(data.search)}%` : undefined
   return and(
     data.passTier ? eq(schema.registration.passTier, data.passTier) : undefined,
@@ -54,7 +56,13 @@ export const listRegistrations = createServerFn({ method: "GET" })
         .from(schema.registration)
         .groupBy(schema.registration.passTier),
     ])
-    return { items, total, page: data.page, pageSize: data.pageSize, tierCounts }
+    return {
+      items,
+      total,
+      page: data.page,
+      pageSize: data.pageSize,
+      tierCounts,
+    }
   })
 
 export type RegistrationItem = Awaited<
@@ -125,6 +133,7 @@ export const exportRegistrationsCsv = createServerFn({ method: "GET" })
       "Organization",
       "Country of residence",
       "LinkedIn",
+      "Referred by",
       "Pass",
       "Payment status",
       "Interest areas",
@@ -145,6 +154,7 @@ export const exportRegistrationsCsv = createServerFn({ method: "GET" })
         row.organization,
         row.country,
         row.linkedinUrl,
+        row.referral,
         row.passTier,
         row.paymentStatus,
         row.interestAreas,
